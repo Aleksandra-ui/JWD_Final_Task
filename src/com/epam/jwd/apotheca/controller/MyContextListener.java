@@ -1,13 +1,13 @@
 package com.epam.jwd.apotheca.controller;
 
 import java.util.Enumeration;
+import java.util.Locale;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import com.epam.jwd.apotheca.dao.ConnectionPool;
-import com.epam.jwd.apotheca.dao.CouldNotInitializeConnectionPoolException;
 
 public class MyContextListener implements ServletContextListener {
 
@@ -30,10 +30,14 @@ public class MyContextListener implements ServletContextListener {
 		}
 		context.setAttribute("xxx", "yyy");
 		context.setAttribute("abc", "def");
-		UserManagerService service = new UserManagerService();
-		context.setAttribute("service", service);
+		UserManagerService userService = new UserManagerService();
+		context.setAttribute("userService", userService);
+		DrugManagerService drugService = new DrugManagerService();
+		context.setAttribute("drugService", drugService);
+		
 		// ConnectionPool.retrieve();
-
+		Locale.setDefault(Locale.US);
+	
 	}
 
 }

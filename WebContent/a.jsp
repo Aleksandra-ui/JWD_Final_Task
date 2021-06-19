@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"
-	import = "com.epam.jwd.apotheca.controller.UserManagerService, com.epam.jwd.apotheca.model.User, java.util.List, com.epam.jwd.apotheca.dao.UserDAO,
-	java.util.Calendar"%>
+	import = "com.epam.jwd.apotheca.controller.UserManagerService, com.epam.jwd.apotheca.model.User,
+	 java.util.List, java.util.Calendar"%>
 
 <!DOCTYPE html>
 <html>
@@ -16,26 +16,22 @@
 	String userPass = request.getParameter("pass"); --%>
 	<%
 	Integer visitsSession = (Integer) session.getAttribute("visits");
-	if (visitsSession == null) {
-		visitsSession = 0;
-	}
-	UserDAO dao=null;
-	//UserManagerService service = (UserManagerService) session.getAttribute("service");
-	UserManagerService service = (UserManagerService) application.getAttribute("service");
-/* 	if (service == null) {
-		service = new UserManagerService();
-		session.setAttribute("service", service);
-	} */
-	dao = service.getUserDAO();
-	visitsSession++;
-	session.setAttribute("visits", visitsSession);
-	System.out.println(dao);
-	List<User> users = dao.getUsers();
-	String userName = request.getParameter("name");
-	String userPass = request.getParameter("pass");
-	String userLogoff = request.getParameter("logoff");
-	String register = request.getParameter("register");
-	
+		if (visitsSession == null) {
+			visitsSession = 0;
+		}
+		//UserManagerService service = (UserManagerService) session.getAttribute("service");
+		UserManagerService service = (UserManagerService) application.getAttribute("userService");
+	/* 	if (service == null) {
+			service = new UserManagerService();
+			session.setAttribute("service", service);
+		} */
+		visitsSession++;
+		System.out.println(service.getUserDAO());
+		List<User> users = service.getUsers();
+		String userName = request.getParameter("name");
+		String userPass = request.getParameter("pass");
+		String userLogoff = request.getParameter("logoff");
+		String register = request.getParameter("register");
 	%>
 	<%=userName%> <%=userPass%> <%=userLogoff%>
 	<% 
@@ -43,7 +39,7 @@
 	
 	if ( user == null ) {
 		if (  "1".equals(register) ){
-			if (dao.hasUser(userName)){
+			if (service.hasUser(userName)){
 				
 			} else {
 				user = new User();

@@ -3,7 +3,7 @@ Session page visited: <%=visitsSession%> times
 
 <ul>
 	<%
- 	for (User u : dao.getUsers()) {
+ 	for (User u : service.getUsers()) {
 	%>
 	<li><%=u.getName()%></li>
 	<%

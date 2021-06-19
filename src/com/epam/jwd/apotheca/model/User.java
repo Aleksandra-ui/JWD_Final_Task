@@ -1,6 +1,6 @@
 package com.epam.jwd.apotheca.model;
 
-public class User {
+public class User implements Entity {
 
 	private String name;
 	private String role;

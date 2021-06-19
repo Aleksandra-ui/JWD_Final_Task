@@ -1,4 +1,4 @@
-package com.epam.jwd.apotheca.dao;
+package com.epam.jwd.apotheca.dao.impl;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,19 +8,85 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 
+import com.epam.jwd.apotheca.dao.ConnectionPool;
+import com.epam.jwd.apotheca.dao.CouldNotInitializeConnectionPoolException;
+import com.epam.jwd.apotheca.dao.api.UserDAO;
 import com.epam.jwd.apotheca.model.User;
 
-public class UserDAO {
+public class UserDAOImpl implements UserDAO {
 
-	public UserDAO() {
+	public UserDAOImpl() {
 		try {
 			cp.init();
 		} catch (CouldNotInitializeConnectionPoolException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public User save(User entity) {
+		return createUser(entity) ;
+	}
+
+	@Override
+	public boolean delete(Integer id) {
+
+		boolean result = false;
+
+		try (Connection connection = cp.takeConnection();PreparedStatement st = connection.prepareStatement("delete from mydb.users where id = ?");) {
+			connection.setAutoCommit(false);
+			st.setInt(1, id);
+
+			result = st.executeUpdate() > 0;
+			connection.commit();
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return result;
+		
+	}
+
+	@Override
+	public List<User> findAll() {
+		return  getUsers();
+	}
+
+	@Override
+	public List<User> findAllById(Integer id) {
+		return getUsers(id);
+	}
+	
+	@Override
+	public User findById(Integer id) {
+		
+		List<User> users = getUsers(id);
+		return users.isEmpty() ? null : users.get(0);
+		
+	}
+
+	@Override
+	public User update(User entity) {
+		boolean result = false;
+
+		try (Connection connection = cp.takeConnection();Statement st = connection.createStatement();) {
+			connection.setAutoCommit(false);
+			result = st.executeUpdate(
+					"update mydb.users set name = '" + entity.getName() + "', role = '" + entity.getRole()
+							+ "', password = '" + entity.getPassword() + "' where id = " + entity.getId()) > 0;
+			connection.commit();
+			result = true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return result ? entity : null;
 	}
 
 	private ConnectionPool cp = ConnectionPool.retrieve();
@@ -91,14 +157,40 @@ public class UserDAO {
 		System.out.println("helloworld");
 	}
 
-	public List<User> getUsers() {
+	public List<User> getUsers(Integer...id) {
 
 		List<User> users = new ArrayList<User>();
 
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 
 			connection.setAutoCommit(false);
-			ResultSet rs = st.executeQuery("SELECT * FROM USERS");
+			ResultSet rs = st.executeQuery("SELECT * FROM USERS " + (id.length > 0 ? "WHERE ID = " + id[0] : ""));
+			while (rs.next()) {
+				User user = new User();
+				user.setName(rs.getString("name"));
+				user.setRole(rs.getString("role"));
+				user.setPassword(rs.getString("password"));
+				user.setId(rs.getInt("id"));
+				users.add(user);
+			}
+			connection.commit();
+			rs.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return users;
+
+	}
+	
+	public List<User> getUsers(String name) {
+
+		List<User> users = new ArrayList<User>();
+
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
+
+			connection.setAutoCommit(false);
+			ResultSet rs = st.executeQuery("SELECT * FROM USERS WHERE NAME = '" + name + "'");
 			while (rs.next()) {
 				User user = new User();
 				user.setName(rs.getString("name"));
@@ -117,13 +209,13 @@ public class UserDAO {
 
 	}
 
-	public boolean createUser(User user) {
+	public User createUser(User user) {
 
 		return createUser(user.getName(), user.getRole(), user.getPassword());
 
 	}
 
-	public boolean createUser(String name, String role, String password) {
+	public User createUser(String name, String role, String password) {
 
 		boolean result = false;
 
@@ -138,7 +230,11 @@ public class UserDAO {
 			e.printStackTrace();
 		}
 
-		return result;
+		User user = null;
+		if (result) {
+			user = getUsers(name).get(0);
+		}
+		return user;
 
 	}
 
@@ -182,5 +278,6 @@ public class UserDAO {
 		return result;
 
 	}
+
 
 }
