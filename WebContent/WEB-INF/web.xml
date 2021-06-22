@@ -21,9 +21,17 @@
  	<servlet-name>ABC</servlet-name>
  	<servlet-class>com.epam.jwd.apotheca.controller.UserManager</servlet-class>
  </servlet>
+ <servlet>
+ 	<servlet-name>drug</servlet-name>
+ 	<servlet-class>com.epam.jwd.apotheca.controller.DrugManager</servlet-class>
+ </servlet>
  <servlet-mapping>
  	<servlet-name>ABC</servlet-name>
  	<url-pattern>/aaa</url-pattern>
+ </servlet-mapping>
+ <servlet-mapping>
+ 	<servlet-name>drug</servlet-name>
+ 	<url-pattern>/createDrug</url-pattern>
  </servlet-mapping>
  <filter>
  	 <filter-name>log</filter-name>

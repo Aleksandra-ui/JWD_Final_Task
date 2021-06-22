@@ -7,7 +7,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import com.epam.jwd.apotheca.dao.ConnectionPool;
+import com.epam.jwd.apotheca.pool.ConnectionPool;
 
 public class MyContextListener implements ServletContextListener {
 

@@ -11,10 +11,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 
-import com.epam.jwd.apotheca.dao.ConnectionPool;
-import com.epam.jwd.apotheca.dao.CouldNotInitializeConnectionPoolException;
 import com.epam.jwd.apotheca.dao.api.UserDAO;
 import com.epam.jwd.apotheca.model.User;
+import com.epam.jwd.apotheca.pool.ConnectionPool;
+import com.epam.jwd.apotheca.pool.CouldNotInitializeConnectionPoolException;
 
 public class UserDAOImpl implements UserDAO {
 
@@ -45,7 +45,6 @@ public class UserDAOImpl implements UserDAO {
 			connection.commit();
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -90,40 +89,10 @@ public class UserDAOImpl implements UserDAO {
 	}
 
 	private ConnectionPool cp = ConnectionPool.retrieve();
-	// private static Connection connection = null;
-
-	/*
-	 * static {
-	 * 
-	 * try { Class.forName("com.mysql.jdbc.Driver"); if (connection == null) {
-	 * connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb",
-	 * "root", "root"); } } catch (SQLException e) { // TODO Auto-generated catch
-	 * block e.printStackTrace(); } catch (ClassNotFoundException e1) { // TODO
-	 * Auto-generated catch block e1.printStackTrace(); }
-	 * 
-	 * System.out.println("driver initialized");
-	 * 
-	 * }
-	 */
-
-	/*
-	 * public void finalize() { try { connection.close();
-	 * System.out.println("connection closed"); } catch (SQLException e) { // TODO
-	 * Auto-generated catch block e.printStackTrace(); } }
-	 */
 
 	public static void main(String[] args) {
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "root", "root");
 				Statement st = conn.createStatement();) {
-			// DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb?user=root&password=root");
-			/*
-			 * Properties props = new Properties(); props.put("user", "root");
-			 * props.put("password", "root");
-			 * DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", props);
-			 */
-			// Connection conn =
-			// DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "root",
-			// "root");
 			conn.setAutoCommit(false);
 			// Statement st = conn.createStatement();
 			System.out

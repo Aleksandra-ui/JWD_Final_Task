@@ -12,7 +12,7 @@ import javax.servlet.http.HttpSession;
 
 import com.epam.jwd.apotheca.model.User;
 
-public class UserManager extends HttpServlet {
+public class DrugManager extends HttpServlet {
 
 	/***/
 	private static final long serialVersionUID = 5923930100531435210L;
@@ -28,27 +28,7 @@ public class UserManager extends HttpServlet {
 		 * for ( String a : req.getParameterMap().keySet() ) { pw.println(a); }
 		 * pw.println("ёу!");
 		 */
-		HttpSession session = req.getSession();
-		 
-		pw.println("<html>");
-		pw.println("<head><title>Apotheca</title></head>");
-		pw.println("<body>");
-		pw.println(req.getAttribute("name"));
-		pw.println("<br>");
-		pw.println(req.getAttribute("pass"));
-		pw.println("<br>");
-		String userName = req.getParameter("name");
-		String userPass = req.getParameter("pass");
-		if (userName != null && userPass != null) {
-			pw.println("logged user: " + userName + "<br/>password: " + userPass + "<br/>");
-		}
-		User user = (User) session.getAttribute("user");
-		if (user == null) {
-			pw.println("<p>please login</p>");
-			pw.println(
-					"<form action=\"/apotheca/\" method=\"POST\">name: <input type=\"text\" id=\"name\"></input><br/>password: <input type=\"password\" id=\"pass\"></input><br><input type=\"submit\"></input></form>");
-		}
-		pw.println("</body></html>");
+		
 	}
 
 	@Override

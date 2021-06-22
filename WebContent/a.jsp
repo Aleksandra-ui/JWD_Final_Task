@@ -5,26 +5,17 @@
 
 <!DOCTYPE html>
 <html>
-<!-- <head> -->
-<!-- <meta charset="ISO-8859-1"> -->
-<!-- <title>Apotheca</title> -->
-<!-- </head> -->
 <%@ include file="head.html" %>
 <body>
-	
-	<%-- String userName = request.getParameter("name");
-	String userPass = request.getParameter("pass"); --%>
+
 	<%
 	Integer visitsSession = (Integer) session.getAttribute("visits");
 		if (visitsSession == null) {
 			visitsSession = 0;
 		}
-		//UserManagerService service = (UserManagerService) session.getAttribute("service");
+
 		UserManagerService service = (UserManagerService) application.getAttribute("userService");
-	/* 	if (service == null) {
-			service = new UserManagerService();
-			session.setAttribute("service", service);
-		} */
+	
 		visitsSession++;
 		System.out.println(service.getUserDAO());
 		List<User> users = service.getUsers();
@@ -101,15 +92,7 @@
 	</form>
 	<%} %>
 	<br />
-<%-- 	Session page visited: <%=visitsSession %> times --%>
-<!-- 	<ul> -->
-<%-- 	<% for (User u : dao.getUsers()) {%> --%>
-<%-- 		<li><%=u.getName() %></li> --%>
-<%-- 	<%} %> --%>
-<!-- 	</ul> -->
-<%-- 	<jsp:include page="users.jsp"> --%>
-<%-- 		<jsp:param value="<%=visitsSession %>" name="visitsSession"/> --%>
-<%-- 	</jsp:include> --%>
+
 <%@ include file = "users.jsp" %>
 <br/>
 <a href="/apotheca/index.jsp">home</a>

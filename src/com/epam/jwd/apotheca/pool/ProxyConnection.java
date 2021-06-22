@@ -1,4 +1,4 @@
-package com.epam.jwd.apotheca.dao;
+package com.epam.jwd.apotheca.pool;
 
 import java.sql.Array;
 import java.sql.Blob;

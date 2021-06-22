@@ -6,8 +6,8 @@ public class Drug  implements Entity {
 	private String name;
 	private Integer quantity;
 	private Integer price;
-	private Integer dose;
-	private boolean prescription;
+	private Double dose;
+	private Boolean prescription;
 	
 	@Override
 	public Integer getId() {
@@ -34,10 +34,10 @@ public class Drug  implements Entity {
 	public void setPrice(Integer price) {
 		this.price = price;
 	}
-	public Integer getDose() {
+	public Double getDose() {
 		return dose;
 	}
-	public void setDose(Integer dose) {
+	public void setDose(Double dose) {
 		this.dose = dose;
 	}
 	public boolean isPrescription() {

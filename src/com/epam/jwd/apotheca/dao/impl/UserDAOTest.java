@@ -6,9 +6,9 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.epam.jwd.apotheca.dao.ConnectionPool;
 import com.epam.jwd.apotheca.dao.api.UserDAO;
 import com.epam.jwd.apotheca.model.User;
+import com.epam.jwd.apotheca.pool.ConnectionPool;
 
 public class UserDAOTest {
 	

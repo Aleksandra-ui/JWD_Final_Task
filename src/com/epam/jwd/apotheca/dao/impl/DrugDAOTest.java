@@ -8,9 +8,9 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.epam.jwd.apotheca.dao.ConnectionPool;
 import com.epam.jwd.apotheca.dao.api.DrugDAO;
 import com.epam.jwd.apotheca.model.Drug;
+import com.epam.jwd.apotheca.pool.ConnectionPool;
 
 public class DrugDAOTest {
 	
