@@ -3,14 +3,78 @@
     pageEncoding="UTF-8" import="java.util.ResourceBundle, java.util.List, com.epam.jwd.apotheca.model.Drug, com.epam.jwd.apotheca.model.User" %>
 <%--     <%@ taglib uri="" prefix="c" %> --%>
      <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+     <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+     <c:if test="${ not empty sessionScope.user and not (fn:toUpperCase(sessionScope.user.role) eq 'DOCTOR')}">
+    	<c:redirect url="/drugs.jsp"/>
+     </c:if>
+		<c:out value="${fn:toUpperCase(sessionScope.user)}"></c:out>
+		<c:out value="${fn:toUpperCase(sessionScope.user.role)}"></c:out>
+		<c:out value="${not (fn:toUpperCase(sessionScope.user.role) eq 'DOCTOR')}"></c:out>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title><%=ResourceBundle.getBundle("Drugs").getString("drugs.list") %></title>
 </head>
+
+
+
 <body>
+
+	<script type="text/javascript">
+	drugIds = new Array();
+	a = window.location.href;
+	paramLine = a.substring(a.indexOf('\\?') + 1);
+	params = paramLine.split("&");
+	for ( param of params ) {
+		if (param.startsWith("drugIds=")) {
+			drugIds = param.substring(param.indexOf("drugIds=") + 9).split(",");
+		}
+	}
 	
+	
+	function showId (drugId) {
+		found = false;
+		idx = drugIds.indexOf(drugId.value);
+
+		if (drugId.checked) {
+			if (idx == -1) {
+				drugIds.push(drugId.value);
+			}
+			
+		} else {
+			if (idx != -1) {
+				drugIds.splice(idx, 1);//deleting 1 element
+			}
+			
+		}
+	} 
+	
+	function changePageSize (select) {
+		
+		drugIdLine = "";
+		if (drugIds.length > 0) {
+			drugIdLine =  "drugIds=";
+			for ( id of drugIds ) {
+				if (id != ""){
+					drugIdLine += id + ",";
+				}
+			}
+			drugIdLine = drugIdLine.substring(0,drugIdLine.length-1);
+		}
+		
+		return select.options[select.selectedIndex].value && (window.location = select.options[select.selectedIndex].value + ((drugIdLine != "") ? "&" + drugIdLine : "" )); 
+		
+	}
+	
+	function changeURL(anchor) {
+		
+		return anchor.href && (window.location = anchor.href + ((drugIdLine != "") ? "&" + drugIdLine : "" )); 
+		
+	}
+	
+</script>
+
 	<%=ResourceBundle.getBundle("Drugs").getString("drugs.welcome") %>
 	<a href="/apotheca/index.jsp">home</a>
 	
@@ -27,10 +91,10 @@
 		<span style="float: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 		<div style="float: left">
 			records per page:&nbsp;
-			<select name="pageSize" onChange = "this.options[this.selectedIndex].value && (window.location = this.options[this.selectedIndex].value);">
-			<option ${pageSize  == 5 ? "selected='true'" : "" } value="/apotheca/drugs.jsp?pageSize=5">5</option>
-			<option ${pageSize  == 10 ? "selected='true'" : "" } value="/apotheca/drugs.jsp?pageSize=10" >10</option>
-			<option ${pageSize  == 20 ? "selected='true'" : "" } value="/apotheca/drugs.jsp?pageSize=20" >20</option>
+			<select name="pageSize" onChange = "changePageSize(this);"> <!-- проверяем есть ли значение в первой части end-a -->
+				<option  ${param.pageSize  == 5 ? "selected='true'" : "" } value="/apotheca/secure/recipe.jsp?pageSize=5">5</option>
+				<option  ${param.pageSize  == 10 ? "selected='true'" : "" } value="/apotheca/secure/recipe.jsp?pageSize=10" >10</option>
+				<option  ${param.pageSize  == 20 ? "selected='true'" : "" } value="/apotheca/secure/recipe.jsp?pageSize=20" >20</option>
 			</select>
 		</div>
 		<span style="float: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -49,7 +113,7 @@
 		<c:forEach var="displayPage" begin="1" end="${pagesCount}">
 			<c:choose>
 				<c:when test="${displayPage == (empty param.currentPage ? 1 : param.currentPage)}">${displayPage} &nbsp;</c:when>
-				<c:otherwise><a href = "/apotheca/drugs.jsp?pageSize=${empty param.pageSize ? 5 : param.pageSize}&currentPage=${displayPage}">${displayPage}</a>&nbsp;</c:otherwise>
+				<c:otherwise><a href = "/apotheca/secure/recipe.jsp?pageSize=${empty param.pageSize ? 5 : param.pageSize}&currentPage=${displayPage}" onclick="changeURL(this);">${displayPage}</a>&nbsp;</c:otherwise>
 			</c:choose>
 		</c:forEach>
 		
@@ -81,19 +145,30 @@
 					<c:forEach items="${drugsList}" var="d">
 
 						<tr bgcolor=<c:out value="${not d.prescription ? 'LightGreen' : 'LightPink'}"/>>
-							<%-- 			<tr  bgcolor="<%=d.isPrescription() ? "red" : "blue" %>"> --%>
 							<td><c:out value="${d.id}" /></td>
-							<%-- 				<td><%=d.getId() %></td> --%>
 							<td><c:out value="${d.name}" /></td>
-							<%-- 				<td><%=d.getName() %></td> --%>
 							<td><c:out value="${d.dose }" /></td>
-							<%--  				<td><%=d.getDose() %></td> --%>
 							<td><c:out value="${d.quantity }" /></td>
-							<%-- 				<td><%=d.getQuantity() %></td> --%>
 							<td><c:out value="${d.price }" /></td>
-							<%-- 				<td><%=d.getPrice() %></td> --%>
-							<td><c:out value="${d.prescription ? 'yes' : 'no'}" /></td>
-							<%-- 				<td><%=d.isPrescription() ? "yes" : "no" %></td> --%>
+							<td>
+								<c:if test="${d.prescription}">
+									<c:set var="present" value="false"/>
+									<c:set var="ids" value="${fn:split(param.drugIds,',')}"/>
+									<c:set var="idStr" >${d.id}</c:set>
+									<c:forEach var="id" items="${ids}">
+										<c:if test="${id == idStr}">
+											<c:set var="present" value="true"/>
+										</c:if>
+									</c:forEach>
+									<c:out value="${param.drugIds}" />
+									<input type="checkbox" value="${d.id}" name="drug" onchange="showId(this);"
+										   <c:out value="${present ? 'checked' : ''}"/>/> 
+									
+									
+									
+									&nbsp; <!-- this указывает на объект checkbox -->
+								</c:if>
+							</td>
 						</tr>
 
 					</c:forEach>

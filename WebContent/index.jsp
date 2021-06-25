@@ -9,7 +9,12 @@
 <body>
 	start page 
 	<a href="/apotheca/secure/UserCounter.jsp">secure</a>
+	<br/>
 	<a href="/apotheca/drugs.jsp">drugs</a>
+	<br/>
+	<a href="/apotheca/secure/recipe.jsp">recipe</a>
+	<br/>
+	<a href="/apotheca/a.jsp">log on</a>
 	
 </body>
 </html>
