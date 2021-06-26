@@ -17,18 +17,39 @@
 <title><%=ResourceBundle.getBundle("Drugs").getString("drugs.list") %></title>
 </head>
 
+<script type="text/javascript">
+	drugIds = new Array(); 
+// 	a = window.location.href; //link to current page
+// 	paramLine = a.substring(a.indexOf('?') + 1);
+// 	params = paramLine.split("&");
+// 	const DRUG_ID = "drugIds=";
+// 	for ( param of params ) {
+// 		if (param.startsWith(DRUG_ID)) {
+// 			drugIds = param.substring(param.indexOf(DRUG_ID) + DRUG_ID.length + 1).split(","); //array of ids of chosen drugs
+// 		}
+// 	}
+</script>
 
-
-<body>
+<body onload="readDrugs();fillWithDrugIds();">
 
 	<script type="text/javascript">
-	drugIds = new Array();
-	a = window.location.href;
-	paramLine = a.substring(a.indexOf('\\?') + 1);
-	params = paramLine.split("&");
-	for ( param of params ) {
-		if (param.startsWith("drugIds=")) {
-			drugIds = param.substring(param.indexOf("drugIds=") + 9).split(",");
+	
+	
+	
+	function readDrugs() {
+	
+	// 	drugIds = new Array(); 
+		a = window.location.search; //link to current page
+		//alert("search: " + a);
+		paramLine = a.substr(1);
+		params = paramLine.split("&");
+		const DRUG_ID = "drugIds=";
+		//alert(params);
+		for ( param of params ) {
+			if (param.startsWith(DRUG_ID)) {
+				//alert( param.substr(param.indexOf(DRUG_ID) + DRUG_ID.length ) );
+				drugIds = param.substring(param.indexOf(DRUG_ID) + DRUG_ID.length ).split(","); //array of ids of chosen drugs
+			}
 		}
 	}
 	
@@ -68,9 +89,28 @@
 	}
 	
 	function changeURL(anchor) {
+		drugIdLine = "";
+		if (drugIds.length > 0) {
+			drugIdLine =  "drugIds=";
+			for ( id of drugIds ) {
+				if (id != ""){
+					drugIdLine += id + ",";
+				}
+			}
+			drugIdLine = drugIdLine.substring(0,drugIdLine.length-1);
+		}
+		newHref = anchor.href + ((drugIdLine != "") ? "&" + drugIdLine : "" );
+		alert(newHref);
+		return anchor.href && (window.location = newHref); //window.location трансформир в window.location.href
 		
-		return anchor.href && (window.location = anchor.href + ((drugIdLine != "") ? "&" + drugIdLine : "" )); 
+	}
+	
+	function fillWithDrugIds(){
 		
+		var opt = document.createElement("option");
+		opt.text = drugIds[0]; //document.getElementById("TextBox4").value;
+	    opt.value =  drugIds[0];//document.getElementById("TextBox4").value;
+	    document.getElementById("ListBox1").options.add(opt);
 	}
 	
 </script>
@@ -153,6 +193,7 @@
 							<td>
 								<c:if test="${d.prescription}">
 									<c:set var="present" value="false"/>
+<%-- 									<c:set var="ids" value="${param.drugIds}"/> --%>
 									<c:set var="ids" value="${fn:split(param.drugIds,',')}"/>
 									<c:set var="idStr" >${d.id}</c:set>
 									<c:forEach var="id" items="${ids}">
@@ -160,7 +201,7 @@
 											<c:set var="present" value="true"/>
 										</c:if>
 									</c:forEach>
-									<c:out value="${param.drugIds}" />
+<%-- 									<c:out value="${param.drugIds}" /> --%>
 									<input type="checkbox" value="${d.id}" name="drug" onchange="showId(this);"
 										   <c:out value="${present ? 'checked' : ''}"/>/> 
 									
@@ -182,6 +223,13 @@
 	</table>
 	</div>
 	
+	<select multiple id="ListBox1" name="fillWithDrugIds(this)">
+		
+<!-- 		<option id="1">---a---</option> -->
+<!-- 		<option id="2">---b---</option> -->
+<!-- 		<option id="3">---c---</option> -->
+<!-- 		<option id="4">---d---</option> -->
+	</select>
 	<%
 	List<String> a = new java.util.ArrayList<String>();
 	a.add("a");
