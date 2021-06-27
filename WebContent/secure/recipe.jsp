@@ -30,7 +30,7 @@
 // 	}
 </script>
 
-<body onload="readDrugs();fillWithDrugIds();">
+<body onload="readDrugs();fillWithDrugIds();displayParams();">
 
 	<script type="text/javascript">
 	
@@ -55,23 +55,41 @@
 	
 	
 	function showId (drugId) {
+		
 		found = false;
 		idx = drugIds.indexOf(drugId.value);
-
+		recipe = document.getElementById("ListBox1");
+		
+		
 		if (drugId.checked) {
 			if (idx == -1) {
 				drugIds.push(drugId.value);
+				var opt = document.createElement("option");
+				opt.text = drugId.value; //document.getElementById("TextBox4").value;
+				opt.id = "drug" + drugId.value;
+				recipe.options.add(opt);
+				recipe.style.display = 'inline-block';
 			}
 			
 		} else {
 			if (idx != -1) {
 				drugIds.splice(idx, 1);//deleting 1 element
+				opt = document.getElementById("drug" + drugId.value);
+				
+				recipe.removeChild(opt);
+				if ( recipe.options.length == 0){
+					recipe.style.display = 'none';
+				}
+				
 			}
 			
 		}
+		
+		
+		
 	} 
 	
-	function changePageSize (select) {
+	function getDrugIds() {
 		
 		drugIdLine = "";
 		if (drugIds.length > 0) {
@@ -83,35 +101,75 @@
 			}
 			drugIdLine = drugIdLine.substring(0,drugIdLine.length-1);
 		}
+		
+		return drugIdLine;
+		
+	}
+	
+	function changePageSize (select) {
+		
+		drugIdLine = getDrugIds();
 		
 		return select.options[select.selectedIndex].value && (window.location = select.options[select.selectedIndex].value + ((drugIdLine != "") ? "&" + drugIdLine : "" )); 
 		
 	}
 	
 	function changeURL(anchor) {
-		drugIdLine = "";
-		if (drugIds.length > 0) {
-			drugIdLine =  "drugIds=";
-			for ( id of drugIds ) {
-				if (id != ""){
-					drugIdLine += id + ",";
-				}
-			}
-			drugIdLine = drugIdLine.substring(0,drugIdLine.length-1);
-		}
+		
+		drugIdLine = getDrugIds();
+		
 		newHref = anchor.href + ((drugIdLine != "") ? "&" + drugIdLine : "" );
-		alert(newHref);
-		return anchor.href && (window.location = newHref); //window.location трансформир в window.location.href
+		
+		return anchor.href && (anchor.href = newHref); //window.location трансформир в window.location.href
 		
 	}
 	
 	function fillWithDrugIds(){
 		
-		var opt = document.createElement("option");
-		opt.text = drugIds[0]; //document.getElementById("TextBox4").value;
-	    opt.value =  drugIds[0];//document.getElementById("TextBox4").value;
-	    document.getElementById("ListBox1").options.add(opt);
+	
+			//document.getElementById("ListBox1").style.display="inline"
+			//visibility: hidden
+		
+		for ( id of drugIds ) {
+			var opt = document.createElement("option");
+			opt.text = id; //document.getElementById("TextBox4").value;
+			opt.id = "drug" + id;
+		    //opt.value =  drugIds[0];//document.getElementById("TextBox4").value;
+		    document.getElementById("ListBox1").options.add(opt);
+		}
+		
+		
+		 
+		//xxx = document.getElementById("drug2")
+		//document.getElementById("ListBox1").removeChild(xxx)
+		
 	}
+	
+	function displayParams() {
+        params = window.location.href;
+        //alert(params);
+        params = "" + params.substring(params.indexOf('?') + 1);
+        pp = params.split('&');
+        //alert(pp);
+        retVal = [];
+        for (i = 0; i < pp.length; i++) {
+            keyVal = pp[i].split("=");
+            //alert("Key = " + keyVal[0] + "\nValue = " + keyVal[1]);
+            retVal.push(keyVal[0] + " : " + keyVal[1]);
+        }
+ 		//alert("RetVal " + retVal);
+        
+    }
+	
+// 	function changeSelectVisibility() {
+		
+// 		var select = document.getElementById("ListBox1");
+// 		alert(drugIds.length);
+		
+// 		select.style.display = drugIds.length == 0 ? 'none' : 'inline'; 
+		
+// 	}
+	
 	
 </script>
 
@@ -223,7 +281,8 @@
 	</table>
 	</div>
 	
-	<select multiple id="ListBox1" name="fillWithDrugIds(this)">
+	<select multiple id="ListBox1" style="display:none">
+<%-- 	<select multiple id="ListBox1" style=" display: "${empty drugIds ? 'none' : 'inline'}"" > --%>
 		
 <!-- 		<option id="1">---a---</option> -->
 <!-- 		<option id="2">---b---</option> -->
