@@ -28,30 +28,33 @@
 // 			drugIds = param.substring(param.indexOf(DRUG_ID) + DRUG_ID.length + 1).split(","); //array of ids of chosen drugs
 // 		}
 // 	}
+
+	
 </script>
 
-<body onload="readDrugs();fillWithDrugIds();displayParams();">
+<body onload="readDrugs()">
 
 	<script type="text/javascript">
 	
 	
-	
 	function readDrugs() {
-	
-	// 	drugIds = new Array(); 
-		a = window.location.search; //link to current page
-		//alert("search: " + a);
-		paramLine = a.substr(1);
-		params = paramLine.split("&");
-		const DRUG_ID = "drugIds=";
-		//alert(params);
-		for ( param of params ) {
-			if (param.startsWith(DRUG_ID)) {
-				//alert( param.substr(param.indexOf(DRUG_ID) + DRUG_ID.length ) );
-				drugIds = param.substring(param.indexOf(DRUG_ID) + DRUG_ID.length ).split(","); //array of ids of chosen drugs
+		
+		// 	drugIds = new Array(); 
+			a = window.location.search; //link to current page
+			//alert("search: " + a);
+			paramLine = a.substr(1);
+			params = paramLine.split("&");
+			const DRUG_ID = "drugIds=";
+			//alert(params);
+			for ( param of params ) {
+				if (param.startsWith(DRUG_ID)) {
+					//alert( param.substr(param.indexOf(DRUG_ID) + DRUG_ID.length ) );
+					drugIds = param.substring(param.indexOf(DRUG_ID) + DRUG_ID.length ).split(","); //array of ids of chosen drugs
+				}
 			}
 		}
-	}
+		
+
 	
 	
 	function showId (drugId) {
@@ -65,7 +68,11 @@
 			if (idx == -1) {
 				drugIds.push(drugId.value);
 				var opt = document.createElement("option");
-				opt.text = drugId.value; //document.getElementById("TextBox4").value;
+				
+				var drugName = document.getElementById("checkbox" + drugId.value);
+				//alert(drugName.value);
+				
+				opt.text = drugName.value; //document.getElementById("TextBox4").value;
 				opt.id = "drug" + drugId.value;
 				recipe.options.add(opt);
 				recipe.style.display = 'inline-block';
@@ -120,28 +127,36 @@
 		
 		newHref = anchor.href + ((drugIdLine != "") ? "&" + drugIdLine : "" );
 		
-		return anchor.href && (anchor.href = newHref); //window.location трансформир в window.location.href
+		return anchor.href && (anchor.href = newHref); //if (anchor.href) {anchor.href = newHref;}. window.location transforms into window.location.href
 		
 	}
 	
 	function fillWithDrugIds(){
 		
-	
+		
 			//document.getElementById("ListBox1").style.display="inline"
 			//visibility: hidden
+			
+		if ( drugIds.length > 0 ) {
+			document.getElementById("ListBox1").style.display="inline-block";
+		}	
+			
+		alert(drugIds +"!!!");	
 		
 		for ( id of drugIds ) {
 			var opt = document.createElement("option");
-			opt.text = id; //document.getElementById("TextBox4").value;
+			//opt.text = id; //document.getElementById("TextBox4").value;
+			
+			var drugName = document.getElementById("checkbox" + id);
+			alert(drugName);
+			
+			opt.text = drugName.value;
+			
 			opt.id = "drug" + id;
 		    //opt.value =  drugIds[0];//document.getElementById("TextBox4").value;
 		    document.getElementById("ListBox1").options.add(opt);
 		}
 		
-		
-		 
-		//xxx = document.getElementById("drug2")
-		//document.getElementById("ListBox1").removeChild(xxx)
 		
 	}
 	
@@ -161,14 +176,24 @@
         
     }
 	
-// 	function changeSelectVisibility() {
+	function changeSelectVisibility() {
 		
-// 		var select = document.getElementById("ListBox1");
-// 		alert(drugIds.length);
+		var select = document.getElementById("ListBox1");
+		select.style.display = (drugIds.length == 0) ? 'none' : 'inline-block'; 
 		
-// 		select.style.display = drugIds.length == 0 ? 'none' : 'inline'; 
-		
-// 	}
+	}
+	
+	function removeOptionSelected()
+	{
+	  var elSel = document.getElementById('selectX');//selectX IS ID OF SELECT
+	  var i;
+	  for (i = elSel.length - 1; i>=0; i--) {
+	    if (elSel.options[i].selected) {
+	      elSel.remove(i);
+	      break;//As suggested in comments
+	    }
+	  }
+	}
 	
 	
 </script>
@@ -262,7 +287,7 @@
 <%-- 									<c:out value="${param.drugIds}" /> --%>
 									<input type="checkbox" value="${d.id}" name="drug" onchange="showId(this);"
 										   <c:out value="${present ? 'checked' : ''}"/>/> 
-									
+									<input type="hidden" id="checkbox${d.id}" value="${d.name}&nbsp;|&nbsp;${d.dose}"/>
 									
 									
 									&nbsp; <!-- this указывает на объект checkbox -->
@@ -281,20 +306,29 @@
 	</table>
 	</div>
 	
-	<select multiple id="ListBox1" style="display:none">
-<%-- 	<select multiple id="ListBox1" style=" display: "${empty drugIds ? 'none' : 'inline'}"" > --%>
-		
-<!-- 		<option id="1">---a---</option> -->
-<!-- 		<option id="2">---b---</option> -->
-<!-- 		<option id="3">---c---</option> -->
-<!-- 		<option id="4">---d---</option> -->
+<!-- <!-- 	<script type="text/javascript"> --> 
+<!-- // 	 fillWithDrugIds(); -->
+<!-- <!-- 	</script> --> 
+	
+	<select multiple id="ListBox1" <c:if test="${fn:length(fn:split(param.drugIds,',')) eq 0}">style="display:none"</c:if> >
+		<%
+			request.setAttribute("allDrugs",service.getDrugs());
+		%>
+		<c:forEach items="${allDrugs}" var="drug">
+			<c:set var="idStr" >${drug.id}</c:set>
+			<c:forEach items="${fn:split(param.drugIds,',')}" var="aDrug">
+				<c:if test="${aDrug == idStr}">
+					<option id = "drug${idStr}">${drug.name}&nbsp;|&nbsp;${ drug.dose }</option>
+				</c:if>
+			</c:forEach>
+		</c:forEach>
 	</select>
 	<%
-	List<String> a = new java.util.ArrayList<String>();
-	a.add("a");
-	a.add("b");
-	a.add("c");
-	request.setAttribute("a", a);
+// 	List<String> a = new java.util.ArrayList<String>();
+// 	a.add("a");
+// 	a.add("b");
+// 	a.add("c");
+// 	request.setAttribute("a", a);
 	%>
 	<c:forEach items = "${a}" var="i" begin="0" end="2" > 
 		<c:out value="${i} "></c:out>

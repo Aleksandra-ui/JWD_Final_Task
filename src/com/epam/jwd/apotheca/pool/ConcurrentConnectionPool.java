@@ -70,6 +70,8 @@ public class ConcurrentConnectionPool implements ConnectionPool {
 			if (connection != null) {
 				if (connection instanceof ProxyConnection) {
 					availableConnections.add((ProxyConnection) connection);
+				} else {
+					System.out.println("can't release connection");
 				}
 			} 
 		} finally {
