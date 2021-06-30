@@ -247,6 +247,30 @@ public class UserDAOImpl implements UserDAO {
 		return result;
 
 	}
+	
+	public List<User> findUsersByRole(String role) {
+		
+		List<User> users = new ArrayList<User>();
+		String query = "select id,name,role,password from mydb.users where role = ?";
+
+		try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement(query);) {
+			st.setString(1, role);
+			ResultSet rs = st.executeQuery();
+			while (rs.next()) {
+				User user = new User();
+				user.setName(rs.getString("name"));
+				user.setRole(rs.getString("role"));
+				user.setPassword(rs.getString("password"));
+				user.setId(rs.getInt("id"));
+				users.add(user);
+			}
+			rs.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return users;
+	}
 
 
 }

@@ -46,4 +46,9 @@ public class UserManagerService {
 		
 	}
 	
+	public List<User> getClients() {
+		return userDAO.findUsersByRole(UserDAO.CLIENT);
+		
+	}
+	
 }

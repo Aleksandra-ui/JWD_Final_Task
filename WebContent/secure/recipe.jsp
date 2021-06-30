@@ -1,6 +1,6 @@
 <%@page import="com.epam.jwd.apotheca.controller.DrugManagerService"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8" import="java.util.ResourceBundle, java.util.List, com.epam.jwd.apotheca.model.Drug, com.epam.jwd.apotheca.model.User" %>
+    pageEncoding="UTF-8" import="java.util.ResourceBundle, java.util.List, com.epam.jwd.apotheca.model.Drug, com.epam.jwd.apotheca.model.User, com.epam.jwd.apotheca.controller.UserManagerService" %>
 <%--     <%@ taglib uri="" prefix="c" %> --%>
      <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
      <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
@@ -32,7 +32,7 @@
 	
 </script>
 
-<body onload="readDrugs()">
+<body onload="readDrugs();fillDaySelect()">
 
 	<script type="text/javascript">
 	
@@ -62,6 +62,7 @@
 		found = false;
 		idx = drugIds.indexOf(drugId.value);
 		recipe = document.getElementById("ListBox1");
+		button = document.getElementById("Submit1");
 		
 		
 		if (drugId.checked) {
@@ -73,19 +74,21 @@
 				//alert(drugName.value);
 				
 				opt.text = drugName.value; //document.getElementById("TextBox4").value;
-				opt.id = "drug" + drugId.value;
+				opt.id = "selectedDrug" + drugId.value;
 				recipe.options.add(opt);
 				recipe.style.display = 'inline-block';
+				button.style.display = 'inline-block';
 			}
 			
 		} else {
 			if (idx != -1) {
 				drugIds.splice(idx, 1);//deleting 1 element
-				opt = document.getElementById("drug" + drugId.value);
+				opt = document.getElementById("selectedDrug" + drugId.value);
 				
 				recipe.removeChild(opt);
 				if ( recipe.options.length == 0){
 					recipe.style.display = 'none';
+					button.style.display = 'none';
 				}
 				
 			}
@@ -152,7 +155,7 @@
 			
 			opt.text = drugName.value;
 			
-			opt.id = "drug" + id;
+			opt.id = "selectedDrug" + id;
 		    //opt.value =  drugIds[0];//document.getElementById("TextBox4").value;
 		    document.getElementById("ListBox1").options.add(opt);
 		}
@@ -179,22 +182,77 @@
 	function changeSelectVisibility() {
 		
 		var select = document.getElementById("ListBox1");
+		var button = document.getElementById("Submit1");
 		select.style.display = (drugIds.length == 0) ? 'none' : 'inline-block'; 
+		button.style.display = (drugIds.length == 0) ? 'none' : 'inline-block'; 
 		
 	}
 	
-	function removeOptionSelected()
+	function removeOptionsSelected()
 	{
-	  var elSel = document.getElementById('selectX');//selectX IS ID OF SELECT
+	  var select = document.getElementById('ListBox1');
 	  var i;
-	  for (i = elSel.length - 1; i>=0; i--) {
-	    if (elSel.options[i].selected) {
-	      elSel.remove(i);
-	      break;//As suggested in comments
+	  
+	  for (i = select.length - 1; i>=0; i--) {
+	    if (select.options[i].selected) {
+	    	optId = select.options[i].id.substr("selectedDrug".length);
+	    	idx = drugIds.indexOf(optId);
+	    	if ( idx != -1 ) {
+	    		drugIds.splice(idx, 1);	
+	    	}
+	    	optId = "drug" + optId;
+	    	checkbox = document.getElementById(optId);
+	    	if ( checkbox != null ) {
+	    		checkbox.checked = false;
+	    	}
+	    	select.remove(i);
 	    }
 	  }
+	  changeSelectVisibility();
 	}
 	
+	function fillDaySelect() {
+		
+		//alert("select");
+		var year = document.getElementById('Year');
+		var month = document.getElementById('Month');
+		var day = document.getElementById('Day');
+		var yearOpt = year.options[year.selectedIndex];
+		var monthOpt = month.options[month.selectedIndex];
+		//alert(monthOpt);
+		if (monthOpt.id == 'february'){
+			var dayOpt = document.getElementById('30');
+			dayOpt.hidden = true;
+			var dayOpt = document.getElementById('31');
+			dayOpt.hidden = true;
+			var dayOpt = document.getElementById('29');
+			if (yearOpt.id == '2024'){
+				dayOpt.hidden = false;
+			} else {
+				dayOpt.hidden = true;
+			}
+		} else {
+				var dayOpt = document.getElementById('29');
+				dayOpt.hidden = false;
+				var dayOpt = document.getElementById('30');
+				dayOpt.hidden = false;
+				var dayOpt = document.getElementById('31');
+				if (monthOpt.value == '31') {
+					dayOpt.hidden = false;
+				} else {
+					dayOpt.hidden = true;
+				}
+		}
+	}
+	
+	function gatherDrugIds() {
+	    drugsContainer = document.getElementByID("ListBox1").options;
+	    Array recipeDrugIds
+	    
+	    for (idx = 0; idx < drugsContainer.length; idx++) {
+	    	
+	    }
+	}
 	
 </script>
 
@@ -285,7 +343,7 @@
 										</c:if>
 									</c:forEach>
 <%-- 									<c:out value="${param.drugIds}" /> --%>
-									<input type="checkbox" value="${d.id}" name="drug" onchange="showId(this);"
+									<input type="checkbox" id="drug${d.id}" value="${d.id}" name="drug" onchange="showId(this);"
 										   <c:out value="${present ? 'checked' : ''}"/>/> 
 									<input type="hidden" id="checkbox${d.id}" value="${d.name}&nbsp;|&nbsp;${d.dose}"/>
 									
@@ -308,42 +366,108 @@
 	
 <!-- <!-- 	<script type="text/javascript"> --> 
 <!-- // 	 fillWithDrugIds(); -->
-<!-- <!-- 	</script> --> 
-	
-	<select multiple id="ListBox1" <c:if test="${fn:length(fn:split(param.drugIds,',')) eq 0}">style="display:none"</c:if> >
-		<%
-			request.setAttribute("allDrugs",service.getDrugs());
-		%>
-		<c:forEach items="${allDrugs}" var="drug">
-			<c:set var="idStr" >${drug.id}</c:set>
-			<c:forEach items="${fn:split(param.drugIds,',')}" var="aDrug">
-				<c:if test="${aDrug == idStr}">
-					<option id = "drug${idStr}">${drug.name}&nbsp;|&nbsp;${ drug.dose }</option>
-				</c:if>
-			</c:forEach>
-		</c:forEach>
-	</select>
+<!-- <!-- 	</script> -->
+
 	<%
-// 	List<String> a = new java.util.ArrayList<String>();
-// 	a.add("a");
-// 	a.add("b");
-// 	a.add("c");
-// 	request.setAttribute("a", a);
+	UserManagerService userService = (UserManagerService) application.getAttribute("userService");
+	List<User> clients = userService.getClients();
+	User doctor = (User)session.getAttribute("user");
+	Integer doctorId = doctor.getId();
 	%>
-	<c:forEach items = "${a}" var="i" begin="0" end="2" > 
-		<c:out value="${i} "></c:out>
-	</c:forEach>
+
+	<form action = "createRecipe.jsp" method="POST">
+		<input hidden="true" name="doctorId" value=<%= doctorId%> />
+		
+		
+<%-- 		<input hidden="true" name="drugs" value="${fn:split(param.drugIds,',')[0]}" /> --%>
+		<select multiple id="ListBox1" 
+			<c:if test="${fn:length(param.drugIds) == 0}">style="display:none"</c:if>>
+			<%
+			request.setAttribute("allDrugs", service.getDrugs());
+			%>
+			<c:forEach items="${allDrugs}" var="drug">
+				<c:set var="idStr">${drug.id}</c:set>
+				<c:forEach items="${fn:split(param.drugIds,',')}" var="aDrug">
+					<c:if test="${aDrug == idStr}">
+						<option id="selectedDrug${idStr}">${drug.name}&nbsp;|&nbsp;${ drug.dose }</option>
+					</c:if>
+				</c:forEach>
+			</c:forEach>
+		</select>
+		<button id="Submit1" type="submit" onclick="  removeOptionsSelected()"
+			<c:if test="${fn:length(param.drugIds) == 0}">style="display:none"</c:if>>delete</button>
 	
-	<c:forEach items="${visibleDrugs}" var="drug" begin="0" end="${visibleDrugs.size}">
-		<c:out value="${drug}" default="---" ></c:out>
-<%-- 		<c:out value="${drug.name}" default="---" ></c:out> --%>
-		<c:out value="<br/>" ></c:out>
-	</c:forEach>
-	
+		<input  value=${ param.drugIds} />
+		<input hidden="true" id="hiddenInput" name="drugs" value=${ param.drugIds} />
+		<select id="ListBoxUsers" name="clientName">
+		<%
+	 	for (User u : userService.getClients()) {
+		%>
+		<option><%=u.getName()%></option>
+		<%
+	 	}
+		%>
+		</select>
+		
+		<select id="Year" name="year" onchange="fillDaySelect()">
+			<option id="2021">2021</option>
+			<option id="2022">2022</option>
+			<option id="2023">2023</option>
+			<option id="2024">2024</option>	
+		</select> 
+		<select id="Month" name="month" onchange="fillDaySelect()" >
+			<option id="january"  value="31">january</option>
+			<option id="february">february</option>
+			<option id="march"  value="31">march</option>
+			<option id="april">april</option>	
+			<option id="may"  value="31">may</option>	
+			<option id="june">june</option>	
+			<option id="july"  value="31">july</option>	
+			<option id="august"  value="31">august</option>	
+			<option id="september">september</option>	
+			<option id="october"  value="31">october</option>	
+			<option id="november">november</option>	
+			<option id="december" value="31">december</option>	
+		</select> 
+		<select id="Day" name="day" >
+			<option>1</option>
+			<option>2</option>
+			<option>3</option>
+			<option>4</option>	
+			<option>5</option>	
+			<option>6</option>	
+			<option>7</option>	
+			<option>8</option>	
+			<option>9</option>	
+			<option>10</option>	
+			<option>11</option>	
+			<option>12</option>	
+			<option>13</option>	
+			<option>14</option>	
+			<option>15</option>	
+			<option>16</option>	
+			<option>17</option>	
+			<option>18</option>	
+			<option>19</option>	
+			<option>20</option>	
+			<option>21</option>	
+			<option>22</option>	
+			<option>23</option>	
+			<option>24</option>	
+			<option>25</option>	
+			<option>26</option>	
+			<option>27</option>	
+			<option>28</option>	
+			<option id="29" hidden="true">29</option>	
+			<option id="30" hidden="true">30</option>	
+			<option id="31" hidden="true">31</option>	
+		</select>   
+		<input type="submit" value="Submit" />
+	</form>
 	
 	<%
 	User user = (User)session.getAttribute("user");
-	if (user != null && "doctor".equalsIgnoreCase(user.getRole())){
+	if (user != null && "pharmacist".equalsIgnoreCase(user.getRole())){
 	%>
 	<a href="/apotheca/secure/createDrug.jsp">create drug</a>
 	<%
