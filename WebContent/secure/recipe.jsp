@@ -246,12 +246,15 @@
 	}
 	
 	function gatherDrugIds() {
+		alert("k");
 	    drugsContainer = document.getElementByID("ListBox1").options;
-	    Array recipeDrugIds
+	    recipeDrugIds = new Array();
 	    
 	    for (idx = 0; idx < drugsContainer.length; idx++) {
-	    	
+	    	recipeDrugIds.add(drugsContainer[idx].value); 
 	    }
+	    
+	    alert(recipeDrugIds);
 	}
 	
 </script>
@@ -371,16 +374,11 @@
 	<%
 	UserManagerService userService = (UserManagerService) application.getAttribute("userService");
 	List<User> clients = userService.getClients();
-	User doctor = (User)session.getAttribute("user");
-	Integer doctorId = doctor.getId();
 	%>
 
 	<form action = "createRecipe.jsp" method="POST">
-		<input hidden="true" name="doctorId" value=<%= doctorId%> />
-		
-		
-<%-- 		<input hidden="true" name="drugs" value="${fn:split(param.drugIds,',')[0]}" /> --%>
-		<select multiple id="ListBox1" 
+		<input hidden="true" name="doctorId" value="${sessionScope.user != null ? sessionScope.user.id : ''}" />
+		<select multiple id="ListBox1"
 			<c:if test="${fn:length(param.drugIds) == 0}">style="display:none"</c:if>>
 			<%
 			request.setAttribute("allDrugs", service.getDrugs());
@@ -389,16 +387,16 @@
 				<c:set var="idStr">${drug.id}</c:set>
 				<c:forEach items="${fn:split(param.drugIds,',')}" var="aDrug">
 					<c:if test="${aDrug == idStr}">
-						<option id="selectedDrug${idStr}">${drug.name}&nbsp;|&nbsp;${ drug.dose }</option>
+						<option id="selectedDrug${idStr}" value="${idStr}">${drug.name}&nbsp;|&nbsp;${ drug.dose }</option>
 					</c:if>
 				</c:forEach>
 			</c:forEach>
 		</select>
-		<button id="Submit1" type="submit" onclick="  removeOptionsSelected()"
+		<button id="Submit1" type="button" onclick="removeOptionsSelected()"
 			<c:if test="${fn:length(param.drugIds) == 0}">style="display:none"</c:if>>delete</button>
 	
 		<input  value=${ param.drugIds} />
-		<input hidden="true" id="hiddenInput" name="drugs" value=${ param.drugIds} />
+		<input hidden="true"  name="drugs" id="hiddenInput" value="${ param.drugIds}" />
 		<select id="ListBoxUsers" name="clientName">
 		<%
 	 	for (User u : userService.getClients()) {
@@ -462,7 +460,7 @@
 			<option id="30" hidden="true">30</option>	
 			<option id="31" hidden="true">31</option>	
 		</select>   
-		<input type="submit" value="Submit" />
+		<input type="submit" value="Submit"/>
 	</form>
 	
 	<%

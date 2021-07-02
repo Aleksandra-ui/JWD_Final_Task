@@ -133,7 +133,7 @@ public class UserDAOImpl implements UserDAO {
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 
 			connection.setAutoCommit(false);
-			ResultSet rs = st.executeQuery("SELECT * FROM USERS " + (id.length > 0 ? "WHERE ID = " + id[0] : ""));
+			ResultSet rs = st.executeQuery("select id,name,role,password from mydb.users " + (id.length > 0 ? "where id = " + id[0] : "") + "order by id");
 			while (rs.next()) {
 				User user = new User();
 				user.setName(rs.getString("name"));
@@ -159,7 +159,7 @@ public class UserDAOImpl implements UserDAO {
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 
 			connection.setAutoCommit(false);
-			ResultSet rs = st.executeQuery("SELECT * FROM USERS WHERE NAME = '" + name + "'");
+			ResultSet rs = st.executeQuery("select id,name,role,password from mydb.users where name = '" + name + "' order by id");
 			while (rs.next()) {
 				User user = new User();
 				user.setName(rs.getString("name"));
@@ -190,7 +190,7 @@ public class UserDAOImpl implements UserDAO {
 
 		try (Connection connection = cp.takeConnection();Statement st = connection.createStatement();) {
 			connection.setAutoCommit(false);
-			result = st.executeUpdate("INSERT INTO mydb.users(name,role,password) VALUES ('" + name + "','" + role
+			result = st.executeUpdate("insert into mydb.users(name,role,password) values ('" + name + "','" + role
 					+ "','" + password + "')") > 0;
 			connection.commit();
 
@@ -251,7 +251,7 @@ public class UserDAOImpl implements UserDAO {
 	public List<User> findUsersByRole(String role) {
 		
 		List<User> users = new ArrayList<User>();
-		String query = "select id,name,role,password from mydb.users where role = ?";
+		String query = "select id,name,role,password from mydb.users where role = ? order by id";
 
 		try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement(query);) {
 			st.setString(1, role);

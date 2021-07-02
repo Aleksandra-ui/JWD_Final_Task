@@ -25,8 +25,6 @@ public class DrugDAOImpl implements DrugDAO {
 		Double dose = entity.getDose();
 		Boolean prescription = entity.isPrescription();
 		
-		
-
 		try (Connection connection = cp.takeConnection();Statement st = connection.createStatement();) {
 			connection.setAutoCommit(false);
 			String sql = "INSERT INTO mydb.drugs(name,quantity,price,dose,prescription) VALUES ('" + name + "'," + String.valueOf(quantity) + "," + String.valueOf(price)
@@ -55,7 +53,7 @@ public class DrugDAOImpl implements DrugDAO {
 
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 
-			ResultSet rs = st.executeQuery("SELECT * FROM DRUGS" );
+			ResultSet rs = st.executeQuery("select id,name,quantity,price,dose,prescription from mydb.drugs order by id" );
 			while (rs.next()) {
 				drugs.add(readDrug(rs));
 			}
@@ -88,7 +86,7 @@ public class DrugDAOImpl implements DrugDAO {
 
 		List<Drug> drugs = new ArrayList<Drug>();
 		
-		String sql = "SELECT * FROM mydb.drugs order by id asc limit ?,?";
+		String sql = "select id,name,quantity,price,dose,prescription from mydb.drugs order by id asc limit ?,?";
 		//"SELECT * FROM DRUGS WHERE ID BETWEEN ? AND ?"
 
 		try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement(sql);) {
@@ -143,7 +141,7 @@ public class DrugDAOImpl implements DrugDAO {
 
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 
-			ResultSet rs = st.executeQuery("SELECT * FROM mydb.drugs WHERE NAME = '" + name + "'");
+			ResultSet rs = st.executeQuery("select id,name,quantity,price,dose,prescription from mydb.drugs WHERE NAME = '" + name + "' order by id");
 			while (rs.next()) {
 				drugs.add(readDrug(rs));
 			}
@@ -159,7 +157,7 @@ public class DrugDAOImpl implements DrugDAO {
 
 		Drug drug = null;
 
-		try (Connection connection = cp.takeConnection();PreparedStatement st = connection.prepareStatement("select * from mydb.drugs where name = ? and dose = ?");) {
+		try (Connection connection = cp.takeConnection();PreparedStatement st = connection.prepareStatement("select id,name,quantity,price,dose,prescription from mydb.drugs where name = ? and dose = ?");) {
 			st.setString(1, name);
 			st.setDouble(2, dose);
 			ResultSet rs = st.executeQuery();
