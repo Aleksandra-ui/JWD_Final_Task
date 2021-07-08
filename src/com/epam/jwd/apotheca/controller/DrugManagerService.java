@@ -43,4 +43,10 @@ public class DrugManagerService {
 		
 	}
 	
+	public Drug getDrug(Integer id) {
+		
+		return drugDAO.findById(id);
+		
+	}
+	
 }

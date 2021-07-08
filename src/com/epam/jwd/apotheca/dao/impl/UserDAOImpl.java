@@ -152,7 +152,7 @@ public class UserDAOImpl implements UserDAO {
 
 	}
 	
-	public List<User> getUsers(String name) {
+	public User getUser(String name) {
 
 		List<User> users = new ArrayList<User>();
 
@@ -174,7 +174,7 @@ public class UserDAOImpl implements UserDAO {
 			e.printStackTrace();
 		}
 
-		return users;
+		return users.get(0);
 
 	}
 
@@ -201,7 +201,7 @@ public class UserDAOImpl implements UserDAO {
 
 		User user = null;
 		if (result) {
-			user = getUsers(name).get(0);
+			user = getUser(name);
 		}
 		return user;
 

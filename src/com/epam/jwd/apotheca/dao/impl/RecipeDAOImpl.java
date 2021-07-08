@@ -151,6 +151,28 @@ public class RecipeDAOImpl implements RecipeDAO {
 		
 		return recipeInDB;
 	}
+	
+	public boolean deleteRecipe(Integer id, Integer userId, Integer drugId) {
+		
+		String query = "delete from mydb.recipe where id = ? and user_id = ? and drug_id = ?";
+		try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement(query);) {
+			st.setInt(1, id);
+			st.setInt(2, userId);
+			st.setInt(3, drugId);
+			st.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		Recipe recipe = findRecipe(id);
+		List<Integer> drugIds = recipe.getDrugIds();
+		if ( drugIds.contains(drugId) ) {
+			return false;
+		} else {
+			return true;
+		}
+		
+	}
 
 	public static void main(String[] args) {
 		RecipeDAOImpl r = new RecipeDAOImpl();

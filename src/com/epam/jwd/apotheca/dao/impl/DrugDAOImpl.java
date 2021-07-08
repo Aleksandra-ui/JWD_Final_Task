@@ -132,8 +132,18 @@ public class DrugDAOImpl implements DrugDAO {
 
 	@Override
 	public Drug findById(Integer id) {
-		// TODO Auto-generated method stub
-		return null;
+		Drug drug = null;
+		String query = "select id,name,quantity,price,dose,prescription from mydb.drugs where id = ?";
+		try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement(query);) {
+			st.setInt(1, id);
+			ResultSet rs = st.executeQuery();
+			rs.next();
+			drug = readDrug(rs);
+			rs.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return drug;
 	}
 	
 	public List<Drug> findByName(String name) {

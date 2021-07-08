@@ -54,7 +54,7 @@ public class DrugDAOTest {
 
 	@Test
 	public void testFindById() {
-		fail("Not yet implemented");
+		System.out.println(drugDAO.findById(1));;
 	}
 
 }

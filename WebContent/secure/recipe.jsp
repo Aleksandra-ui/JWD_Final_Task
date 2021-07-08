@@ -4,7 +4,7 @@
 <%--     <%@ taglib uri="" prefix="c" %> --%>
      <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
      <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-     <c:if test="${ not empty sessionScope.user and not (fn:toUpperCase(sessionScope.user.role) eq 'DOCTOR')}">
+     <c:if test="${ not empty sessionScope.user and not (fn:toUpperCase(sessionScope.user.role) eq 1)}">
     	<c:redirect url="/drugs.jsp"/>
      </c:if>
 		<c:out value="${fn:toUpperCase(sessionScope.user)}"></c:out>
@@ -32,7 +32,7 @@
 	
 </script>
 
-<body onload="readDrugs();fillDaySelect()">
+<body onload="readDrugs();fillDaySelect();fillWithDrugIds()">
 
 	<script type="text/javascript">
 	
@@ -61,23 +61,23 @@
 		
 		found = false;
 		idx = drugIds.indexOf(drugId.value);
-		recipe = document.getElementById("ListBox1");
-		button = document.getElementById("Submit1");
-		
-		
+ 		recipe = document.getElementById("ListBox1");
+// 		button = document.getElementById("Submit1");
+ 		div = document.getElementById("div");
+ 		
 		if (drugId.checked) {
 			if (idx == -1) {
 				drugIds.push(drugId.value);
 				var opt = document.createElement("option");
-				
 				var drugName = document.getElementById("checkbox" + drugId.value);
-				//alert(drugName.value);
-				
 				opt.text = drugName.value; //document.getElementById("TextBox4").value;
 				opt.id = "selectedDrug" + drugId.value;
 				recipe.options.add(opt);
-				recipe.style.display = 'inline-block';
-				button.style.display = 'inline-block';
+// 				recipe.style.display = 'inline-block';
+// 				button.style.display = 'inline-block';
+// 				button.style.display = 'inline-block';
+				div.style.display = 'inline-block';
+				
 			}
 			
 		} else {
@@ -87,8 +87,9 @@
 				
 				recipe.removeChild(opt);
 				if ( recipe.options.length == 0){
-					recipe.style.display = 'none';
-					button.style.display = 'none';
+// 					recipe.style.display = 'none';
+// 					button.style.display = 'none';
+					div.style.display = 'none';
 				}
 				
 			}
@@ -143,15 +144,12 @@
 		if ( drugIds.length > 0 ) {
 			document.getElementById("ListBox1").style.display="inline-block";
 		}	
-			
-		alert(drugIds +"!!!");	
 		
 		for ( id of drugIds ) {
 			var opt = document.createElement("option");
 			//opt.text = id; //document.getElementById("TextBox4").value;
 			
 			var drugName = document.getElementById("checkbox" + id);
-			alert(drugName);
 			
 			opt.text = drugName.value;
 			
@@ -181,10 +179,12 @@
 	
 	function changeSelectVisibility() {
 		
-		var select = document.getElementById("ListBox1");
-		var button = document.getElementById("Submit1");
-		select.style.display = (drugIds.length == 0) ? 'none' : 'inline-block'; 
-		button.style.display = (drugIds.length == 0) ? 'none' : 'inline-block'; 
+// 		var select = document.getElementById("ListBox1");
+// 		var button = document.getElementById("Submit1");
+// 		select.style.display = (drugIds.length == 0) ? 'none' : 'inline-block'; 
+// 		button.style.display = (drugIds.length == 0) ? 'none' : 'inline-block';
+		var div = document.getElementById("div");
+ 		div.style.display = (drugIds.length == 0) ? 'none' : 'inline-block'; 
 		
 	}
 	
@@ -237,7 +237,7 @@
 				var dayOpt = document.getElementById('30');
 				dayOpt.hidden = false;
 				var dayOpt = document.getElementById('31');
-				if (monthOpt.value == '31') {
+				if ( (Number(monthOpt.value) < "8" && Number(monthOpt.value) % 2 == 1)||(Number(monthOpt.value) >= "8" && Number(monthOpt.value) % 2 == 0) ) {
 					dayOpt.hidden = false;
 				} else {
 					dayOpt.hidden = true;
@@ -246,15 +246,21 @@
 	}
 	
 	function gatherDrugIds() {
-		alert("k");
-	    drugsContainer = document.getElementByID("ListBox1").options;
-	    recipeDrugIds = new Array();
+		//alert("i");
+		var select = document.getElementById("ListBox1");
+	    var drugsContainer = select.getElementsByTagName('option');
+	    //alert("k");
+	    var hiddenValue = "";
+	    //alert(hiddenValue);
 	    
-	    for (idx = 0; idx < drugsContainer.length; idx++) {
-	    	recipeDrugIds.add(drugsContainer[idx].value); 
+	    for (var idx = 0; idx < drugsContainer.length; idx++) {
+	    	hiddenValue += drugsContainer[idx].id.substr(12); 
+	    	   if (idx < (drugsContainer.length -1))  {
+	               hiddenValue += ",";
+	           }
 	    }
-	    
-	    alert(recipeDrugIds);
+	    //alert(hiddenValue);
+	    document.getElementById("selectedIds").value = hiddenValue; 
 	}
 	
 </script>
@@ -378,89 +384,104 @@
 
 	<form action = "createRecipe.jsp" method="POST">
 		<input hidden="true" name="doctorId" value="${sessionScope.user != null ? sessionScope.user.id : ''}" />
-		<select multiple id="ListBox1"
-			<c:if test="${fn:length(param.drugIds) == 0}">style="display:none"</c:if>>
-			<%
-			request.setAttribute("allDrugs", service.getDrugs());
-			%>
-			<c:forEach items="${allDrugs}" var="drug">
-				<c:set var="idStr">${drug.id}</c:set>
-				<c:forEach items="${fn:split(param.drugIds,',')}" var="aDrug">
-					<c:if test="${aDrug == idStr}">
-						<option id="selectedDrug${idStr}" value="${idStr}">${drug.name}&nbsp;|&nbsp;${ drug.dose }</option>
-					</c:if>
+		<div id="div"
+		<c:if test="${fn:length(param.drugIds) == 0}">style="display:none"</c:if>>
+			<select multiple id="ListBox1">
+				<%
+				request.setAttribute("allDrugs", service.getDrugs());
+				%>
+				<c:forEach items="${allDrugs}" var="drug">
+					<c:set var="idStr">${drug.id}</c:set>
+					<c:forEach items="${fn:split(param.drugIds,',')}" var="aDrug">
+						<c:if test="${aDrug == idStr}">
+							<option id="selectedDrug${idStr}" value="${idStr}" >${drug.name}&nbsp;|&nbsp;${ drug.dose }</option>
+						</c:if>
+					</c:forEach>
 				</c:forEach>
-			</c:forEach>
-		</select>
-		<button id="Submit1" type="button" onclick="removeOptionsSelected()"
-			<c:if test="${fn:length(param.drugIds) == 0}">style="display:none"</c:if>>delete</button>
+			</select>
+			<button id="Submit1" type="button" onclick="removeOptionsSelected();"
+				<c:if test="${fn:length(param.drugIds) == 0}">style="display:none"</c:if>>delete</button>
 	
-		<input  value=${ param.drugIds} />
-		<input hidden="true"  name="drugs" id="hiddenInput" value="${ param.drugIds}" />
-		<select id="ListBoxUsers" name="clientName">
-		<%
-	 	for (User u : userService.getClients()) {
-		%>
-		<option><%=u.getName()%></option>
-		<%
-	 	}
-		%>
-		</select>
-		
-		<select id="Year" name="year" onchange="fillDaySelect()">
-			<option id="2021">2021</option>
-			<option id="2022">2022</option>
-			<option id="2023">2023</option>
-			<option id="2024">2024</option>	
-		</select> 
-		<select id="Month" name="month" onchange="fillDaySelect()" >
-			<option id="january"  value="31">january</option>
-			<option id="february">february</option>
-			<option id="march"  value="31">march</option>
-			<option id="april">april</option>	
-			<option id="may"  value="31">may</option>	
-			<option id="june">june</option>	
-			<option id="july"  value="31">july</option>	
-			<option id="august"  value="31">august</option>	
-			<option id="september">september</option>	
-			<option id="october"  value="31">october</option>	
-			<option id="november">november</option>	
-			<option id="december" value="31">december</option>	
-		</select> 
-		<select id="Day" name="day" >
-			<option>1</option>
-			<option>2</option>
-			<option>3</option>
-			<option>4</option>	
-			<option>5</option>	
-			<option>6</option>	
-			<option>7</option>	
-			<option>8</option>	
-			<option>9</option>	
-			<option>10</option>	
-			<option>11</option>	
-			<option>12</option>	
-			<option>13</option>	
-			<option>14</option>	
-			<option>15</option>	
-			<option>16</option>	
-			<option>17</option>	
-			<option>18</option>	
-			<option>19</option>	
-			<option>20</option>	
-			<option>21</option>	
-			<option>22</option>	
-			<option>23</option>	
-			<option>24</option>	
-			<option>25</option>	
-			<option>26</option>	
-			<option>27</option>	
-			<option>28</option>	
-			<option id="29" hidden="true">29</option>	
-			<option id="30" hidden="true">30</option>	
-			<option id="31" hidden="true">31</option>	
-		</select>   
-		<input type="submit" value="Submit"/>
+			<input hidden="true" id="selectedIds"  name="recipeDrugIds" id="hiddenInput"  />
+			<select id="ListBoxUsers" name="clientName">
+			<%
+		 	for (User u : userService.getClients()) {
+			%>
+			<option><%=u.getName()%></option>
+			<%
+		 	}
+			%>
+			</select>
+			
+			<select id="Year" name="year" onchange="fillDaySelect()">
+				<option id="2021">2021</option>
+				<option id="2022">2022</option>
+				<option id="2023">2023</option>
+				<option id="2024">2024</option>	
+			</select> 
+			<select id="Month" name="month" onchange="fillDaySelect()" >
+				<option id="january"  value="01">january</option>
+				<option id="february"  value="02">february </option>
+				<option id="march"  value="03">march</option>
+				<option id="april"  value="04">april</option>	
+				<option id="may"  value="05">may</option>	
+				<option id="june"  value="06">june</option>	
+				<option id="july"  value="07">july</option>	
+				<option id="august"  value="08">august</option>	
+				<option id="september"  value="09">september</option>	
+				<option id="october"  value="10">october</option>	
+				<option id="november"  value="11">november</option>	
+				<option id="december" value="12">december</option>	
+			</select> 
+	<!-- 		<select id="Month" name="month" onchange="fillDaySelect()" > -->
+	<!-- 			<option id="january"  value="31">january</option> -->
+	<!-- 			<option id="february">february</option> -->
+	<!-- 			<option id="march"  value="31">march</option> -->
+	<!-- 			<option id="april">april</option>	 -->
+	<!-- 			<option id="may"  value="31">may</option>	 -->
+	<!-- 			<option id="june">june</option>	 -->
+	<!-- 			<option id="july"  value="31">july</option>	 -->
+	<!-- 			<option id="august"  value="31">august</option>	 -->
+	<!-- 			<option id="september">september</option>	 -->
+	<!-- 			<option id="october"  value="31">october</option>	 -->
+	<!-- 			<option id="november">november</option>	 -->
+	<!-- 			<option id="december" value="31">december</option>	 -->
+	<!-- 		</select>  -->
+			<select id="Day" name="day" >
+				<option>01</option>
+				<option>02</option>
+				<option>03</option>
+				<option>04</option>	
+				<option>05</option>	
+				<option>06</option>	
+				<option>07</option>	
+				<option>08</option>	
+				<option>09</option>	
+				<option>10</option>	
+				<option>11</option>	
+				<option>12</option>	
+				<option>13</option>	
+				<option>14</option>	
+				<option>15</option>	
+				<option>16</option>	
+				<option>17</option>	
+				<option>18</option>	
+				<option>19</option>	
+				<option>20</option>	
+				<option>21</option>	
+				<option>22</option>	
+				<option>23</option>	
+				<option>24</option>	
+				<option>25</option>	
+				<option>26</option>	
+				<option>27</option>	
+				<option>28</option>	
+				<option id="29" hidden="true">29</option>	
+				<option id="30" hidden="true">30</option>	
+				<option id="31" hidden="true">31</option>	
+			</select>   
+			<input type="submit" value="create recipe" onclick="gatherDrugIds()"/>
+		</div>
 	</form>
 	
 	<%
