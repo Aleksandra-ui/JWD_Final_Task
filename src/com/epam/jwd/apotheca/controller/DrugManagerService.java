@@ -27,6 +27,14 @@ public class DrugManagerService {
 		return drugDAO.findById(start, end);
 	}
 	
+	public List<Drug> getPrescriptedDrugs(){
+		return drugDAO.findAll();
+	}
+	
+	public List<Drug> getPrescriptedDrugs(int start, int end){
+		return drugDAO.findById(start, end);
+	}
+	
 	public boolean addDrug(Drug newDrug) {
 		
 		Drug existingDrug = drugDAO.findDrug(newDrug.getName(), newDrug.getDose()); 

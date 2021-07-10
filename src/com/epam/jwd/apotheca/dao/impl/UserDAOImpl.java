@@ -8,10 +8,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.Properties;
 
 import com.epam.jwd.apotheca.dao.api.UserDAO;
+import com.epam.jwd.apotheca.model.Role;
 import com.epam.jwd.apotheca.model.User;
 import com.epam.jwd.apotheca.pool.ConnectionPool;
 import com.epam.jwd.apotheca.pool.CouldNotInitializeConnectionPoolException;
@@ -77,7 +76,7 @@ public class UserDAOImpl implements UserDAO {
 		try (Connection connection = cp.takeConnection();Statement st = connection.createStatement();) {
 			connection.setAutoCommit(false);
 			result = st.executeUpdate(
-					"update mydb.users set name = '" + entity.getName() + "', role = '" + entity.getRole()
+					"update mydb.users set name = '" + entity.getName() + "', role_id = '" + entity.getRole().getId()
 							+ "', password = '" + entity.getPassword() + "' where id = " + entity.getId()) > 0;
 			connection.commit();
 			result = true;
@@ -95,15 +94,15 @@ public class UserDAOImpl implements UserDAO {
 				Statement st = conn.createStatement();) {
 			conn.setAutoCommit(false);
 			// Statement st = conn.createStatement();
-			System.out
-					.println(st.executeUpdate("INSERT INTO mydb.users(name,role,password) VALUES ('a','CLIENT','a')"));
+//			System.out
+//					.println(st.executeUpdate("INSERT INTO mydb.users(name,role_id,password) VALUES ('a',3,'a')"));
 			System.out.println(st.executeUpdate("update mydb.users set name = 'b' where id = 2"));
 			System.out.println(st.executeUpdate("delete from mydb.users where id = 3;"));
-			ResultSet rs = st.executeQuery("SELECT * FROM USERS WHERE ROLE = 'CLIENT'");
+			ResultSet rs = st.executeQuery("SELECT * FROM USERS WHERE ROLE_ID = 3");
 			while (rs.next()) {
 				User user = new User();
 				user.setName(rs.getString("name"));
-				user.setRole(rs.getString("role"));
+				user.setRole(new Role());
 				user.setPassword(rs.getString("password"));
 				user.setId(rs.getInt("id"));
 				System.out.println(user);
@@ -133,13 +132,19 @@ public class UserDAOImpl implements UserDAO {
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 
 			connection.setAutoCommit(false);
-			ResultSet rs = st.executeQuery("select id,name,role,password from mydb.users " + (id.length > 0 ? "where id = " + id[0] : "") + "order by id");
+			ResultSet rs = st.executeQuery("select u.id, u.name, u.password, r.id, r.name, r.permission from mydb.users u "
+					+ "join mydb.roles r on r.id = u.role_id "
+					+ (id.length > 0 ? "where u.id = " + id[0] : "") + " order by u.id");
 			while (rs.next()) {
 				User user = new User();
-				user.setName(rs.getString("name"));
-				user.setRole(rs.getString("role"));
-				user.setPassword(rs.getString("password"));
-				user.setId(rs.getInt("id"));
+				Role role = new Role();
+				role.setId(rs.getInt("r.id"));
+				role.setPermission(rs.getInt("r.permission"));
+				role.setName(rs.getString("r.name"));
+				user.setName(rs.getString("u.name"));
+				user.setRole(role);
+				user.setPassword(rs.getString("u.password"));
+				user.setId(rs.getInt("u.id"));
 				users.add(user);
 			}
 			connection.commit();
@@ -159,13 +164,19 @@ public class UserDAOImpl implements UserDAO {
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 
 			connection.setAutoCommit(false);
-			ResultSet rs = st.executeQuery("select id,name,role,password from mydb.users where name = '" + name + "' order by id");
+			ResultSet rs = st.executeQuery("select u.id, u.name, u.password, r.id, r.name, r.permission from mydb.users u "
+					+ "join mydb.roles r on r.id = u.role_id "
+					+ "where u.name = '" + name + "' order by u.id");
 			while (rs.next()) {
+				Role role = new Role();
+				role.setId(rs.getInt("r.id"));
+				role.setPermission(rs.getInt("r.permission"));
+				role.setName(rs.getString("r.name"));
 				User user = new User();
-				user.setName(rs.getString("name"));
-				user.setRole(rs.getString("role"));
-				user.setPassword(rs.getString("password"));
-				user.setId(rs.getInt("id"));
+				user.setName(rs.getString("u.name"));
+				user.setRole(role);
+				user.setPassword(rs.getString("u.password"));
+				user.setId(rs.getInt("u.id"));
 				users.add(user);
 			}
 			connection.commit();
@@ -180,18 +191,18 @@ public class UserDAOImpl implements UserDAO {
 
 	public User createUser(User user) {
 
-		return createUser(user.getName(), user.getRole(), user.getPassword());
+		return createUser(user.getName(), user.getRole().getId(), user.getPassword());
 
 	}
 
-	public User createUser(String name, String role, String password) {
+	public User createUser(String name, Integer role_id, String password) {
 
 		boolean result = false;
 
 		try (Connection connection = cp.takeConnection();Statement st = connection.createStatement();) {
 			connection.setAutoCommit(false);
-			result = st.executeUpdate("insert into mydb.users(name,role,password) values ('" + name + "','" + role
-					+ "','" + password + "')") > 0;
+			result = st.executeUpdate("insert into mydb.users(name,role_id,password) values ('" + name + "'," + role_id
+					+ ",'" + password + "')") > 0;
 			connection.commit();
 
 		} catch (SQLException e) {
@@ -248,20 +259,25 @@ public class UserDAOImpl implements UserDAO {
 
 	}
 	
-	public List<User> findUsersByRole(String role) {
+	public List<User> findUsersByRole(Integer roleId) {
 		
 		List<User> users = new ArrayList<User>();
-		String query = "select id,name,role,password from mydb.users where role = ? order by id";
+		String query = "select u.id, u.name, u.password, r.id, r.name, r.permission from mydb.users u "
+						+ "join mydb.roles r on r.id = u.role_id where r.id = ? order by u.id";
 
 		try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement(query);) {
-			st.setString(1, role);
+			st.setInt(1, roleId);
 			ResultSet rs = st.executeQuery();
 			while (rs.next()) {
 				User user = new User();
-				user.setName(rs.getString("name"));
-				user.setRole(rs.getString("role"));
-				user.setPassword(rs.getString("password"));
-				user.setId(rs.getInt("id"));
+				Role role = new Role();
+				role.setId(rs.getInt("r.id"));
+				role.setPermission(rs.getInt("r.permission"));
+				role.setName(rs.getString("r.name"));
+				user.setName(rs.getString("u.name"));
+				user.setRole(role);
+				user.setPassword(rs.getString("u.password"));
+				user.setId(rs.getInt("u.id"));
 				users.add(user);
 			}
 			rs.close();

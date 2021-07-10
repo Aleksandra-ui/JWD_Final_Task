@@ -54,4 +54,26 @@ public class UserManagerService {
 		return ((UserDAOImpl)userDAO).getUser(name);
 	}
 	
+	public User getUser(Integer id) {
+		return userDAO.findById(id);
+	}
+	
+	public boolean canPrescribe(User user) {
+		
+		return isRoleEnabled(user, UserDAO.DOCTOR);
+		
+	}
+	
+	public boolean canAddDrugs(User user) {
+		
+		return isRoleEnabled(user, UserDAO.PHARMACIST);
+		
+	}
+	
+	public boolean isRoleEnabled(User user, Integer roleId) {
+		
+		return (roleId & user.getRole().getPermission()) == roleId;
+		
+	}
+	
 }

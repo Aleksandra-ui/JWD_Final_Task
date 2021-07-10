@@ -64,6 +64,24 @@ public class DrugDAOImpl implements DrugDAO {
 		return drugs;
 		
 	}
+	
+	public List<Drug> findPrescripted() {
+
+		List<Drug> drugs = new ArrayList<Drug>();
+
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
+
+			ResultSet rs = st.executeQuery("select id,name,quantity,price,dose,prescription from mydb.drugs where prescription = "+1+" order by id" );
+			while (rs.next()) {
+				drugs.add(readDrug(rs));
+			}
+			rs.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return drugs;
+		
+	}
 
 	private Drug readDrug(ResultSet rs) throws SQLException {
 		Drug drug = new Drug();
@@ -82,11 +100,35 @@ public class DrugDAOImpl implements DrugDAO {
 		return null;
 	}
 	
-	public List<Drug> findById(Integer start, Integer end) {
+	public List<Drug> findPrescriptedById(Integer start, Integer end) {
 
 		List<Drug> drugs = new ArrayList<Drug>();
 		
 		String sql = "select id,name,quantity,price,dose,prescription from mydb.drugs order by id asc limit ?,?";
+		//"SELECT * FROM DRUGS WHERE ID BETWEEN ? AND ?"
+
+		try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement(sql);) {
+
+			st.setInt(1, start);
+			st.setInt(2, end);
+			ResultSet rs = st.executeQuery();
+			while (rs.next()) {
+				
+				drugs.add(readDrug(rs));
+			}
+			rs.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return drugs;
+		
+	}
+	
+	public List<Drug> findById(Integer start, Integer end) {
+
+		List<Drug> drugs = new ArrayList<Drug>();
+		
+		String sql = "select id,name,quantity,price,dose,prescription from mydb.drugs where prescription = "+1+" order by id asc limit ?,?";
 		//"SELECT * FROM DRUGS WHERE ID BETWEEN ? AND ?"
 
 		try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement(sql);) {

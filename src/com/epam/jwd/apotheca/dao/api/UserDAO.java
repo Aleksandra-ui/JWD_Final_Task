@@ -6,12 +6,12 @@ import com.epam.jwd.apotheca.model.User;
 
 public interface UserDAO extends DAO<User> {
 	
-	static final String PHARMACIST = "pharmacist";
-	static final String CLIENT = "client";
-	static final String DOCTOR = "doctor";
+	static final Integer PHARMACIST = 2;
+	static final Integer CLIENT = 1;
+	static final Integer DOCTOR = 4;
 	
 	User findById(Integer id);
 	
-	List<User> findUsersByRole(String role);
+	List<User> findUsersByRole(Integer roleId);
 
 }

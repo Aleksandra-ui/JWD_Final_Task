@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8" import="com.epam.jwd.apotheca.controller.RecipeManagerService, com.epam.jwd.apotheca.controller.UserManagerService, com.epam.jwd.apotheca.controller.DrugManagerService, com.epam.jwd.apotheca.model.Recipe, java.util.Arrays, java.util.List,
-    java.util.stream.Collectors, java.sql.Date, java.util.ArrayList, java.text.SimpleDateFormat, java.text.ParseException, com.epam.jwd.apotheca.model.Drug" %>
+    java.util.stream.Collectors, java.sql.Date, java.util.ArrayList, java.text.SimpleDateFormat, java.text.ParseException, com.epam.jwd.apotheca.model.Drug, com.epam.jwd.apotheca.model.User" %>
  <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -14,7 +14,7 @@
     	<c:redirect url="/secure/recipe.jsp"/>
      </c:if>
 	
-	the recipe was prescribed to <%=request.getParameter("clientName")%> and is valid through <%=request.getParameter("day") %> <%=request.getParameter("month") %>
+	the recipe was prescribed to <%=request.getParameter("clientName")%> by ${ sessionScope.doctorName } and is valid through <%=request.getParameter("day") %> <%=request.getParameter("month") %>
 	<%=request.getParameter("year") %>
 	
 	<%
@@ -47,6 +47,10 @@
 			drugs.add(dService.getDrug(id));
 		}
 		request.setAttribute("drugs", drugs);
+		
+		User doctor = uService.getUser(Integer.valueOf(request.getParameter("doctorId")));
+		String doctorName = doctor.getName();
+		session.setAttribute("doctorName", doctorName);
 		
 	%>
 

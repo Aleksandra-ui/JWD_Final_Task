@@ -1,15 +1,27 @@
 <%@page import="com.epam.jwd.apotheca.controller.DrugManagerService"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8" import="java.util.ResourceBundle, java.util.List, com.epam.jwd.apotheca.model.Drug, com.epam.jwd.apotheca.model.User, com.epam.jwd.apotheca.controller.UserManagerService" %>
+    pageEncoding="UTF-8" import="java.util.ResourceBundle, java.util.List, com.epam.jwd.apotheca.model.Drug, com.epam.jwd.apotheca.model.User, com.epam.jwd.apotheca.controller.UserManagerService,
+    com.epam.jwd.apotheca.dao.api.UserDAO, java.util.stream.Collectors, java.util.stream.Stream, java.util.function.Predicate, java.util.ArrayList" %>
 <%--     <%@ taglib uri="" prefix="c" %> --%>
      <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
      <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-     <c:if test="${ not empty sessionScope.user and not (fn:toUpperCase(sessionScope.user.role) eq 1)}">
+  
+ <%
+ UserManagerService userService = (UserManagerService) application.getAttribute("userService");
+ %>
+ <c:if test="${ not empty sessionScope.user }">    
+	 <%
+	 	request.setAttribute("canPrescribe", userService.canPrescribe((User)session.getAttribute("user")));
+	 %>
+ </c:if>
+ <c:out value="${canPrescribe}"></c:out>
+          
+     <c:if test="${ not empty canPrescribe and not canPrescribe }">
     	<c:redirect url="/drugs.jsp"/>
      </c:if>
-		<c:out value="${fn:toUpperCase(sessionScope.user)}"></c:out>
-		<c:out value="${fn:toUpperCase(sessionScope.user.role)}"></c:out>
-		<c:out value="${not (fn:toUpperCase(sessionScope.user.role) eq 'DOCTOR')}"></c:out>
+<%-- 		<c:out value="${fn:toUpperCase(sessionScope.user)}"></c:out> --%>
+<%-- 		<c:out value="${fn:toUpperCase(sessionScope.user.role)}"></c:out> --%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -136,26 +148,27 @@
 	}
 	
 	function fillWithDrugIds(){
+		var select = document.getElementById("ListBox1");
+		var arr = select.options;
+		var unique = true;
 		
-		
-			//document.getElementById("ListBox1").style.display="inline"
-			//visibility: hidden
-			
 		if ( drugIds.length > 0 ) {
-			document.getElementById("ListBox1").style.display="inline-block";
+			select.style.display="inline-block";
 		}	
 		
 		for ( id of drugIds ) {
 			var opt = document.createElement("option");
-			//opt.text = id; //document.getElementById("TextBox4").value;
-			
 			var drugName = document.getElementById("checkbox" + id);
-			
 			opt.text = drugName.value;
-			
 			opt.id = "selectedDrug" + id;
-		    //opt.value =  drugIds[0];//document.getElementById("TextBox4").value;
-		    document.getElementById("ListBox1").options.add(opt);
+			for (i = 0; i < arr.length; i++) {
+				  if (arr[i].id == opt.id) {
+					  unique = false;
+				  }
+			}
+			if ( unique ) {
+				document.getElementById("ListBox1").options.add(opt);	
+			}
 		}
 		
 		
@@ -270,7 +283,7 @@
 	
 	<%
 		DrugManagerService service = (DrugManagerService) application.getAttribute("drugService");
-		List<Drug> drugs = service.getDrugs();
+		List<Drug> drugs = service.getPrescriptedDrugs();
 		int pageSize = request.getParameter("pageSize") == null ? 5 : Integer.valueOf(request.getParameter("pageSize"));
 		int currentPage = request.getParameter("currentPage") == null ? 1 : Integer.valueOf(request.getParameter("currentPage"));
 	%>
@@ -281,7 +294,7 @@
 		<span style="float: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 		<div style="float: left">
 			records per page:&nbsp;
-			<select name="pageSize" onChange = "changePageSize(this);"> <!-- проверяем есть ли значение в первой части end-a -->
+			<select name="pageSize" onChange = "changePageSize(this);"> <!-- checking if there is a value in the first part of an and -->
 				<option  ${param.pageSize  == 5 ? "selected='true'" : "" } value="/apotheca/secure/recipe.jsp?pageSize=5">5</option>
 				<option  ${param.pageSize  == 10 ? "selected='true'" : "" } value="/apotheca/secure/recipe.jsp?pageSize=10" >10</option>
 				<option  ${param.pageSize  == 20 ? "selected='true'" : "" } value="/apotheca/secure/recipe.jsp?pageSize=20" >20</option>
@@ -324,44 +337,33 @@
 		
 		<tbody align ="center">
 		<%
-			List<Drug> visibleDrugs = service.getDrugs(pageSize * (currentPage - 1) , pageSize );
+			List<Drug> visibleDrugs = service.getPrescriptedDrugs(pageSize * (currentPage - 1) , pageSize );
 			request.setAttribute("drugsList", visibleDrugs); //analogue of line 73 
-// 				for ( Drug d : visibleDrugs ){
 		%>
-<%-- 			<jsp:useBean id="drugList" beanName="visibleDrugs" type="List<Drug>" scope="request"/> --%>
-<%--  		    <c:set scope="request" var="drugsList" value="${visibleDrugs}"/> --%>
 			<c:choose>
 				<c:when test="${not empty drugsList}">
 					<c:forEach items="${drugsList}" var="d">
-
-						<tr bgcolor=<c:out value="${not d.prescription ? 'LightGreen' : 'LightPink'}"/>>
+						<tr bgcolor="LightPink">
 							<td><c:out value="${d.id}" /></td>
 							<td><c:out value="${d.name}" /></td>
 							<td><c:out value="${d.dose }" /></td>
 							<td><c:out value="${d.quantity }" /></td>
 							<td><c:out value="${d.price }" /></td>
 							<td>
-								<c:if test="${d.prescription}">
-									<c:set var="present" value="false"/>
-<%-- 									<c:set var="ids" value="${param.drugIds}"/> --%>
-									<c:set var="ids" value="${fn:split(param.drugIds,',')}"/>
-									<c:set var="idStr" >${d.id}</c:set>
-									<c:forEach var="id" items="${ids}">
-										<c:if test="${id == idStr}">
-											<c:set var="present" value="true"/>
-										</c:if>
-									</c:forEach>
-<%-- 									<c:out value="${param.drugIds}" /> --%>
-									<input type="checkbox" id="drug${d.id}" value="${d.id}" name="drug" onchange="showId(this);"
-										   <c:out value="${present ? 'checked' : ''}"/>/> 
-									<input type="hidden" id="checkbox${d.id}" value="${d.name}&nbsp;|&nbsp;${d.dose}"/>
-									
-									
-									&nbsp; <!-- this указывает на объект checkbox -->
-								</c:if>
+								<c:set var="present" value="false"/>
+								<c:set var="ids" value="${fn:split(param.drugIds,',')}"/>
+								<c:set var="idStr" >${d.id}</c:set>
+								<c:forEach var="id" items="${ids}">
+									<c:if test="${id == idStr}">
+										<c:set var="present" value="true"/>
+									</c:if>
+								</c:forEach>
+								<input type="checkbox" id="drug${d.id}" value="${d.id}" name="drug" onchange="showId(this);"
+									   <c:out value="${present ? 'checked' : ''}"/>/> 
+								<input type="hidden" id="checkbox${d.id}" value="${d.name}&nbsp;|&nbsp;${d.dose}"/>
+								&nbsp; <!-- this points to the checkbox object -->
 							</td>
 						</tr>
-
 					</c:forEach>
 				</c:when>
 				<c:otherwise>
@@ -378,7 +380,6 @@
 <!-- <!-- 	</script> -->
 
 	<%
-	UserManagerService userService = (UserManagerService) application.getAttribute("userService");
 	List<User> clients = userService.getClients();
 	%>
 
@@ -484,13 +485,13 @@
 		</div>
 	</form>
 	
-	<%
-	User user = (User)session.getAttribute("user");
-	if (user != null && "pharmacist".equalsIgnoreCase(user.getRole())){
-	%>
-	<a href="/apotheca/secure/createDrug.jsp">create drug</a>
-	<%
-	}
-	%>
+<%-- 	<% --%>
+<!-- // 	User user = (User)session.getAttribute("user"); -->
+<!-- // 	if (user != null && userService.canAddDrugs(user)){ -->
+<%-- 	%> --%>
+<!-- 	<a href="/apotheca/secure/createDrug.jsp">create drug</a> -->
+<%-- 	<% --%>
+<!-- // 	} -->
+<%-- 	%> --%>
 </body>
 </html>

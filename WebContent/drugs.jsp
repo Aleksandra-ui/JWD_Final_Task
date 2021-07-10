@@ -1,3 +1,4 @@
+<%@page import="com.epam.jwd.apotheca.controller.UserManagerService"%>
 <%@page import="com.epam.jwd.apotheca.controller.DrugManagerService"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8" import="java.util.ResourceBundle, java.util.List, com.epam.jwd.apotheca.model.Drug, com.epam.jwd.apotheca.model.User" %>
@@ -127,7 +128,8 @@
 	
 	<%
 	User user = (User)session.getAttribute("user");
-	if (user != null && "doctor".equalsIgnoreCase(user.getRole())){
+	UserManagerService uService = (UserManagerService) application.getAttribute("userService");
+	if (user != null && uService.canPrescribe(user)){
 	%>
 	<a href="/apotheca/secure/createDrug.jsp">create drug</a>
 	<%

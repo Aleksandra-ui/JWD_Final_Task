@@ -3,7 +3,7 @@ package com.epam.jwd.apotheca.model;
 public class User implements Entity {
 
 	private String name;
-	private String role;
+	private Role role;
 	private String password;
 	private Integer id;
 
@@ -15,11 +15,11 @@ public class User implements Entity {
 		this.name = name;
 	}
 
-	public String getRole() {
+	public Role getRole() {
 		return role;
 	}
 
-	public void setRole(String role) {
+	public void setRole(Role role) {
 		this.role = role;
 	}
 
