@@ -28,11 +28,11 @@ public class DrugManagerService {
 	}
 	
 	public List<Drug> getPrescriptedDrugs(){
-		return drugDAO.findAll();
+		return ((DrugDAOImpl)drugDAO).findPrescripted();
 	}
 	
 	public List<Drug> getPrescriptedDrugs(int start, int end){
-		return drugDAO.findById(start, end);
+		return ((DrugDAOImpl)drugDAO).findPrescriptedById(start, end);
 	}
 	
 	public boolean addDrug(Drug newDrug) {

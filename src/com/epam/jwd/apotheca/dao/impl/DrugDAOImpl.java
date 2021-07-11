@@ -100,7 +100,7 @@ public class DrugDAOImpl implements DrugDAO {
 		return null;
 	}
 	
-	public List<Drug> findPrescriptedById(Integer start, Integer end) {
+	public List<Drug> findById(Integer start, Integer end) {
 
 		List<Drug> drugs = new ArrayList<Drug>();
 		
@@ -124,7 +124,7 @@ public class DrugDAOImpl implements DrugDAO {
 		
 	}
 	
-	public List<Drug> findById(Integer start, Integer end) {
+	public List<Drug> findPrescriptedById(Integer start, Integer end) {
 
 		List<Drug> drugs = new ArrayList<Drug>();
 		

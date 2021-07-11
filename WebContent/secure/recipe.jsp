@@ -389,7 +389,7 @@
 		<c:if test="${fn:length(param.drugIds) == 0}">style="display:none"</c:if>>
 			<select multiple id="ListBox1">
 				<%
-				request.setAttribute("allDrugs", service.getDrugs());
+				request.setAttribute("allDrugs", service.getPrescriptedDrugs());
 				%>
 				<c:forEach items="${allDrugs}" var="drug">
 					<c:set var="idStr">${drug.id}</c:set>
