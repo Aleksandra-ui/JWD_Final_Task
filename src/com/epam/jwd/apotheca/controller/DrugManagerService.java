@@ -24,7 +24,7 @@ public class DrugManagerService {
 	}
 	
 	public List<Drug> getDrugs(int start, int end){
-		return drugDAO.findById(start, end);
+		return drugDAO.findByRange(start, end);
 	}
 	
 	public List<Drug> getPrescriptedDrugs(){
@@ -32,7 +32,7 @@ public class DrugManagerService {
 	}
 	
 	public List<Drug> getPrescriptedDrugs(int start, int end){
-		return ((DrugDAOImpl)drugDAO).findPrescriptedById(start, end);
+		return ((DrugDAOImpl)drugDAO).findPrescriptedByRange(start, end);
 	}
 	
 	public boolean addDrug(Drug newDrug) {

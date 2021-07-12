@@ -47,7 +47,7 @@ public class UserManagerService {
 	}
 	
 	public List<User> getClients() {
-		return userDAO.findUsersByRole(UserDAO.CLIENT);
+		return userDAO.findUsersByRole(UserDAO.ROLE_CLIENT);
 	}
 	
 	public User getUser(String name) {
@@ -60,13 +60,13 @@ public class UserManagerService {
 	
 	public boolean canPrescribe(User user) {
 		
-		return isRoleEnabled(user, UserDAO.DOCTOR);
+		return isRoleEnabled(user, UserDAO.PERM_DOCTOR);
 		
 	}
 	
 	public boolean canAddDrugs(User user) {
 		
-		return isRoleEnabled(user, UserDAO.PHARMACIST);
+		return isRoleEnabled(user, UserDAO.PERM_PHARMACIST);
 		
 	}
 	

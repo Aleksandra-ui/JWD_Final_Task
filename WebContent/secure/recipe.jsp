@@ -74,7 +74,7 @@
 		found = false;
 		idx = drugIds.indexOf(drugId.value);
  		recipe = document.getElementById("ListBox1");
-// 		button = document.getElementById("Submit1");
+		button = document.getElementById("Submit1");
  		div = document.getElementById("div");
  		
 		if (drugId.checked) {
@@ -86,7 +86,7 @@
 				opt.id = "selectedDrug" + drugId.value;
 				recipe.options.add(opt);
 // 				recipe.style.display = 'inline-block';
-// 				button.style.display = 'inline-block';
+				button.style.display = 'inline-block';
 // 				button.style.display = 'inline-block';
 				div.style.display = 'inline-block';
 				
@@ -100,7 +100,7 @@
 				recipe.removeChild(opt);
 				if ( recipe.options.length == 0){
 // 					recipe.style.display = 'none';
-// 					button.style.display = 'none';
+					button.style.display = 'none';
 					div.style.display = 'none';
 				}
 				
@@ -282,8 +282,8 @@
 	<a href="/apotheca/index.jsp">home</a>
 	
 	<%
-		DrugManagerService service = (DrugManagerService) application.getAttribute("drugService");
-		List<Drug> drugs = service.getPrescriptedDrugs();
+		DrugManagerService drugService = (DrugManagerService) application.getAttribute("drugService");
+		List<Drug> drugs = drugService.getPrescriptedDrugs();
 		int pageSize = request.getParameter("pageSize") == null ? 5 : Integer.valueOf(request.getParameter("pageSize"));
 		int currentPage = request.getParameter("currentPage") == null ? 1 : Integer.valueOf(request.getParameter("currentPage"));
 	%>
@@ -337,7 +337,7 @@
 		
 		<tbody align ="center">
 		<%
-			List<Drug> visibleDrugs = service.getPrescriptedDrugs(pageSize * (currentPage - 1) , pageSize );
+			List<Drug> visibleDrugs = drugService.getPrescriptedDrugs(pageSize * (currentPage - 1) , pageSize );
 			request.setAttribute("drugsList", visibleDrugs); //analogue of line 73 
 		%>
 			<c:choose>
@@ -389,7 +389,7 @@
 		<c:if test="${fn:length(param.drugIds) == 0}">style="display:none"</c:if>>
 			<select multiple id="ListBox1">
 				<%
-				request.setAttribute("allDrugs", service.getPrescriptedDrugs());
+				request.setAttribute("allDrugs", drugService.getPrescriptedDrugs());
 				%>
 				<c:forEach items="${allDrugs}" var="drug">
 					<c:set var="idStr">${drug.id}</c:set>

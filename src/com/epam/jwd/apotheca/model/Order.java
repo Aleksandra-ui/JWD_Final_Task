@@ -2,13 +2,12 @@ package com.epam.jwd.apotheca.model;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Map;
 
 public class Order implements Entity {
 
 	private Integer id;
-	private Integer drugId;
-	private Integer amount;
-	private List<Integer[]> drugs;
+	private Map<Drug, Integer> drugs;
 	private Integer userId;
 	private Date date;
 	public Integer getId() {
@@ -17,22 +16,12 @@ public class Order implements Entity {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	public Integer getDrugId() {
-		return drugId;
-	}
-	public void setDrugId(Integer drugId) {
-		this.drugId = drugId;
-	}
-	public Integer getAmount() {
-		return amount;
-	}
-	public void setAmount(Integer amount) {
-		this.amount = amount;
-	}
-	public List<Integer[]> getDrugs() {
+	
+	
+	public Map<Drug, Integer> getDrugs() {
 		return drugs;
 	}
-	public void setDrugs(List<Integer[]> drugs) {
+	public void setDrugs(Map<Drug, Integer> drugs) {
 		this.drugs = drugs;
 	}
 	public Integer getUserId() {
@@ -46,6 +35,47 @@ public class Order implements Entity {
 	}
 	public void setDate(Date date) {
 		this.date = date;
+	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((date == null) ? 0 : date.hashCode());
+		result = prime * result + ((drugs == null) ? 0 : drugs.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((userId == null) ? 0 : userId.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Order other = (Order) obj;
+		if (date == null) {
+			if (other.date != null)
+				return false;
+		} else if (!date.equals(other.date))
+			return false;
+		if (drugs == null) {
+			if (other.drugs != null)
+				return false;
+		} else if (!drugs.equals(other.drugs))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (userId == null) {
+			if (other.userId != null)
+				return false;
+		} else if (!userId.equals(other.userId))
+			return false;
+		return true;
 	}
 	
 	

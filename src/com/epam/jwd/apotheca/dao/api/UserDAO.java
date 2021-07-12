@@ -6,9 +6,12 @@ import com.epam.jwd.apotheca.model.User;
 
 public interface UserDAO extends DAO<User> {
 	
-	static final Integer PHARMACIST = 2;
-	static final Integer CLIENT = 1;
-	static final Integer DOCTOR = 4;
+	static final Integer PERM_PHARMACIST = 2;
+	static final Integer PERM_CLIENT = 1;
+	static final Integer PERM_DOCTOR = 4;
+	static final Integer ROLE_PHARMACIST = 2;
+	static final Integer ROLE_CLIENT = 3;
+	static final Integer ROLE_DOCTOR = 1;
 	
 	User findById(Integer id);
 	

@@ -10,6 +10,25 @@
 <title><%=ResourceBundle.getBundle("Drugs").getString("drugs.list") %></title>
 </head>
 <body>
+
+	<script>
+	
+		function addRemoveFromCart(checkbox, drugId) {
+			
+			amount = document.getElementById("amount" + drugId);
+			
+			if (checkbox.checked) {
+				amount.removeAttribute("disabled");
+				if ( amount.value == 0 ) {
+					amount.value = 1;	
+				}
+			} else {
+				amount.setAttribute("disabled", true);
+			}
+			
+		}
+	
+	</script>
 	
 	<%=ResourceBundle.getBundle("Drugs").getString("drugs.welcome") %>
 	<a href="/apotheca/index.jsp">home</a>
@@ -28,9 +47,9 @@
 		<div style="float: left">
 			records per page:&nbsp;
 			<select name="pageSize" onChange = "this.options[this.selectedIndex].value && (window.location = this.options[this.selectedIndex].value);">
-			<option ${pageSize  == 5 ? "selected='true'" : "" } value="/apotheca/drugs.jsp?pageSize=5">5</option>
-			<option ${pageSize  == 10 ? "selected='true'" : "" } value="/apotheca/drugs.jsp?pageSize=10" >10</option>
-			<option ${pageSize  == 20 ? "selected='true'" : "" } value="/apotheca/drugs.jsp?pageSize=20" >20</option>
+			<option ${(empty param.pageSize or param.pageSize == 5) ? "selected='true'" : "" } value="/apotheca/drugs.jsp?pageSize=5">5</option>
+			<option ${(not empty param.pageSize and param.pageSize  == 10) ? "selected='true'" : "" } value="/apotheca/drugs.jsp?pageSize=10" >10</option>
+			<option ${(not empty param.pageSize and param.pageSize  == 20) ? "selected='true'" : "" } value="/apotheca/drugs.jsp?pageSize=20" >20</option>
 			</select>
 		</div>
 		<span style="float: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -91,7 +110,8 @@
 							<td><c:out value="${d.price }" /></td>
 							<td><c:out value="${d.prescription ? 'yes' : 'no'}" /></td>
 							<%-- 				<td><%=d.isPrescription() ? "yes" : "no" %></td> --%>
-							<td><input type="number" value=0 readonly id="amount${d.id}"/></td>
+							<td><input type="number" value=0 disabled id="amount${d.id}"/></td>
+							<td><input type="checkbox" onchange="addRemoveFromCart(this, ${d.id})"/></td>
 						</tr>
 
 					</c:forEach>

@@ -159,13 +159,13 @@ public class UserDAOTest {
 		user.setName("k2");
 		user.setPassword("t");
 		Role role = new Role();
-		role.setId( UserDAO.DOCTOR);
+		role.setId( UserDAO.PERM_DOCTOR);
 		role.setName("doctor");
 		user.setRole(role);
 		
 		user = userDAO.save(user);
 		
-		role.setId(UserDAO.CLIENT);
+		role.setId(UserDAO.PERM_CLIENT);
 		role.setName("client");
 		user.setPassword("q");
 		user.setRole(role);
@@ -173,7 +173,7 @@ public class UserDAOTest {
 		
 		User newUser = userDAO.update(user);
 		
-		assert "q".equals(newUser.getPassword()) & UserDAO.CLIENT == newUser.getRole().getId() & "z".equals(newUser.getName());
+		assert "q".equals(newUser.getPassword()) & UserDAO.PERM_CLIENT == newUser.getRole().getId() & "z".equals(newUser.getName());
 		
 		userDAO.delete(newUser.getId());
 		userDAO.delete(user.getId());
@@ -188,7 +188,7 @@ public class UserDAOTest {
 		user.setName("k");
 		user.setPassword("jjjj");
 		Role role = new Role();
-		role.setId(UserDAO.CLIENT);
+		role.setId(UserDAO.PERM_CLIENT);
 		role.setName("client");
 		user.setRole(role);
 		
@@ -202,7 +202,7 @@ public class UserDAOTest {
 	
 	@Test
 	public void testFindUsersByRole() {
-		System.out.println(userDAO.findUsersByRole(UserDAO.CLIENT));;
+		System.out.println(userDAO.findUsersByRole(UserDAO.PERM_CLIENT));;
 	}
 
 }

@@ -71,7 +71,7 @@ public class DrugDAOImpl implements DrugDAO {
 
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 
-			ResultSet rs = st.executeQuery("select id,name,quantity,price,dose,prescription from mydb.drugs where prescription = "+1+" order by id" );
+			ResultSet rs = st.executeQuery("select id,name,quantity,price,dose,prescription from mydb.drugs where prescription = " + 1 + " order by id" );
 			while (rs.next()) {
 				drugs.add(readDrug(rs));
 			}
@@ -100,7 +100,7 @@ public class DrugDAOImpl implements DrugDAO {
 		return null;
 	}
 	
-	public List<Drug> findById(Integer start, Integer end) {
+	public List<Drug> findByRange(Integer start, Integer end) {
 
 		List<Drug> drugs = new ArrayList<Drug>();
 		
@@ -124,11 +124,11 @@ public class DrugDAOImpl implements DrugDAO {
 		
 	}
 	
-	public List<Drug> findPrescriptedById(Integer start, Integer end) {
+	public List<Drug> findPrescriptedByRange(Integer start, Integer end) {
 
 		List<Drug> drugs = new ArrayList<Drug>();
 		
-		String sql = "select id,name,quantity,price,dose,prescription from mydb.drugs where prescription = "+1+" order by id asc limit ?,?";
+		String sql = "select id,name,quantity,price,dose,prescription from mydb.drugs where prescription = " + 1 + " order by id asc limit ?,?";
 		//"SELECT * FROM DRUGS WHERE ID BETWEEN ? AND ?"
 
 		try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement(sql);) {
