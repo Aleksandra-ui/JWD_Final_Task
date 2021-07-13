@@ -65,13 +65,14 @@ public class OrderDAOImpl implements OrderDAO {
 		return orderInDB;
 
 	}
-
+	
 	@Override
 	public List<Order> findAll() {
+		
 		List<Order> orders = new ArrayList<Order>();
 		Set<Integer> ids = new HashSet<Integer>();
 		DrugDAO drugDAO = new DrugDAOImpl();
-
+		
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 
 			ResultSet rs = st.executeQuery("select id from mydb.orders");
@@ -106,38 +107,7 @@ public class OrderDAOImpl implements OrderDAO {
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}
-		
-			
-//			ResultSet rs = st.executeQuery("select id, drug_id, amount, user_id, order_date from mydb.orders order by id");
-//			while (rs.next()) {
-//				Order order = new Order();
-//				order.setId(rs.getInt("id"));
-//				
-//				Map<Drug, Integer> drugs = null;
-//				while (rs.next()) {
-//					if ( order == null ) {
-//						drugs = new HashMap <Drug, Integer> ();
-//						order = new Order();
-//						order.setId(rs.getInt("o.id"));
-//						order.setUserId(rs.getInt("o.user_id"));
-//						order.setDate(rs.getDate("o.order_date"));
-//					}
-//					Drug drug = new Drug();
-//					drug.setId(rs.getInt("o.drug_id"));
-//					drug.setName(rs.getString("d.name"));
-//					drug.setPrice(rs.getInt("d.price"));
-//					drug.setDose(rs.getDouble("d.dose"));
-//					drugs.put(drug, rs.getInt("o.amount"));
-//				}
-//				
-//				orders.add(order);
-//			}
-//			connection.commit();
-//			rs.close();
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//		}
+		}	
 
 		return orders;
 
@@ -228,6 +198,51 @@ public class OrderDAOImpl implements OrderDAO {
 		}
 		
 		return order;
+		
+	}
+	
+	public List<Order> findOrdersByUser(Integer userId) {
+	
+		Set<Integer> ids = new HashSet<Integer>();
+		List<Order> orders = new ArrayList<Order>();
+		DrugDAO drugDAO = new DrugDAOImpl();
+		
+		try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement("select id from mydb.orders where user_id = ?");) {
+			st.setInt(1, userId);
+			ResultSet rs = st.executeQuery();
+			while (rs.next()) {
+				ids.add(rs.getInt(1));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement("select drug_id, amount, order_date from mydb.orders where id = ?");) {
+			
+			for (Integer id : ids) {
+				st.setInt(1, id);
+				ResultSet rs = st.executeQuery();
+				Order order = new Order();
+				Map<Drug, Integer> drugs = new HashMap<>();
+				order.setId(id);
+				order.setUserId(userId);
+				if (rs.next()) {
+					order.setDate(rs.getDate("order_date"));
+					drugs.put(drugDAO.findById(rs.getInt("drug_id")), rs.getInt("amount"));
+				}
+				while (rs.next()) {
+					drugs.put(drugDAO.findById(rs.getInt("drug_id")), rs.getInt("amount"));
+				}
+				order.setDrugs(drugs);
+				orders.add(order);
+
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}	
+		
+		return orders;
 		
 	}
 

@@ -147,5 +147,34 @@ public class OrderDAOTest {
 		Assert.assertEquals(order, order2);
 		
 	}
+	
+	@Test
+	public void testFindOrdersByUser() {
+					
+		User user = new User();
+		Role role = new Role();
+		Order order = new Order();
+		role.setId(UserDAO.ROLE_CLIENT);
+		
+		user.setName("name");
+		user.setPassword("name");
+		user.setRole(role);
+		user = userDAO.save(user);
+		
+		order.setDate(new Date(System.currentTimeMillis()));
+		order.setUserId(user.getId());
+		Map<Drug, Integer> drugs = new HashMap<>();
+		drugs.put(drugDAO.findById(1), 2);
+		drugs.put(drugDAO.findById(2), 4);
+		order.setDrugs(drugs);
+		
+		order = orderDAO.save(order);
+		
+		Assert.assertEquals(order, ((OrderDAOImpl)orderDAO).findOrdersByUser(user.getId()).get(0));	
+		
+		orderDAO.delete(order.getId());
+		userDAO.delete(user.getId());
+		 
+	}
 
 }
