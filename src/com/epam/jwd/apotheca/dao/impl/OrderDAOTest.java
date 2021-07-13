@@ -80,7 +80,9 @@ public class OrderDAOTest {
 
 	@Test
 	public void testFindAll() {
-		
+		for( Order o : orderDAO.findAll() ) {
+			System.out.println( o );
+		}
 	}
 
 	@Test

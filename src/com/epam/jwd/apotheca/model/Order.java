@@ -10,34 +10,42 @@ public class Order implements Entity {
 	private Map<Drug, Integer> drugs;
 	private Integer userId;
 	private Date date;
+
 	public Integer getId() {
 		return id;
 	}
+
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	
-	
+
 	public Map<Drug, Integer> getDrugs() {
 		return drugs;
 	}
+
 	public void setDrugs(Map<Drug, Integer> drugs) {
 		this.drugs = drugs;
 	}
+
 	public Integer getUserId() {
 		return userId;
 	}
+
 	public void setUserId(Integer userId) {
 		this.userId = userId;
 	}
+
 	public Date getDate() {
 		return date;
 	}
+
 	public void setDate(Date date) {
 		this.date = date;
 	}
+
 	@Override
 	public int hashCode() {
+
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((date == null) ? 0 : date.hashCode());
@@ -45,9 +53,12 @@ public class Order implements Entity {
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((userId == null) ? 0 : userId.hashCode());
 		return result;
+		
 	}
+
 	@Override
 	public boolean equals(Object obj) {
+		
 		if (this == obj)
 			return true;
 		if (obj == null)
@@ -76,8 +87,14 @@ public class Order implements Entity {
 		} else if (!userId.equals(other.userId))
 			return false;
 		return true;
+
+	}
+
+	@Override
+	public String toString() {
+		return "Order [id=" + id + ", drugs=" + drugs + ", userId=" + userId + ", date=" + date + "]";
 	}
 	
 	
-	
+
 }
