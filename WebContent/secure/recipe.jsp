@@ -161,7 +161,6 @@
 			}
 		}
 		
-		
 	}
 	
 	function displayParams() {
@@ -351,7 +350,7 @@
 								<input type="checkbox" id="drug${d.id}" value="${d.id}" name="drug" onchange="showId(this);"
 									   <c:out value="${present ? 'checked' : ''}"/>/> 
 								<input type="hidden" id="checkbox${d.id}" value="${d.name}&nbsp;|&nbsp;${d.dose}"/>
-								&nbsp; <!-- this points to the checkbox object -->
+								&nbsp; 
 							</td>
 						</tr>
 					</c:forEach>
