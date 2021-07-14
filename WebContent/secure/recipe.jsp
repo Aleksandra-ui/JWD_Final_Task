@@ -48,26 +48,18 @@
 
 	<script type="text/javascript">
 	
-	
 	function readDrugs() {
 		
-		// 	drugIds = new Array(); 
-			a = window.location.search; //link to current page
-			//alert("search: " + a);
+			a = window.location.search; 
 			paramLine = a.substr(1);
 			params = paramLine.split("&");
 			const DRUG_ID = "drugIds=";
-			//alert(params);
 			for ( param of params ) {
 				if (param.startsWith(DRUG_ID)) {
-					//alert( param.substr(param.indexOf(DRUG_ID) + DRUG_ID.length ) );
 					drugIds = param.substring(param.indexOf(DRUG_ID) + DRUG_ID.length ).split(","); //array of ids of chosen drugs
 				}
 			}
 		}
-		
-
-	
 	
 	function showId (drugId) {
 		
@@ -107,8 +99,6 @@
 			}
 			
 		}
-		
-		
 		
 	} 
 	

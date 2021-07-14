@@ -1,10 +1,13 @@
 package com.epam.jwd.apotheca.controller;
 
+import java.util.List;
+
 import com.epam.jwd.apotheca.dao.api.DrugDAO;
 import com.epam.jwd.apotheca.dao.api.RecipeDAO;
 import com.epam.jwd.apotheca.dao.impl.DrugDAOImpl;
 import com.epam.jwd.apotheca.dao.impl.RecipeDAOImpl;
 import com.epam.jwd.apotheca.model.Recipe;
+import com.epam.jwd.apotheca.model.User;
 
 public class RecipeManagerService {
 	
@@ -16,6 +19,12 @@ public class RecipeManagerService {
 	
 	public boolean addRecipe(Recipe recipe) {
 		return recipeDAO.save(recipe) != null;
+	}
+	
+	public List<Recipe> findByUser (User user) {
+		
+		return recipeDAO.findRecipe(user);
+		
 	}
 	
 }

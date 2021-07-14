@@ -34,6 +34,8 @@ public class MyContextListener implements ServletContextListener {
 		context.setAttribute("userService", userService);
 		DrugManagerService drugService = new DrugManagerService();
 		context.setAttribute("drugService", drugService);
+		RecipeManagerService recipeService = new RecipeManagerService();
+		context.setAttribute("recipeService", recipeService);
 		
 		// ConnectionPool.retrieve();
 		Locale.setDefault(Locale.US);

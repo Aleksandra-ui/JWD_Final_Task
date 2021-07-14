@@ -1,17 +1,75 @@
 <%@page import="com.epam.jwd.apotheca.controller.DrugManagerService"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8" import="java.util.ResourceBundle, java.util.List, com.epam.jwd.apotheca.model.Drug, com.epam.jwd.apotheca.model.User, com.epam.jwd.apotheca.controller.UserManagerService" %>
+    pageEncoding="UTF-8" import="java.util.ResourceBundle, java.util.List, com.epam.jwd.apotheca.model.Drug, com.epam.jwd.apotheca.model.User, com.epam.jwd.apotheca.controller.UserManagerService,
+    com.epam.jwd.apotheca.controller.RecipeManagerService, com.epam.jwd.apotheca.model.Recipe, java.util.Map, java.util.HashMap, java.sql.Date" %>
 <%--     <%@ taglib uri="" prefix="c" %> --%>
      <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+     <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title><%=ResourceBundle.getBundle("Drugs").getString("drugs.list") %></title>
 </head>
-<body>
+<body onload="readDrugs();">
 
 	<script>
+	
+		drugIds = new Array(); 
+		
+		function readDrugs() {
+			
+				a = window.location.search; 
+				paramLine = a.substr(1);
+				params = paramLine.split("&");
+				const DRUG_ID = "drugIds=";
+				for ( param of params ) {
+					if (param.startsWith(DRUG_ID)) {
+						drugIds = param.substring(param.indexOf(DRUG_ID) + DRUG_ID.length ).split(","); //array of ids of chosen drugs
+					}
+				}
+		}
+		
+		function showId (drugId) {
+			
+			found = false;
+			idx = drugIds.indexOf(drugId.value);
+	 		recipe = document.getElementById("ListBox1");
+			button = document.getElementById("Submit1");
+	 		div = document.getElementById("div");
+	 		
+			if (drugId.checked) {
+				if (idx == -1) {
+					drugIds.push(drugId.value);
+					var opt = document.createElement("option");
+					var drugName = document.getElementById("checkbox" + drugId.value);
+					opt.text = drugName.value; //document.getElementById("TextBox4").value;
+					opt.id = "selectedDrug" + drugId.value;
+					recipe.options.add(opt);
+//	 				recipe.style.display = 'inline-block';
+					button.style.display = 'inline-block';
+//	 				button.style.display = 'inline-block';
+					div.style.display = 'inline-block';
+					
+				}
+				
+			} else {
+				if (idx != -1) {
+					drugIds.splice(idx, 1);//deleting 1 element
+					opt = document.getElementById("selectedDrug" + drugId.value);
+					
+					recipe.removeChild(opt);
+					if ( recipe.options.length == 0){
+//	 					recipe.style.display = 'none';
+						button.style.display = 'none';
+						div.style.display = 'none';
+					}
+					
+				}
+				
+			}
+			
+		} 
 	
 		function addRemoveFromCart(checkbox, drugId) {
 			
@@ -85,6 +143,7 @@
 				<th>price</th>
 				<th>prescription</th>
 				<th>amount</th>
+				<th>expiery date</th>
 				<th>add to cart</th>
 			</tr>
 		</thead>
@@ -92,8 +151,20 @@
 		<tbody align ="center">
 		<%
 			List<Drug> visibleDrugs = service.getDrugs(pageSize * (currentPage - 1) , pageSize );
-			request.setAttribute("drugsList", visibleDrugs); //analogue of line 73 
-// 				for ( Drug d : visibleDrugs ){
+			request.setAttribute("drugsList", visibleDrugs); 
+			RecipeManagerService recipeService = (RecipeManagerService)application.getAttribute("recipeService"); 
+			User user = (User)session.getAttribute("user");
+			Map<Integer, Date> drugsFromRecipe = new HashMap<Integer, Date>();
+			if ( user != null ) {
+				List<Recipe> recipesForUser = recipeService.findByUser(user);
+				for ( Recipe recipe : recipesForUser ) {
+					Date expieryDate = recipe.getExpieryDate();
+					for ( Integer drugId : recipe.getDrugIds() ) {
+						drugsFromRecipe.put(drugId, expieryDate);
+					}
+				}
+			}
+			request.setAttribute("drugsFromRecipe", drugsFromRecipe);
 		%>
 <%-- 			<jsp:useBean id="drugList" beanName="visibleDrugs" type="List<Drug>" scope="request"/> --%>
 <%--  		    <c:set scope="request" var="drugsList" value="${visibleDrugs}"/> --%>
@@ -111,7 +182,10 @@
 							<td><c:out value="${d.prescription ? 'yes' : 'no'}" /></td>
 							<%-- 				<td><%=d.isPrescription() ? "yes" : "no" %></td> --%>
 							<td><input type="number" value=0 disabled id="amount${d.id}"/></td>
-							<td><input type="checkbox" onchange="addRemoveFromCart(this, ${d.id})"/></td>
+							<td><c:if test="${not empty drugsFromRecipe[d.id] }" >
+								<c:out value="${drugsFromRecipe[d.id] }"/>
+							</c:if></td>
+							<td><input type="checkbox" onchange="addRemoveFromCart(this, ${d.id});showId(this);"/></td>
 						</tr>
 
 					</c:forEach>
@@ -123,6 +197,24 @@
 		
 		</tbody>
 	</table>
+
+	<select multiple id="ListBox1">
+		<%
+		DrugManagerService drugService = (DrugManagerService)application.getAttribute("drugService");
+		request.setAttribute("allDrugs", drugService.getDrugs());
+		%>
+		<c:forEach items="${allDrugs}" var="drug">
+			<c:set var="idStr">${drug.id}</c:set>
+			<c:forEach items="${fn:split(param.drugIds,',')}" var="aDrug">
+				<c:if test="${aDrug == idStr}">
+					<option id="selectedDrug${idStr}" value="${idStr}">${drug.name}&nbsp;|&nbsp;${ drug.dose }</option>
+				</c:if>
+			</c:forEach>
+		</c:forEach>
+	</select>
+	<button id="Submit1" type="button" onclick="removeOptionsSelected();"
+		<c:if test="${fn:length(param.drugIds) == 0}">style="display:none"</c:if>>delete</button>
+
 	</div>
 	
 	<%
@@ -144,7 +236,6 @@
 	
 	
 	<%
-	User user = (User)session.getAttribute("user");
 	UserManagerService uService = (UserManagerService)application.getAttribute("userService");
 	if (user != null && uService.canPrescribe(user)){
 	%>
