@@ -12,11 +12,13 @@
 <meta charset="UTF-8">
 <title><%=ResourceBundle.getBundle("Drugs").getString("drugs.list")%></title>
 </head>
-<body onload="readDrugs();fillWithDrugIds()">
+<script type="text/javascript">
+	drugIds = new Array(); 
+</script>
+<body onload="readDrugs();fillWithDrugIds();printTotal()">
 
-	<script>
+	<script type="text/javascript">
 	
-		drugIds = new Array(); 
 		
 		function readDrugs() {
 			
@@ -43,15 +45,14 @@
 				if (idx == -1) {
 					drugIds.push(drugId.value);
 					var opt = document.createElement("option");
-					var drugName = document.getElementById("checkbox" + drugId.value);
-					opt.text = drugName.value; 
+					var drugDescr = document.getElementById("checkbox" + drugId.value);
+					opt.text = drugDescr.value; 
 					opt.id = "selectedDrug" + drugId.value;
 					select.options.add(opt);
 					button.style.display = 'inline-block';
-					div.style.display = 'inline-block';
-					
+					div.style.display = 'inline-block';	
+					document.getElementById("amount" + drugId.value).removeAttribute("disabled");
 				}
-				
 			} else {
 				if (idx != -1) {
 					drugIds.splice(idx, 1);//deleting 1 element
@@ -60,13 +61,11 @@
 					if ( select.options.length == 0){
 						button.style.display = 'none';
 						div.style.display = 'none';
-					}
-					
+					}	
 				}
-				
 			}
-			printTotalAmount();
-			
+			printTotal();
+
 		} 
 	
 		function addRemoveFromCart(checkbox, drugId) {
@@ -92,22 +91,37 @@
 			if ( drugIds.length > 0 ) {
 				select.style.display="inline-block";
 			}	
-			
 			for ( id of drugIds ) {
+				alert(document.getElementById("amount" + id) );
+				if (document.getElementById("amount" + id) != null) {
+					document.getElementById("amount" + id).removeAttribute("disabled");
+					amountValue = localStorage.getItem("amount" + id);
+					if ( amountValue == null ) {
+						amountValue = 1;
+					}
+					document.getElementById("amount" + id).value = amountValue; 
+				}
+				
 				var opt = document.createElement("option");
-				var drugName = document.getElementById("checkbox" + id);
-				opt.text = drugName.value;
+				var drugDescr = document.getElementById("checkbox" + id).value;
+				opt.text = drugDescr + " | " + localStorage.getItem("amount"+id) != null ? localStorage.getItem("amount"+id) : "";
+			
 				opt.id = "selectedDrug" + id;
 				for (i = 0; i < arr.length; i++) {
 					  if (arr[i].id == opt.id) {
 						  unique = false;
 					  }
 				}
-				if ( unique ) {
-					document.getElementById("ListBox1").options.add(opt);	
+				if ( ! unique ) {
+					opt.id = "";
+					var option = document.getElementById("selectedDrug" + id);
+					select.remove(option);
 				}
+				opt.id = "selectedDrug" + id;
+				document.getElementById("ListBox1").options.add(opt);	
 			}
-			printTotalAmount();
+			printTotal();
+
 		}
 		
 		function getDrugIds() {
@@ -158,7 +172,6 @@
 	            retVal.push(keyVal[0] + " : " + keyVal[1]);
 	        }
 	 		//alert("RetVal " + retVal);
-	        
 	    }
 		
 		function changeSelectVisibility() {
@@ -196,12 +209,9 @@
 		}
 		
 		function gatherDrugIds() {
-			//alert("i");
 			var select = document.getElementById("ListBox1");
 		    var drugsContainer = select.getElementsByTagName('option');
-		    //alert("k");
 		    var hiddenValue = "";
-		    //alert(hiddenValue);
 		    
 		    for (var idx = 0; idx < drugsContainer.length; idx++) {
 		    	hiddenValue += drugsContainer[idx].id.substr(12); 
@@ -209,25 +219,40 @@
 		               hiddenValue += ",";
 		           }
 		    }
-		    //alert(hiddenValue);
+		   
 		    document.getElementById("selectedIds").value = hiddenValue; 
 		}
 		
-		function printTotalAmount() {
+		function printTotal() {
 			
 			var select = document.getElementById("ListBox1");
 		    var drugsContainer = select.getElementsByTagName('option');
-		    var totalAmount = 0;
-		    var input = document.getElementById("totalAmount");
+		    var total = 0;
+		    var input = document.getElementById("total");
 		    
 		    for (var idx = 0; idx < drugsContainer.length; idx++) {
 		    	
-		    	i = drugsContainer[idx].text.lastIndexOf("|", 4);
-		    	priceStr = drugsContainer[idx].text.substr(i-1);
-		    	totalAmount = totalAmount + Number(priceStr);
+		    	var i = drugsContainer[idx].text.lastIndexOf('|');
+		    	priceStr = drugsContainer[idx].text.substring(0, i);
+		    	i = priceStr.lastIndexOf('|');
+		    	priceStr = priceStr.substring(i + 1);
+		    	total = total + Number(priceStr);
 		    }
 		    
-			input.value = totalAmount;
+			input.value = total;
+			
+		}
+		
+		function printAmount(drugId) {
+			
+			var option = document.getElementById("selectedDrug" + drugId);
+			var amount = document.getElementById("amount" + drugId);
+			option.text = option.text.substring(0, option.text.lastIndexOf('|') + 1) + " " + String(amount.value);
+		}
+		
+		function saveAmount(input) {
+			
+			localStorage.setItem(input.id, input.value);
 			
 		}
 	
@@ -327,7 +352,7 @@
 					for (Recipe recipe : recipesForUser) {
 						Date expieryDate = recipe.getExpieryDate();
 						for (Integer drugId : recipe.getDrugIds()) {
-					drugsFromRecipe.put(drugId, expieryDate);
+							drugsFromRecipe.put(drugId, expieryDate);
 						}
 					}
 				}
@@ -350,7 +375,7 @@
 								<td><c:out value="${d.prescription ? 'yes' : 'no'}" /></td>
 								<%-- 				<td><%=d.isPrescription() ? "yes" : "no" %></td> --%>
 								<td><input type="number" value=0 disabled
-									id="amount${d.id}" /></td>
+									id="amount${d.id}" onchange="printAmount(${d.id });" onkeyup="saveAmount(this);"/></td>
 								<td><c:if test="${not empty drugsFromRecipe[d.id] }">
 										<c:out value="${drugsFromRecipe[d.id] }" />
 									</c:if></td>
@@ -366,7 +391,7 @@
 									<input type="checkbox" id="drug${d.id}" value="${d.id}" name="drug"
 										onchange="addRemoveFromCart(this, ${d.id});showId(this);"
 										<c:out value="${present ? 'checked' : ''}"/> />
-									<input type="hidden" id="checkbox${d.id}" value="${d.name}&nbsp;|&nbsp;${d.dose}&nbsp;|&nbsp;${d.quantity}&nbsp;|&nbsp;${d.price}"/>
+									<input type="hidden" id="checkbox${d.id}" value="${d.name}&nbsp;|&nbsp;${d.dose}&nbsp;|&nbsp;${d.price}"/>
 								</td>
 							</tr>
 
@@ -382,9 +407,9 @@
 			</tbody>
 		</table>
 
-		<form action="drugsbill.jsp" method="POST">
+		<form action="drugsBill.jsp" method="POST">
 			<div id = "div" <c:if test="${fn:length(param.drugIds) == 0}">style="display:none"</c:if>>
-				<select multiple id="ListBox1" onload="printTotalAmount();">
+				<select multiple id="ListBox1">
 					<%
 					DrugManagerService drugService = (DrugManagerService) application.getAttribute("drugService");
 					request.setAttribute("allDrugs", drugService.getDrugs());
@@ -393,16 +418,16 @@
 						<c:set var="idStr">${drug.id}</c:set>
 						<c:forEach items="${fn:split(param.drugIds,',')}" var="aDrug">
 							<c:if test="${aDrug == idStr}">
-								<option id="selectedDrug${idStr}" value="${idStr}">${drug.name}&nbsp;|&nbsp;${ drug.dose }&nbsp;|&nbsp;${drug.quantity}&nbsp;|&nbsp;${drug.price}</option>
+								<option id="selectedDrug${idStr}" value="${idStr}">${d.name}&nbsp;|&nbsp;${d.dose}&nbsp;|&nbsp;${d.price}&nbsp;|&nbsp;</option>
 							</c:if>
 						</c:forEach>
 					</c:forEach>
 				</select>
-				<button id="Submit1" type="button" onclick="removeOptionsSelected();"
+				<button id="Submit1" type="button" onclick="removeOptionsSelected();printTotal()"
 					<c:if test="${fn:length(param.drugIds) == 0}">style="display:none"</c:if>>delete</button>
 				<input hidden="true" id="selectedIds"  name="drugIds" id="hiddenInput"  />
-				<label for="totalAmount">total amount</label>
-				<input id="totalAmount"></input>
+				<label for="total">total</label>
+				<input id="total"></input>
 				<input type="submit" value="buy drugs" onclick="gatherDrugIds()"/>
 			</div>
 		</form>
@@ -436,5 +461,8 @@
 	<%
 	}
 	%>
+<!-- 	<script> -->
+
+<!-- 	</script> -->
 </body>
 </html>
