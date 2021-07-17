@@ -160,7 +160,7 @@
 				document.getElementById("ListBox1").options.add(opt);	
 			}
 		}
-		
+	
 	}
 	
 	function displayParams() {
