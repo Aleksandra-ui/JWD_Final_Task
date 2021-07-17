@@ -234,6 +234,29 @@
 		    document.getElementById("selectedIds").value = hiddenValue; 
 		}
 		
+		function gatherAmounts() {
+			
+			var select = document.getElementById("ListBox1");
+			var drugsContainer = select.getElementsByTagName('option');
+			var amounts = document.getElementById("amounts");
+			var drugIdsStr = document.getElementById("selectedIds").value.split(',');
+			alert(drugIdsStr);
+			var listStr = "";
+			
+			for ( var i = 0; i < drugIdsStr.length; i ++ ) {
+				//alert(drugIdsStr[i]);
+				//alert(localStorage.getItem("amount" + drugIdsStr[i]));
+				
+				listStr += drugsContainer[i].text.substring(drugsContainer[i].text.lastIndexOf('|') + 1, drugsContainer[i].text.length);
+				if ( i < (drugIdsStr.length - 1) ) {
+					listStr += ",";
+				}
+			}
+			alert(listStr);
+			amounts.value = listStr;
+			
+		}
+		
 		function printTotal() {
 			
 			var select = document.getElementById("ListBox1");
@@ -429,7 +452,8 @@
 						<c:set var="idStr">${drug.id}</c:set>
 						<c:forEach items="${fn:split(param.drugIds,',')}" var="aDrug">
 							<c:if test="${aDrug == idStr}">
-								<option id="selectedDrug${idStr}" value="${idStr}">${drug.name}&nbsp;|&nbsp;${drug.dose}&nbsp;|&nbsp;${drug.price}&nbsp;|&nbsp;<script>document.write(localStorage.getItem("amount" + ${drug.id}) != null ? localStorage.getItem("amount" + ${drug.id}) : 1);</script></option>
+								<option id="selectedDrug${idStr}" value="${idStr}">
+								${drug.name}&nbsp;|&nbsp;${drug.dose}&nbsp;|&nbsp;${drug.price}&nbsp;|&nbsp;<script>document.write(localStorage.getItem("amount" + ${drug.id}) != null ? localStorage.getItem("amount" + ${drug.id}) : 1);</script></option>
 							</c:if>
 						</c:forEach>
 					</c:forEach>
@@ -438,9 +462,11 @@
 					<c:if test="${fn:length(param.drugIds) == 0}">style="display:none"</c:if>>delete</button>
 				<input hidden="true" id="selectedIds"  name="drugIds" id="hiddenInput"  />
 				<label for="total">total</label>
-				<input id="total" readonly></input>
-				<input type="submit" value="buy drugs" onclick="gatherDrugIds()"/>
+				<input id="total"></input>
+				<input hidden="true" name="amounts" id="amounts"/>
+				<input type="submit" value="buy drugs" onclick="gatherDrugIds();gatherAmounts()"/>
 			</div>
+			
 		</form>
 		
 	</div>
