@@ -15,7 +15,7 @@
 <script type="text/javascript">
 	drugIds = new Array(); 
 </script>
-<body onload="readDrugs();setAmount();printTotal();fillWithDrugIds();">
+<body onload="readDrugs();setAmount();printTotal();/*fillWithDrugIds();*/">
 
 	<script type="text/javascript">
 	
@@ -59,7 +59,7 @@
 					select.options.add(opt);
 					button.style.display = 'inline-block';
 					div.style.display = 'inline-block';	
-					alert("xx");
+					
 					
 				}
 			} else {
@@ -92,33 +92,33 @@
 			
 		}
 		
-		function fillWithDrugIds(){
+// 		function fillWithDrugIds(){
 
-			var select = document.getElementById("ListBox1");
-			var arr = select.options;
-			var unique = true;
+// 			var select = document.getElementById("ListBox1");
+// 			var arr = select.options;
+// 			var unique = true;
 			
 			
-			if ( drugIds.length > 0 ) {
-				select.style.display="inline-block";
-			}	
-			for ( id of drugIds ) {
-				var opt = document.createElement("option");
-				var drugName = document.getElementById("checkbox" + id);
-				opt.text = drugName.value + " | " + document.getElementById("amount" + drugId.value).value;
-				opt.id = "selectedDrug" + id;
-				for (i = 0; i < arr.length; i++) {
-					  if (arr[i].id == opt.id) {
-						  unique = false;
-					  }
-				}
-				if ( unique ) {
-					document.getElementById("ListBox1").options.add(opt);	
-				}
-			}
+// 			if ( drugIds.length > 0 ) {
+// 				select.style.display="inline-block";
+// 			}	
+// 			for ( id of drugIds ) {
+// 				var opt = document.createElement("option");
+// 				var drugName = document.getElementById("checkbox" + id);
+// 				opt.text = drugName.value + " | " + document.getElementById("amount" + id.value).value;
+// 				opt.id = "selectedDrug" + id;
+// 				for (i = 0; i < arr.length; i++) {
+// 					  if (arr[i].id == opt.id) {
+// 						  unique = false;
+// 					  }
+// 				}
+// 				if ( unique ) {
+// 					document.getElementById("ListBox1").options.add(opt);	
+// 				}
+// 			}
 			
 			
-		}
+// 		}
 		
 		function setAmount() {
 			for ( id of drugIds ) {
@@ -240,19 +240,20 @@
 			var drugsContainer = select.getElementsByTagName('option');
 			var amounts = document.getElementById("amounts");
 			var drugIdsStr = document.getElementById("selectedIds").value.split(',');
-			alert(drugIdsStr);
+			
 			var listStr = "";
 			
 			for ( var i = 0; i < drugIdsStr.length; i ++ ) {
 				//alert(drugIdsStr[i]);
 				//alert(localStorage.getItem("amount" + drugIdsStr[i]));
 				
-				listStr += drugsContainer[i].text.substring(drugsContainer[i].text.lastIndexOf('|') + 1, drugsContainer[i].text.length);
+				listStr += drugsContainer[i].text.substring(drugsContainer[i].text.lastIndexOf('|') + 1, drugsContainer[i].text.length).trim();
 				if ( i < (drugIdsStr.length - 1) ) {
 					listStr += ",";
 				}
+			
 			}
-			alert(listStr);
+			
 			amounts.value = listStr;
 			
 		}
@@ -267,10 +268,12 @@
 		    for (var idx = 0; idx < drugsContainer.length; idx++) {
 		    	
 		    	var i = drugsContainer[idx].text.lastIndexOf('|');
+		    	amount = drugsContainer[idx].text.substr(i + 1);
+		    	
 		    	priceStr = drugsContainer[idx].text.substring(0, i);
 		    	i = priceStr.lastIndexOf('|');
 		    	priceStr = priceStr.substring(i + 1);
-		    	total = total + Number(priceStr);
+		    	total = total + Number(priceStr) * Number(amount);
 		    }
 		    
 			input.value = total;
@@ -291,6 +294,8 @@
 		}
 	
 	</script>
+	
+	<%@ include file = "/mainMenu.jsp" %>
 
 	<%=ResourceBundle.getBundle("Drugs").getString("drugs.welcome")%>
 	<a href="/apotheca/index.jsp">home</a>
@@ -409,7 +414,7 @@
 								<td><c:out value="${d.prescription ? 'yes' : 'no'}" /></td>
 								<%-- 				<td><%=d.isPrescription() ? "yes" : "no" %></td> --%>
 								<td><input type="number" value=0 disabled
-									id="amount${d.id}" onchange="printAmount(${d.id });" onkeyup="saveAmount(this);"/></td>
+									id="amount${d.id}" onchange="printAmount(${d.id });printTotal()" onkeyup="saveAmount(this);"/></td>
 								<td><c:if test="${not empty drugsFromRecipe[d.id] }">
 										<c:out value="${drugsFromRecipe[d.id] }" />
 									</c:if></td>
@@ -422,10 +427,17 @@
 											<c:set var="present" value="true"/>
 										</c:if>
 									</c:forEach>
-									<input type="checkbox" id="drug${d.id}" value="${d.id}" name="drug"
-										onchange="addRemoveFromCart(this, ${d.id});showId(this);"
-										<c:out value="${present ? 'checked' : ''}"/> />
-									<input type="hidden" id="checkbox${d.id}" value="${d.name}&nbsp;|&nbsp;${d.dose}&nbsp;|&nbsp;${d.price}"/>
+							
+									<c:choose>
+										<c:when test="${(not d.prescription) or (not empty drugsFromRecipe[d.id]) }">
+											<input type="checkbox" id="drug${d.id}" value="${d.id}" name="drug"
+												onchange="addRemoveFromCart(this, ${d.id});showId(this);"
+												<c:out value="${present ? 'checked' : ''}"/> />
+											<input type="hidden" id="checkbox${d.id}" value="${d.name}&nbsp;|&nbsp;${d.dose}&nbsp;|&nbsp;${d.price}"/>
+										</c:when>
+										<c:otherwise>recipe required</c:otherwise> 
+									</c:choose>
+									
 								</td>
 							</tr>
 
@@ -443,7 +455,7 @@
 
 		<form action="drugsBill.jsp" method="POST">
 			<div id = "div" <c:if test="${fn:length(param.drugIds) == 0}">style="display:none"</c:if>>
-				<select multiple id="ListBox1" onload="setAmount()">
+				<select multiple id="ListBox1">
 					<%
 					DrugManagerService drugService = (DrugManagerService) application.getAttribute("drugService");
 					request.setAttribute("allDrugs", drugService.getDrugs());
@@ -453,7 +465,9 @@
 						<c:forEach items="${fn:split(param.drugIds,',')}" var="aDrug">
 							<c:if test="${aDrug == idStr}">
 								<option id="selectedDrug${idStr}" value="${idStr}">
-								${drug.name}&nbsp;|&nbsp;${drug.dose}&nbsp;|&nbsp;${drug.price}&nbsp;|&nbsp;<script>document.write(localStorage.getItem("amount" + ${drug.id}) != null ? localStorage.getItem("amount" + ${drug.id}) : 1);</script></option>
+<%-- 									<c:set var="price"><script>document.write(${drug.price} * (localStorage.getItem("amount" + ${drug.id}) != null ? localStorage.getItem("amount" + ${drug.id}) : 1));</script></c:set> --%>
+									${drug.name}&nbsp;|&nbsp;${drug.dose}&nbsp;|&nbsp;${drug.price}&nbsp;|&nbsp;<script>document.write(localStorage.getItem("amount" + ${drug.id}) != null ? localStorage.getItem("amount" + ${drug.id}) : 1);</script>
+								</option>
 							</c:if>
 						</c:forEach>
 					</c:forEach>
@@ -462,7 +476,7 @@
 					<c:if test="${fn:length(param.drugIds) == 0}">style="display:none"</c:if>>delete</button>
 				<input hidden="true" id="selectedIds"  name="drugIds" id="hiddenInput"  />
 				<label for="total">total</label>
-				<input id="total"></input>
+				<input id="total" readonly></input>
 				<input hidden="true" name="amounts" id="amounts"/>
 				<input type="submit" value="buy drugs" onclick="gatherDrugIds();gatherAmounts()"/>
 			</div>
@@ -492,7 +506,7 @@
 
 	<%
 	UserManagerService uService = (UserManagerService) application.getAttribute("userService");
-	if (user != null && uService.canPrescribe(user)) {
+	if (user != null && uService.canAddDrugs(user)) {
 	%>
 	<a href="/apotheca/secure/createDrug.jsp">create drug</a>
 	<%

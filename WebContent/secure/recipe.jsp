@@ -44,7 +44,7 @@
 	
 </script>
 
-<body onload="readDrugs();fillDaySelect();fillWithDrugIds()">
+<body onload="readDrugs();fillDaySelect();/*fillWithDrugIds()*/">
 
 	<script type="text/javascript">
 	
@@ -137,31 +137,31 @@
 		
 	}
 	
-	function fillWithDrugIds(){
-		var select = document.getElementById("ListBox1");
-		var arr = select.options;
-		var unique = true;
+// 	function fillWithDrugIds(){
+// 		var select = document.getElementById("ListBox1");
+// 		var arr = select.options;
+// 		var unique = true;
 		
-		if ( drugIds.length > 0 ) {
-			select.style.display="inline-block";
-		}	
+// 		if ( drugIds.length > 0 ) {
+// 			select.style.display="inline-block";
+// 		}	
 		
-		for ( id of drugIds ) {
-			var opt = document.createElement("option");
-			var drugName = document.getElementById("checkbox" + id);
-			opt.text = drugName.value;
-			opt.id = "selectedDrug" + id;
-			for (i = 0; i < arr.length; i++) {
-				  if (arr[i].id == opt.id) {
-					  unique = false;
-				  }
-			}
-			if ( unique ) {
-				document.getElementById("ListBox1").options.add(opt);	
-			}
-		}
+// 		for ( id of drugIds ) {
+// 			var opt = document.createElement("option");
+// 			var drugName = document.getElementById("checkbox" + id);
+// 			opt.text = drugName.value;
+// 			opt.id = "selectedDrug" + id;
+// 			for (i = 0; i < arr.length; i++) {
+// 				  if (arr[i].id == opt.id) {
+// 					  unique = false;
+// 				  }
+// 			}
+// 			if ( unique ) {
+// 				document.getElementById("ListBox1").options.add(opt);	
+// 			}
+// 		}
 	
-	}
+// 	}
 	
 	function displayParams() {
         params = window.location.href;
@@ -266,6 +266,8 @@
 	}
 	
 </script>
+
+	<%@ include file = "/mainMenu.jsp" %>
 
 	<%=ResourceBundle.getBundle("Drugs").getString("drugs.welcome") %>
 	<a href="/apotheca/index.jsp">home</a>

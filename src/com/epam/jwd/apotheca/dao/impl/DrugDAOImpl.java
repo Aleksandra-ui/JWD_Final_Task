@@ -174,18 +174,33 @@ public class DrugDAOImpl implements DrugDAO {
 
 	@Override
 	public Drug findById(Integer id) {
-		Drug drug = null;
-		String query = "select id,name,quantity,price,dose,prescription from mydb.drugs where id = ?";
+		
+		List<Drug> drugs = findByIds(id);
+		return drugs.size() == 0 ? null : drugs.get(0);
+	}
+	
+	public List<Drug> findByIds(Integer... ids) {
+		List<Drug> drugs = new ArrayList<Drug>();
+		String idsStr = "";
+		for ( Integer id : ids ) {
+			idsStr += String.valueOf(id) + ",";
+		}
+		idsStr = idsStr.substring(0, idsStr.length() - 1);
+		String query = "select id,name,quantity,price,dose,prescription from mydb.drugs where id "+ (ids.length == 1 ? " = ?" : "in (" + idsStr + ")");
 		try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement(query);) {
-			st.setInt(1, id);
+			if ( ids.length == 1 ) {
+				st.setInt(1, ids[0]);
+			}
+			
 			ResultSet rs = st.executeQuery();
-			rs.next();
-			drug = readDrug(rs);
+			while (rs.next()) {
+				drugs.add(readDrug(rs));
+			}
 			rs.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return drug;
+		return drugs;
 	}
 	
 	public List<Drug> findByName(String name) {

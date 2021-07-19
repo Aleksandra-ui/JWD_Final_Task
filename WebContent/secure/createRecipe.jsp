@@ -10,6 +10,8 @@
 </head>
 <body>
 	
+	<%@ include file = "/mainMenu.jsp" %>
+	
 	<c:if test="${ empty param.recipeDrugIds }">
     	<c:redirect url="/secure/recipe.jsp"/>
      </c:if>

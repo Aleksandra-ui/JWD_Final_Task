@@ -1,5 +1,7 @@
 package com.epam.jwd.apotheca.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -54,6 +56,20 @@ public class DrugManagerService {
 	public Drug getDrug(Integer id) {
 		
 		return drugDAO.findById(id);
+		
+	}
+	
+	public List<Drug> getDrugs(Integer... ids) {
+		
+		return drugDAO.findByIds(ids);
+		
+	}
+	
+	public List<Drug> getDrugs(String... ids) {
+		
+		List<Integer> intIds = new ArrayList<Integer>();
+		Arrays.asList(ids).stream().forEach(id -> intIds.add(Integer.valueOf(id)));
+		return drugDAO.findByIds(intIds.toArray(new Integer[intIds.size()]));
 		
 	}
 	

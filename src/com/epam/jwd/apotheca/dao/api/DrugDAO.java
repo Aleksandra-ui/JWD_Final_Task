@@ -12,4 +12,6 @@ public interface DrugDAO extends DAO<Drug> {
 	
 	Drug findDrug(String name, Double dose) ;
 	
+	List<Drug> findByIds(Integer... ids);
+	
 }

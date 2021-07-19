@@ -7,14 +7,11 @@
 <title>Hello</title>
 </head>
 <body>
+
+	<%@ include file = "/mainMenu.jsp" %>
+	
 	start page 
-	<a href="/apotheca/secure/UserCounter.jsp">secure</a>
-	<br/>
-	<a href="/apotheca/drugs.jsp">drugs</a>
-	<br/>
-	<a href="/apotheca/secure/recipe.jsp">recipe</a>
-	<br/>
-	<a href="/apotheca/a.jsp">log on</a>
+	<a href="/apotheca/secure/UserCounter.jsp">user counter</a>
 	
 </body>
 </html>

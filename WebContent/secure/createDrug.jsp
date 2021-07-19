@@ -7,6 +7,9 @@
 <title>add drug</title>
 </head>
 <body>
+
+	<%@ include file = "/mainMenu.jsp" %>
+
 	<form action="/apotheca/secure/createDrug.jsp" method="post">
 		<label for = "drugName">name</label> :
 		<input type = "text" name = "drugName"/>

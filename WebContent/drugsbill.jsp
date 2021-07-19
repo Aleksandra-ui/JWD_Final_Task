@@ -10,6 +10,8 @@
 </head>
 <body>
 
+	<%@ include file = "/mainMenu.jsp" %>
+
 	<table border="1" style="width: 50%">
 		<caption>Bought drugs</caption>
 		<thead align="center">
@@ -23,35 +25,27 @@
 
 		<tbody align="center">
 			<%
+			
 				DrugManagerService drugService = (DrugManagerService)application.getAttribute("drugService");
-				List<Drug> drugs = new ArrayList<Drug>();
-				List<String> drugIds = new ArrayList<String>();
 				String[] drugIdsStr = request.getParameter("drugIds").split(",");
 				Map<Drug, String> amountsById = new HashMap<Drug, String>();
-		
-				for ( String drugId : drugIdsStr ) {
-					drugIds.add(drugId);
-				}
-				for ( String id : drugIds ) {
-					drugs.add(drugService.getDrug(Integer.valueOf(id)));
-				}
+				List<Drug> drugs = drugService.getDrugs(drugIdsStr); 
+	
 				request.setAttribute("drugsList", drugs);
 				
-				List<String> amounts = new ArrayList<String>();
 				String[] amountsStr = request.getParameter("amounts").split(",");
-				for ( String amount : amountsStr ) {
-					amounts.add(amount);
-				}
-				
-				for ( int i = 0; i < drugIds.size(); i ++ ) {
-					amountsById.put(drugs.get(i), amounts.get(i));
+				for ( int i = 0; i < drugIdsStr.length; i ++ ) {
+					amountsById.put(drugs.get(i), amountsStr[i]);
 				}
 				request.setAttribute("amountsById", amountsById);
 				
+				Integer total = 0;
+				for ( Drug d : drugs ) {
+					total += d.getPrice() * Integer.valueOf( amountsById.get(d) ); 
+				}
+				
 			%>
-			<%=request.getAttribute("drugsList") %>
-			<%= request.getParameter("amounts") %>
-			<%= request.getParameter("drugIds") %>
+			
 			<c:choose>
 				<c:when test="${not empty drugsList}">
 					<c:forEach items="${drugsList}" var="d">
@@ -59,10 +53,7 @@
 							bgcolor=<c:out value="${not d.prescription ? 'LightGreen' : 'LightPink'}"/>>
 							<td><c:out value="${d.name}" /></td>
 							<td><c:out value="${d.dose }" /></td>
-							<td>
-								<c:set var="idStr">${d.id }</c:set>
-								<c:out value="${amountsById[d]}" />
-							</td>
+							<td><c:out value="${amountsById[d]}" /></td>
 							<td><c:out value="${d.price }" /></td>
 						</tr>
 					</c:forEach>
@@ -76,6 +67,8 @@
 
 		</tbody>
 	</table>
+	
+	total: <%= total %>
 
 </body>
 </html>

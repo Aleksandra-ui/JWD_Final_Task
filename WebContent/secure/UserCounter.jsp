@@ -7,6 +7,9 @@
 <title>Insert title here</title>
 </head>
 <body>
+
+	<%@ include file = "/mainMenu.jsp" %>
+
 	<%=application.getAttribute("xxx")%> : <%=application.getAttribute("zzz")%>
 	<br/>
 	<%

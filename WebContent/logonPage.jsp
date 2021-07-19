@@ -8,6 +8,8 @@
 <%@ include file="head.html" %>
 <body>
 
+	<%@ include file = "/mainMenu.jsp" %>
+
 	<%
 	Integer visitsSession = (Integer) session.getAttribute("visits");
 		if (visitsSession == null) {
