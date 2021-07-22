@@ -72,7 +72,7 @@ public class UserManagerService {
 	
 	public boolean isRoleEnabled(User user, Integer roleId) {
 		
-		return (roleId & user.getRole().getPermission()) == roleId;
+		return (user != null) && ((roleId & user.getRole().getPermission()) == roleId);
 		
 	}
 	

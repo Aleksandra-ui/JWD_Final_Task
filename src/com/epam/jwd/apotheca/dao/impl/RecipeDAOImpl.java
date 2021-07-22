@@ -74,6 +74,28 @@ public class RecipeDAOImpl implements RecipeDAO {
 
 		return recipes;
 	}
+
+	public List<Recipe> findRecipeByDoctor(User doctor) {
+		
+		String query = "select distinct r.id from mydb.recipe r"
+		+ " join mydb.users u on u.id = r.doctor_id where u.id = ? or u.name = ? order by r.id";
+		
+		List<Recipe> recipes = new ArrayList<Recipe>(); 
+
+		try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement(query);) {
+			st.setInt(1, doctor.getId());
+			st.setString(2, doctor.getName());
+			ResultSet rs = st.executeQuery();
+			while (rs.next()) {
+				recipes.add(findRecipe(rs.getInt("r.id")));
+			}
+			rs.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return recipes;
+	}
 	
 	@Override
 	public Recipe findRecipe(Integer id) {

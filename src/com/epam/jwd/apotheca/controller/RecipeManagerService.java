@@ -27,4 +27,10 @@ public class RecipeManagerService {
 		
 	}
 	
+	public List<Recipe> findByDoctor (User doctor) {
+		
+		return recipeDAO.findRecipeByDoctor(doctor);
+		
+	}
+	
 }

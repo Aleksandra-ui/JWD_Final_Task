@@ -158,7 +158,6 @@ public class DrugDAOImpl implements DrugDAO {
 					"update mydb.drugs set quantity = " + entity.getQuantity()
 							+ ", price = " + entity.getPrice() + ", prescription = " + (entity.isPrescription() ? "1" : "0") + " where id = " + entity.getId()) > 0;
 			connection.commit();
-			result = true;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -168,8 +167,16 @@ public class DrugDAOImpl implements DrugDAO {
 
 	@Override
 	public boolean delete(Integer id) {
-		// TODO Auto-generated method stub
-		return false;
+		
+		String query = "delete from mydb.drugs where id = " + id;
+		boolean result = false;
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
+			result = st.executeUpdate(query) > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return result;
 	}
 
 	@Override

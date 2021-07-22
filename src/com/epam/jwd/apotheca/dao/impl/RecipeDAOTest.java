@@ -1,7 +1,5 @@
 package com.epam.jwd.apotheca.dao.impl;
 
-import static org.junit.Assert.*;
-
 import java.util.ArrayList;
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -10,21 +8,26 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.epam.jwd.apotheca.dao.api.DrugDAO;
 import com.epam.jwd.apotheca.dao.api.RecipeDAO;
+import com.epam.jwd.apotheca.dao.api.UserDAO;
 import com.epam.jwd.apotheca.model.Recipe;
+import com.epam.jwd.apotheca.model.User;
 import com.epam.jwd.apotheca.pool.ConnectionPool;
 
 public class RecipeDAOTest {
 
 	private static RecipeDAO recipeDAO;
+	private static UserDAO userDAO;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		recipeDAO = new RecipeDAOImpl();
+		userDAO = new UserDAOImpl();
 	}
 	
 	@AfterClass
@@ -50,7 +53,7 @@ public class RecipeDAOTest {
 		Integer id = recipeInDB.getId();
 		recipe.setId(id);
 		found = recipeDAO.findRecipe(id);
-		assertEquals(recipe,found);
+		Assert.assertEquals(recipe,found);
 	}
 	
 	@Test
@@ -84,7 +87,7 @@ public class RecipeDAOTest {
 			recipe.setId(id);
 			System.out.println(recipe);
 			System.out.println(recipeInDB);
-			assertEquals ( recipe.getExpieryDate(),(recipeInDB.getExpieryDate()));
+			Assert.assertEquals ( recipe.getExpieryDate(),(recipeInDB.getExpieryDate()));
 		}
 	}
 	
@@ -113,6 +116,16 @@ public class RecipeDAOTest {
 		Recipe recipeInDB = recipeDAO.findRecipe(id);
 		List<Integer> drugIds2 = recipeInDB.getDrugIds();
 		assert ! (drugIds2.contains(6));
+	}
+	
+	@Test
+	public void testFindRecipesByDoctor() {
+		
+		User doctor = ((UserDAOImpl)userDAO).getUser("p");
+		List<Recipe> recipes = recipeDAO.findRecipeByDoctor(doctor);
+		System.out.println(recipes);
+		Assert.assertNotNull(recipes);
+		
 	}
 
 }

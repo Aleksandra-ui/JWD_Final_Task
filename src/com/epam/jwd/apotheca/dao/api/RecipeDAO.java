@@ -17,4 +17,6 @@ public interface RecipeDAO extends DAO<Recipe> {
 	
 	Recipe save(Recipe recipe);
 	
+	List<Recipe> findRecipeByDoctor(User doctor);
+	
 }

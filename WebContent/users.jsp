@@ -1,12 +1,5 @@
-Session page visited: <%=visitsSession%> times
-<%-- Session page visited: <%=request.getParameter("visitsSession")%> times --%>
-
 <ul>
-	<%
- 	for (User u : service.getUsers()) {
-	%>
-	<li><%=u.getName()%></li>
-	<%
- 	}
-	%>
+	<c:forEach var="u" items="${users }">
+		<li>name: ${u.name} | password: ${u.password} | role: ${u.role.name }</li>				
+	</c:forEach>
 </ul> 

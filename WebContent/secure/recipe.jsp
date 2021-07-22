@@ -3,20 +3,17 @@
     pageEncoding="UTF-8" import="java.util.ResourceBundle, java.util.List, com.epam.jwd.apotheca.model.Drug, com.epam.jwd.apotheca.model.User, com.epam.jwd.apotheca.controller.UserManagerService,
     com.epam.jwd.apotheca.dao.api.UserDAO, java.util.stream.Collectors, java.util.stream.Stream, java.util.function.Predicate, java.util.ArrayList" %>
 <%--     <%@ taglib uri="" prefix="c" %> --%>
-     <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-     <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>   
+<%@ include file = "/mainMenu.jsp" %>
   
- <%
- UserManagerService userService = (UserManagerService) application.getAttribute("userService");
- %>
  <c:if test="${ not empty sessionScope.user }">    
 	 <%
 	 	request.setAttribute("canPrescribe", userService.canPrescribe((User)session.getAttribute("user")));
 	 %>
  </c:if>
- <c:out value="${canPrescribe}"></c:out>
           
-     <c:if test="${ not empty canPrescribe and not canPrescribe }">
+     <c:if test="${ (not empty canPrescribe) and (not canPrescribe) }">
     	<c:redirect url="/drugs.jsp"/>
      </c:if>
 <%-- 		<c:out value="${fn:toUpperCase(sessionScope.user)}"></c:out> --%>
@@ -267,10 +264,7 @@
 	
 </script>
 
-	<%@ include file = "/mainMenu.jsp" %>
-
 	<%=ResourceBundle.getBundle("Drugs").getString("drugs.welcome") %>
-	<a href="/apotheca/index.jsp">home</a>
 	
 	<%
 		DrugManagerService drugService = (DrugManagerService) application.getAttribute("drugService");
@@ -365,10 +359,6 @@
 		</tbody>
 	</table>
 	</div>
-	
-<!-- <!-- 	<script type="text/javascript"> --> 
-<!-- // 	 fillWithDrugIds(); -->
-<!-- <!-- 	</script> -->
 
 	<%
 	List<User> clients = userService.getClients();
@@ -425,49 +415,11 @@
 				<option id="november"  value="11">november</option>	
 				<option id="december" value="12">december</option>	
 			</select> 
-	<!-- 		<select id="Month" name="month" onchange="fillDaySelect()" > -->
-	<!-- 			<option id="january"  value="31">january</option> -->
-	<!-- 			<option id="february">february</option> -->
-	<!-- 			<option id="march"  value="31">march</option> -->
-	<!-- 			<option id="april">april</option>	 -->
-	<!-- 			<option id="may"  value="31">may</option>	 -->
-	<!-- 			<option id="june">june</option>	 -->
-	<!-- 			<option id="july"  value="31">july</option>	 -->
-	<!-- 			<option id="august"  value="31">august</option>	 -->
-	<!-- 			<option id="september">september</option>	 -->
-	<!-- 			<option id="october"  value="31">october</option>	 -->
-	<!-- 			<option id="november">november</option>	 -->
-	<!-- 			<option id="december" value="31">december</option>	 -->
-	<!-- 		</select>  -->
+
 			<select id="Day" name="day" >
-				<option>01</option>
-				<option>02</option>
-				<option>03</option>
-				<option>04</option>	
-				<option>05</option>	
-				<option>06</option>	
-				<option>07</option>	
-				<option>08</option>	
-				<option>09</option>	
-				<option>10</option>	
-				<option>11</option>	
-				<option>12</option>	
-				<option>13</option>	
-				<option>14</option>	
-				<option>15</option>	
-				<option>16</option>	
-				<option>17</option>	
-				<option>18</option>	
-				<option>19</option>	
-				<option>20</option>	
-				<option>21</option>	
-				<option>22</option>	
-				<option>23</option>	
-				<option>24</option>	
-				<option>25</option>	
-				<option>26</option>	
-				<option>27</option>	
-				<option>28</option>	
+				<c:forEach var="d" begin="1" end="28">
+					<option>${(d lt 10) ? '0' : ''}${d}</option>  	
+				</c:forEach>
 				<option id="29" hidden="true">29</option>	
 				<option id="30" hidden="true">30</option>	
 				<option id="31" hidden="true">31</option>	
@@ -475,14 +427,6 @@
 			<input type="submit" value="create recipe" onclick="gatherDrugIds()"/>
 		</div>
 	</form>
-	
-<%-- 	<% --%>
-<!-- // 	User user = (User)session.getAttribute("user"); -->
-<!-- // 	if (user != null && userService.canAddDrugs(user)){ -->
-<%-- 	%> --%>
-<!-- 	<a href="/apotheca/secure/createDrug.jsp">create drug</a> -->
-<%-- 	<% --%>
-<!-- // 	} -->
-<%-- 	%> --%>
+
 </body>
 </html>

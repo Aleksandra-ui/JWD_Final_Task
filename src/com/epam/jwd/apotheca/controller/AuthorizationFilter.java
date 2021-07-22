@@ -16,6 +16,8 @@ import com.epam.jwd.apotheca.model.User;
 
 public class AuthorizationFilter implements Filter {
 
+	public static final String APOTHECA_LOGON_PAGE_JSP = "/apotheca/logonPage.jsp";
+
 	@Override
 	public void destroy() {
 		// TODO Auto-generated method stub
@@ -30,7 +32,7 @@ public class AuthorizationFilter implements Filter {
 		HttpSession session = ((HttpServletRequest)request).getSession();
 		User user = (User)session.getAttribute("user");
 		if (user==null) {
-			((HttpServletResponse)response).sendRedirect("/apotheca/a.jsp");
+			((HttpServletResponse)response).sendRedirect(APOTHECA_LOGON_PAGE_JSP);
 		} 
 		chain.doFilter(request, response);
 		System.out.println("after authorization filter");

@@ -16,9 +16,6 @@
     	<c:redirect url="/secure/recipe.jsp"/>
      </c:if>
 	
-	the recipe was prescribed to <%=request.getParameter("clientName")%> by ${ sessionScope.doctorName } and is valid through <%=request.getParameter("day") %> <%=request.getParameter("month") %>
-	<%=request.getParameter("year") %>
-	
 	<%
 		RecipeManagerService service = new RecipeManagerService();
 		UserManagerService uService = new UserManagerService();
@@ -55,6 +52,10 @@
 		session.setAttribute("doctorName", doctorName);
 		
 	%>
+	
+	<font color="blue">
+		the recipe was prescribed to ${param.clientName} by ${ sessionScope.doctorName } and is valid through ${param.day} ${param.month} ${param.year}
+	</font>
 
 	<table border="1" style="width: 50%">
 		<caption>Drugs in recipe</caption>
@@ -81,7 +82,7 @@
 		</tbody>
 	</table>
 	
-	<a href="recipe.jsp">List of recipe</a>
+	<a href="recipe.jsp">Create new recipe</a>
 
 </body>
 </html>

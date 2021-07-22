@@ -296,9 +296,9 @@
 	</script>
 	
 	<%@ include file = "/mainMenu.jsp" %>
+	<div style="margin-top: 10px;"></div>
 
-	<%=ResourceBundle.getBundle("Drugs").getString("drugs.welcome")%>
-	<a href="/apotheca/index.jsp">home</a>
+	<span style="text-align: center;"><%=ResourceBundle.getBundle("Drugs").getString("drugs.welcome")%></span>
 
 	<%
 	DrugManagerService service = (DrugManagerService) application.getAttribute("drugService");
@@ -485,17 +485,6 @@
 		
 	</div>
 
-	<%
-	List<String> a = new java.util.ArrayList<String>();
-	a.add("a");
-	a.add("b");
-	a.add("c");
-	request.setAttribute("a", a);
-	%>
-	<c:forEach items="${a}" var="i" begin="0" end="2">
-		<c:out value="${i} "></c:out>
-	</c:forEach>
-
 	<c:forEach items="${visibleDrugs}" var="drug" begin="0"
 		end="${visibleDrugs.size}">
 		<c:out value="${drug}" default="---"></c:out>
@@ -503,10 +492,11 @@
 		<c:out value="<br/>"></c:out>
 	</c:forEach>
 
+	<div style="margin-top: 10px;"></div>
 
 	<%
 	UserManagerService uService = (UserManagerService) application.getAttribute("userService");
-	if (user != null && uService.canAddDrugs(user)) {
+	if (uService.canAddDrugs(user)) {
 	%>
 	<a href="/apotheca/secure/createDrug.jsp">create drug</a>
 	<%
