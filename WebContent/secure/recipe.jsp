@@ -6,14 +6,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>   
 <%@ include file = "/mainMenu.jsp" %>
-  
- <c:if test="${ not empty sessionScope.user }">    
-	 <%
-	 	request.setAttribute("canPrescribe", userService.canPrescribe((User)session.getAttribute("user")));
-	 %>
- </c:if>
           
-     <c:if test="${ (not empty canPrescribe) and (not canPrescribe) }">
+     <c:if test="${ not ( sessionScope.user.role.id eq UserDAO.ROLE_DOCTOR ) }">
     	<c:redirect url="/drugs.jsp"/>
      </c:if>
 <%-- 		<c:out value="${fn:toUpperCase(sessionScope.user)}"></c:out> --%>
