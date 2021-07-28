@@ -33,8 +33,7 @@
 			<%
 			
 				User user = (User) session.getAttribute("user");%>
-			
-			<%= user%>
+
 			<% 
 				DrugManagerService drugService = (DrugManagerService)application.getAttribute("drugService");
 				OrderManagerService orderService = (OrderManagerService)application.getAttribute("orderService");
@@ -58,7 +57,6 @@
 				orderService.buy(user.getId(), amountsById);
 				
 			%>
-			<%=amountsById %>
 			
 			<c:choose>
 				<c:when test="${not empty drugsList}">

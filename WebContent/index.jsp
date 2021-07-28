@@ -11,7 +11,7 @@
 	<%@ include file = "/mainMenu.jsp" %>
 	
 	start page 
-	<a href="/apotheca/secure/UserCounter.jsp">user counter</a>
+	<a href="/apotheca/secure/UserCounter.jsp">User counter</a>
 	
 </body>
 </html>

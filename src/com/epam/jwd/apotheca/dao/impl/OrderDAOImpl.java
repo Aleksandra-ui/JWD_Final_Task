@@ -207,7 +207,7 @@ public class OrderDAOImpl implements OrderDAO {
 		List<Order> orders = new ArrayList<Order>();
 		DrugDAO drugDAO = new DrugDAOImpl();
 		
-		try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement("select id from mydb.orders where user_id = ?");) {
+		try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement("select id from mydb.orders where user_id = ? order by id");) {
 			st.setInt(1, userId);
 			ResultSet rs = st.executeQuery();
 			while (rs.next()) {

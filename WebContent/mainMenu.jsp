@@ -35,6 +35,9 @@
 		<c:if test="${ canPrescribe }">
 			<li class="menu-item"><a href="/apotheca/secure/recipe.jsp">Prescribe recipe</a></li>
 		</c:if> 
+		<c:if test="${ canPrescribe }">
+			<li class="menu-item"><a href="/apotheca/secure/prescribedRecipes.jsp">Prescribed recipes</a></li>
+		</c:if> 
 		<c:if test="${not empty sessionScope.user }">
 			<li class="menu-item"><a href="/apotheca/secure/orders.jsp">Your orders</a></li>
 		</c:if> 
