@@ -1,4 +1,4 @@
-package test.com.epam.jwd.apotheca.dao.impl;
+package com.epam.jwd.apotheca.dao.impl;
 
 import org.junit.Assert;
 
