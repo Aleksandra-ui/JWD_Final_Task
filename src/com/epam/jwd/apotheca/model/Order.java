@@ -1,7 +1,6 @@
 package com.epam.jwd.apotheca.model;
 
 import java.sql.Date;
-import java.util.List;
 import java.util.Map;
 
 public class Order implements Entity {
@@ -53,12 +52,12 @@ public class Order implements Entity {
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((userId == null) ? 0 : userId.hashCode());
 		return result;
-		
+
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		
+
 		if (this == obj)
 			return true;
 		if (obj == null)
@@ -94,7 +93,5 @@ public class Order implements Entity {
 	public String toString() {
 		return "Order [id=" + id + ", drugs=" + drugs + ", userId=" + userId + ", date=" + date + "]";
 	}
-	
-	
 
 }

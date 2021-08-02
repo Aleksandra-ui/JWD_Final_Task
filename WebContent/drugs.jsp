@@ -14,7 +14,7 @@
 <script type="text/javascript">
 	drugIds = new Array(); 
 </script>
-<body onload="readDrugs();setAmount();printTotal();/*fillWithDrugIds();*/">
+<body onload="readDrugs();setAmount();printTotal();">
 
 	<script type="text/javascript">
 	
@@ -91,34 +91,6 @@
 			
 		}
 		
-// 		function fillWithDrugIds(){
-
-// 			var select = document.getElementById("ListBox1");
-// 			var arr = select.options;
-// 			var unique = true;
-			
-			
-// 			if ( drugIds.length > 0 ) {
-// 				select.style.display="inline-block";
-// 			}	
-// 			for ( id of drugIds ) {
-// 				var opt = document.createElement("option");
-// 				var drugName = document.getElementById("checkbox" + id);
-// 				opt.text = drugName.value + " | " + document.getElementById("amount" + id.value).value;
-// 				opt.id = "selectedDrug" + id;
-// 				for (i = 0; i < arr.length; i++) {
-// 					  if (arr[i].id == opt.id) {
-// 						  unique = false;
-// 					  }
-// 				}
-// 				if ( unique ) {
-// 					document.getElementById("ListBox1").options.add(opt);	
-// 				}
-// 			}
-			
-			
-// 		}
-		
 		function setAmount() {
 			for ( id of drugIds ) {
 				amount = document.getElementById("amount" + id);
@@ -165,31 +137,23 @@
 			
 			newHref = anchor.href + ((drugIdLine != "") ? "&" + drugIdLine : "" );
 			
-			return anchor.href && (anchor.href = newHref); //if (anchor.href) {anchor.href = newHref;}. window.location transforms into window.location.href
+			return anchor.href && (anchor.href = newHref);
 			
 		}
 		
 		function displayParams() {
 	        params = window.location.href;
-	        //alert(params);
 	        params = "" + params.substring(params.indexOf('?') + 1);
 	        pp = params.split('&');
-	        //alert(pp);
 	        retVal = [];
 	        for (i = 0; i < pp.length; i++) {
 	            keyVal = pp[i].split("=");
-	            //alert("Key = " + keyVal[0] + "\nValue = " + keyVal[1]);
 	            retVal.push(keyVal[0] + " : " + keyVal[1]);
 	        }
-	 		//alert("RetVal " + retVal);
 	    }
 		
 		function changeSelectVisibility() {
-			
-//	 		var select = document.getElementById("ListBox1");
-//	 		var button = document.getElementById("Submit1");
-//	 		select.style.display = (drugIds.length == 0) ? 'none' : 'inline-block'; 
-//	 		button.style.display = (drugIds.length == 0) ? 'none' : 'inline-block';
+
 			var div = document.getElementById("div");
 	 		div.style.display = (drugIds.length == 0) ? 'none' : 'inline-block'; 
 			
@@ -243,8 +207,6 @@
 			var listStr = "";
 			
 			for ( var i = 0; i < drugIdsStr.length; i ++ ) {
-				//alert(drugIdsStr[i]);
-				//alert(localStorage.getItem("amount" + drugIdsStr[i]));
 				
 				listStr += drugsContainer[i].text.substring(drugsContainer[i].text.lastIndexOf('|') + 1, drugsContainer[i].text.length).trim();
 				if ( i < (drugIdsStr.length - 1) ) {
@@ -343,12 +305,6 @@
 				Integer pagesCount = drugs.size() / pageSize + ((drugs.size() % pageSize) == 0 ? 0 : 1);
 				request.setAttribute("pagesCount", pagesCount);
 				%>
-
-				<%-- 		<c:set scope="request" var="pagesCount" value="${drugs.size() / pageSize + ((drugs.size() % pageSize) == 0 ? 0 : 1)}"/> --%>
-
-				<%-- 		<c:out value="${param.pageSize}"/> --%>
-				<%-- 		<c:set scope="request" var="currentPage" value="${empty param.currentPage ? 1 : param.currentPage}"/> --%>
-				<%-- 		<c:set scope="request" var="pageSize" value="${empty param.pageSize ? 5 : param.pageSize}"/> --%>
 
 				<c:forEach var="displayPage" begin="1" end="${pagesCount}">
 					<c:choose>
@@ -501,8 +457,6 @@
 	<%
 	}
 	%>
-<!-- 	<script> -->
 
-<!-- 	</script> -->
 </body>
 </html>

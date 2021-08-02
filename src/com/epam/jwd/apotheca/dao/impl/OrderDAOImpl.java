@@ -16,44 +16,39 @@ import com.epam.jwd.apotheca.dao.api.DrugDAO;
 import com.epam.jwd.apotheca.dao.api.OrderDAO;
 import com.epam.jwd.apotheca.model.Drug;
 import com.epam.jwd.apotheca.model.Order;
-import com.epam.jwd.apotheca.model.Recipe;
-import com.epam.jwd.apotheca.model.Role;
-import com.epam.jwd.apotheca.model.User;
 import com.epam.jwd.apotheca.pool.ConnectionPool;
 import com.epam.jwd.apotheca.pool.CouldNotInitializeConnectionPoolException;
 
 public class OrderDAOImpl implements OrderDAO {
-	
+
 	private ConnectionPool cp = ConnectionPool.retrieve();
-	
+
 	public OrderDAOImpl() {
 		try {
 			cp.init();
 		} catch (CouldNotInitializeConnectionPoolException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
 	@Override
 	public Order save(Order order) {
-		
+
 		boolean result = false;
 		Integer id = getMaxId() + 1;
 		Map<Drug, Integer> drugs = order.getDrugs();
-		
-		try (Connection connection = cp.takeConnection();Statement st = connection.createStatement();) {
+
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 			connection.setAutoCommit(false);
-			for ( Drug drug : drugs.keySet() ) {
+			for (Drug drug : drugs.keySet()) {
 				result = st.executeUpdate("insert into mydb.orders (id, drug_id, amount, user_id, order_date)"
-						+ "values ('" + id + "','" + drug.getId() + "','" + drugs.get(drug) + "','" + order.getUserId() + "','"
-						+ order.getDate() + "')") > 0;
+						+ "values ('" + id + "','" + drug.getId() + "','" + drugs.get(drug) + "','" + order.getUserId()
+						+ "','" + order.getDate() + "')") > 0;
 			}
-			
+
 			connection.commit();
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -61,32 +56,34 @@ public class OrderDAOImpl implements OrderDAO {
 		if (result) {
 			orderInDB = findOrder(id);
 		}
-		
+
 		return orderInDB;
 
 	}
-	
+
 	@Override
 	public List<Order> findAll() {
-		
+
 		List<Order> orders = new ArrayList<Order>();
 		Set<Integer> ids = new HashSet<Integer>();
 		DrugDAO drugDAO = new DrugDAOImpl();
-		
+
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 
 			ResultSet rs = st.executeQuery("select id from mydb.orders");
 			while (rs.next()) {
 				ids.add(rs.getInt(1));
 			}
-	
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
-		try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement("select drug_id, amount, user_id, order_date from mydb.orders where id = ?");) {
-			
-			for ( Integer id : ids ) {
+
+		try (Connection connection = cp.takeConnection();
+				PreparedStatement st = connection.prepareStatement(
+						"select drug_id, amount, user_id, order_date from mydb.orders where id = ?");) {
+
+			for (Integer id : ids) {
 				st.setInt(1, id);
 				ResultSet rs = st.executeQuery();
 				Order order = new Order();
@@ -102,12 +99,12 @@ public class OrderDAOImpl implements OrderDAO {
 				}
 				order.setDrugs(drugs);
 				orders.add(order);
-				
+
 			}
-			
+
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}	
+		}
 
 		return orders;
 
@@ -115,13 +112,11 @@ public class OrderDAOImpl implements OrderDAO {
 
 	@Override
 	public List<Order> findAllById(Integer id) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Order update(Order entity) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -129,7 +124,8 @@ public class OrderDAOImpl implements OrderDAO {
 	public boolean delete(Integer id) {
 		boolean result = false;
 
-		try (Connection connection = cp.takeConnection();PreparedStatement st = connection.prepareStatement("delete from mydb.orders where id = ?");) {
+		try (Connection connection = cp.takeConnection();
+				PreparedStatement st = connection.prepareStatement("delete from mydb.orders where id = ?");) {
 			connection.setAutoCommit(false);
 			st.setInt(1, id);
 
@@ -142,19 +138,17 @@ public class OrderDAOImpl implements OrderDAO {
 
 		return result;
 	}
-	
+
 	public Integer getMaxId() {
 		String query = "select max(id) from mydb.orders";
 		Integer id = null;
-		try (Connection connection = cp.takeConnection();Statement st = connection.createStatement();) {
-			
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
+
 			ResultSet rs = st.executeQuery(query);
 			rs.next();
 			id = rs.getInt(1);
-			
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return id;
@@ -162,21 +156,18 @@ public class OrderDAOImpl implements OrderDAO {
 
 	@Override
 	public Order findOrder(Integer id) {
-		
+
 		String query = "select o.id, o.order_date, o.user_id, o.drug_id, o.amount, d.name, d.price, d.dose from mydb.orders o "
-					 + "join mydb.drugs d on o.drug_id = d.id "
-					 + "where o.id = ? "
-					 + "order by o.id;";
+				+ "join mydb.drugs d on o.drug_id = d.id " + "where o.id = ? " + "order by o.id;";
 		Order order = null;
-		
-		
+
 		try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement(query);) {
 			st.setInt(1, id);
 			ResultSet rs = st.executeQuery();
 			Map<Drug, Integer> drugs = null;
 			while (rs.next()) {
-				if ( order == null ) {
-					drugs = new HashMap <Drug, Integer> ();
+				if (order == null) {
+					drugs = new HashMap<Drug, Integer>();
 					order = new Order();
 					order.setId(rs.getInt("o.id"));
 					order.setUserId(rs.getInt("o.user_id"));
@@ -196,18 +187,20 @@ public class OrderDAOImpl implements OrderDAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		return order;
-		
+
 	}
-	
+
 	public List<Order> findOrdersByUser(Integer userId) {
-	
+
 		Set<Integer> ids = new HashSet<Integer>();
 		List<Order> orders = new ArrayList<Order>();
 		DrugDAO drugDAO = new DrugDAOImpl();
-		
-		try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement("select id from mydb.orders where user_id = ? order by id");) {
+
+		try (Connection connection = cp.takeConnection();
+				PreparedStatement st = connection
+						.prepareStatement("select id from mydb.orders where user_id = ? order by id");) {
 			st.setInt(1, userId);
 			ResultSet rs = st.executeQuery();
 			while (rs.next()) {
@@ -216,9 +209,11 @@ public class OrderDAOImpl implements OrderDAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
-		try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement("select drug_id, amount, order_date from mydb.orders where id = ?");) {
-			
+
+		try (Connection connection = cp.takeConnection();
+				PreparedStatement st = connection
+						.prepareStatement("select drug_id, amount, order_date from mydb.orders where id = ?");) {
+
 			for (Integer id : ids) {
 				st.setInt(1, id);
 				ResultSet rs = st.executeQuery();
@@ -237,13 +232,13 @@ public class OrderDAOImpl implements OrderDAO {
 				orders.add(order);
 
 			}
-			
+
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}	
-		
+		}
+
 		return orders;
-		
+
 	}
 
 }

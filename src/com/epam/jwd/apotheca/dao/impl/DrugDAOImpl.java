@@ -15,7 +15,7 @@ import com.epam.jwd.apotheca.pool.ConnectionPool;
 public class DrugDAOImpl implements DrugDAO {
 
 	private ConnectionPool cp = ConnectionPool.retrieve();
-	
+
 	@Override
 	public Drug save(Drug entity) {
 		boolean result = false;
@@ -24,25 +24,25 @@ public class DrugDAOImpl implements DrugDAO {
 		Integer price = entity.getPrice();
 		Double dose = entity.getDose();
 		Boolean prescription = entity.isPrescription();
-		
-		try (Connection connection = cp.takeConnection();Statement st = connection.createStatement();) {
+
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 			connection.setAutoCommit(false);
-			String sql = "INSERT INTO mydb.drugs(name,quantity,price,dose,prescription) VALUES ('" + name + "'," + String.valueOf(quantity) + "," + String.valueOf(price)
-			+ "," + String.valueOf(dose) + "," + (prescription ? "1" : "0") + ")";
+			String sql = "INSERT INTO mydb.drugs(name,quantity,price,dose,prescription) VALUES ('" + name + "',"
+					+ String.valueOf(quantity) + "," + String.valueOf(price) + "," + String.valueOf(dose) + ","
+					+ (prescription ? "1" : "0") + ")";
 			System.out.println(sql);
 			result = st.executeUpdate(sql) > 0;
 			connection.commit();
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		Drug drug = null;
 		if (result) {
-			drug = findDrug(name,dose);
+			drug = findDrug(name, dose);
 		}
-		
+
 		return drug;
 	}
 
@@ -53,7 +53,8 @@ public class DrugDAOImpl implements DrugDAO {
 
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 
-			ResultSet rs = st.executeQuery("select id,name,quantity,price,dose,prescription from mydb.drugs order by id" );
+			ResultSet rs = st
+					.executeQuery("select id,name,quantity,price,dose,prescription from mydb.drugs order by id");
 			while (rs.next()) {
 				drugs.add(readDrug(rs));
 			}
@@ -62,16 +63,18 @@ public class DrugDAOImpl implements DrugDAO {
 			e.printStackTrace();
 		}
 		return drugs;
-		
+
 	}
-	
+
 	public List<Drug> findPrescripted() {
 
 		List<Drug> drugs = new ArrayList<Drug>();
 
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 
-			ResultSet rs = st.executeQuery("select id,name,quantity,price,dose,prescription from mydb.drugs where prescription = " + 1 + " order by id" );
+			ResultSet rs = st.executeQuery(
+					"select id,name,quantity,price,dose,prescription from mydb.drugs where prescription = " + 1
+							+ " order by id");
 			while (rs.next()) {
 				drugs.add(readDrug(rs));
 			}
@@ -80,7 +83,7 @@ public class DrugDAOImpl implements DrugDAO {
 			e.printStackTrace();
 		}
 		return drugs;
-		
+
 	}
 
 	private Drug readDrug(ResultSet rs) throws SQLException {
@@ -96,16 +99,14 @@ public class DrugDAOImpl implements DrugDAO {
 
 	@Override
 	public List<Drug> findAllById(Integer id) {
-		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	public List<Drug> findByRange(Integer start, Integer end) {
 
 		List<Drug> drugs = new ArrayList<Drug>();
-		
+
 		String sql = "select id,name,quantity,price,dose,prescription from mydb.drugs order by id asc limit ?,?";
-		//"SELECT * FROM DRUGS WHERE ID BETWEEN ? AND ?"
 
 		try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement(sql);) {
 
@@ -113,7 +114,7 @@ public class DrugDAOImpl implements DrugDAO {
 			st.setInt(2, end);
 			ResultSet rs = st.executeQuery();
 			while (rs.next()) {
-				
+
 				drugs.add(readDrug(rs));
 			}
 			rs.close();
@@ -121,15 +122,15 @@ public class DrugDAOImpl implements DrugDAO {
 			e.printStackTrace();
 		}
 		return drugs;
-		
+
 	}
-	
+
 	public List<Drug> findPrescriptedByRange(Integer start, Integer end) {
 
 		List<Drug> drugs = new ArrayList<Drug>();
-		
-		String sql = "select id,name,quantity,price,dose,prescription from mydb.drugs where prescription = " + 1 + " order by id asc limit ?,?";
-		//"SELECT * FROM DRUGS WHERE ID BETWEEN ? AND ?"
+
+		String sql = "select id,name,quantity,price,dose,prescription from mydb.drugs where prescription = " + 1
+				+ " order by id asc limit ?,?";
 
 		try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement(sql);) {
 
@@ -137,7 +138,7 @@ public class DrugDAOImpl implements DrugDAO {
 			st.setInt(2, end);
 			ResultSet rs = st.executeQuery();
 			while (rs.next()) {
-				
+
 				drugs.add(readDrug(rs));
 			}
 			rs.close();
@@ -145,18 +146,18 @@ public class DrugDAOImpl implements DrugDAO {
 			e.printStackTrace();
 		}
 		return drugs;
-		
+
 	}
 
 	@Override
 	public Drug update(Drug entity) {
 		boolean result = false;
 
-		try (Connection connection = cp.takeConnection();Statement st = connection.createStatement();) {
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 			connection.setAutoCommit(false);
-			result = st.executeUpdate(
-					"update mydb.drugs set quantity = " + entity.getQuantity()
-							+ ", price = " + entity.getPrice() + ", prescription = " + (entity.isPrescription() ? "1" : "0") + " where id = " + entity.getId()) > 0;
+			result = st.executeUpdate("update mydb.drugs set quantity = " + entity.getQuantity() + ", price = "
+					+ entity.getPrice() + ", prescription = " + (entity.isPrescription() ? "1" : "0") + " where id = "
+					+ entity.getId()) > 0;
 			connection.commit();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -167,7 +168,7 @@ public class DrugDAOImpl implements DrugDAO {
 
 	@Override
 	public boolean delete(Integer id) {
-		
+
 		String query = "delete from mydb.drugs where id = " + id;
 		boolean result = false;
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
@@ -175,30 +176,31 @@ public class DrugDAOImpl implements DrugDAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		return result;
 	}
 
 	@Override
 	public Drug findById(Integer id) {
-		
+
 		List<Drug> drugs = findByIds(id);
 		return drugs.size() == 0 ? null : drugs.get(0);
 	}
-	
+
 	public List<Drug> findByIds(Integer... ids) {
 		List<Drug> drugs = new ArrayList<Drug>();
 		String idsStr = "";
-		for ( Integer id : ids ) {
+		for (Integer id : ids) {
 			idsStr += String.valueOf(id) + ",";
 		}
 		idsStr = idsStr.substring(0, idsStr.length() - 1);
-		String query = "select id,name,quantity,price,dose,prescription from mydb.drugs where id "+ (ids.length == 1 ? " = ?" : "in (" + idsStr + ")");
+		String query = "select id,name,quantity,price,dose,prescription from mydb.drugs where id "
+				+ (ids.length == 1 ? " = ?" : "in (" + idsStr + ")");
 		try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement(query);) {
-			if ( ids.length == 1 ) {
+			if (ids.length == 1) {
 				st.setInt(1, ids[0]);
 			}
-			
+
 			ResultSet rs = st.executeQuery();
 			while (rs.next()) {
 				drugs.add(readDrug(rs));
@@ -209,13 +211,15 @@ public class DrugDAOImpl implements DrugDAO {
 		}
 		return drugs;
 	}
-	
+
 	public List<Drug> findByName(String name) {
 		List<Drug> drugs = new ArrayList<Drug>();
 
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 
-			ResultSet rs = st.executeQuery("select id,name,quantity,price,dose,prescription from mydb.drugs WHERE NAME = '" + name + "' order by id");
+			ResultSet rs = st
+					.executeQuery("select id,name,quantity,price,dose,prescription from mydb.drugs WHERE NAME = '"
+							+ name + "' order by id");
 			while (rs.next()) {
 				drugs.add(readDrug(rs));
 			}
@@ -226,21 +230,22 @@ public class DrugDAOImpl implements DrugDAO {
 
 		return drugs;
 	}
-	
+
 	public Drug findDrug(String name, Double dose) {
 
 		Drug drug = null;
 
-		try (Connection connection = cp.takeConnection();PreparedStatement st = connection.prepareStatement("select id,name,quantity,price,dose,prescription from mydb.drugs where name = ? and dose = ?");) {
+		try (Connection connection = cp.takeConnection();
+				PreparedStatement st = connection.prepareStatement(
+						"select id,name,quantity,price,dose,prescription from mydb.drugs where name = ? and dose = ?");) {
 			st.setString(1, name);
 			st.setDouble(2, dose);
 			ResultSet rs = st.executeQuery();
-			if ( rs.next() ) {
+			if (rs.next()) {
 				drug = readDrug(rs);
 			}
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

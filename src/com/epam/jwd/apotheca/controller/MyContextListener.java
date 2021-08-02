@@ -38,10 +38,9 @@ public class MyContextListener implements ServletContextListener {
 		context.setAttribute("recipeService", recipeService);
 		OrderManagerService orderService = new OrderManagerService();
 		context.setAttribute("orderService", orderService);
-		
-		// ConnectionPool.retrieve();
+
 		Locale.setDefault(Locale.US);
-	
+
 	}
 
 }

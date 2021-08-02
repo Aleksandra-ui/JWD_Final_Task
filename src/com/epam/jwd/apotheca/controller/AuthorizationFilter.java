@@ -20,7 +20,6 @@ public class AuthorizationFilter implements Filter {
 
 	@Override
 	public void destroy() {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -28,20 +27,19 @@ public class AuthorizationFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		System.out.println("before authorization filter");
-		
-		HttpSession session = ((HttpServletRequest)request).getSession();
-		User user = (User)session.getAttribute("user");
-		if (user==null) {
-			((HttpServletResponse)response).sendRedirect(APOTHECA_LOGON_PAGE_JSP);
-		} 
+
+		HttpSession session = ((HttpServletRequest) request).getSession();
+		User user = (User) session.getAttribute("user");
+		if (user == null) {
+			((HttpServletResponse) response).sendRedirect(APOTHECA_LOGON_PAGE_JSP);
+		}
 		chain.doFilter(request, response);
 		System.out.println("after authorization filter");
-		
+
 	}
 
 	@Override
 	public void init(FilterConfig arg0) throws ServletException {
-		// TODO Auto-generated method stub
 
 	}
 

@@ -21,14 +21,13 @@ public class UserDAOImpl implements UserDAO {
 		try {
 			cp.init();
 		} catch (CouldNotInitializeConnectionPoolException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
 	@Override
 	public User save(User entity) {
-		return createUser(entity) ;
+		return createUser(entity);
 	}
 
 	@Override
@@ -36,7 +35,8 @@ public class UserDAOImpl implements UserDAO {
 
 		boolean result = false;
 
-		try (Connection connection = cp.takeConnection();PreparedStatement st = connection.prepareStatement("delete from mydb.users where id = ?");) {
+		try (Connection connection = cp.takeConnection();
+				PreparedStatement st = connection.prepareStatement("delete from mydb.users where id = ?");) {
 			connection.setAutoCommit(false);
 			st.setInt(1, id);
 
@@ -48,32 +48,32 @@ public class UserDAOImpl implements UserDAO {
 		}
 
 		return result;
-		
+
 	}
 
 	@Override
 	public List<User> findAll() {
-		return  getUsers();
+		return getUsers();
 	}
 
 	@Override
 	public List<User> findAllById(Integer id) {
 		return getUsers(id);
 	}
-	
+
 	@Override
 	public User findById(Integer id) {
-		
+
 		List<User> users = getUsers(id);
 		return users.isEmpty() ? null : users.get(0);
-		
+
 	}
 
 	@Override
 	public User update(User entity) {
 		boolean result = false;
 
-		try (Connection connection = cp.takeConnection();Statement st = connection.createStatement();) {
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 			connection.setAutoCommit(false);
 			result = st.executeUpdate(
 					"update mydb.users set name = '" + entity.getName() + "', role_id = '" + entity.getRole().getId()
@@ -93,9 +93,6 @@ public class UserDAOImpl implements UserDAO {
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "root", "root");
 				Statement st = conn.createStatement();) {
 			conn.setAutoCommit(false);
-			// Statement st = conn.createStatement();
-//			System.out
-//					.println(st.executeUpdate("INSERT INTO mydb.users(name,role_id,password) VALUES ('a',3,'a')"));
 			System.out.println(st.executeUpdate("update mydb.users set name = 'b' where id = 2"));
 			System.out.println(st.executeUpdate("delete from mydb.users where id = 3;"));
 			ResultSet rs = st.executeQuery("SELECT * FROM USERS WHERE ROLE_ID = 3");
@@ -106,35 +103,27 @@ public class UserDAOImpl implements UserDAO {
 				user.setPassword(rs.getString("password"));
 				user.setId(rs.getInt("id"));
 				System.out.println(user);
-				/*
-				 * System.out.print(rs.getString("name") + " ");
-				 * System.out.println(rs.getInt("id"));
-				 */
 			}
 			conn.commit();
 			conn.rollback();
 			rs.close();
-			/*
-			 * st.close(); conn.close();
-			 */
-
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		System.out.println("helloworld");
 	}
 
-	public List<User> getUsers(Integer...id) {
+	public List<User> getUsers(Integer... id) {
 
 		List<User> users = new ArrayList<User>();
 
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 
 			connection.setAutoCommit(false);
-			ResultSet rs = st.executeQuery("select u.id, u.name, u.password, r.id, r.name, r.permission from mydb.users u "
-					+ "join mydb.roles r on r.id = u.role_id "
-					+ (id.length > 0 ? "where u.id = " + id[0] : "") + " order by u.id");
+			ResultSet rs = st
+					.executeQuery("select u.id, u.name, u.password, r.id, r.name, r.permission from mydb.users u "
+							+ "join mydb.roles r on r.id = u.role_id " + (id.length > 0 ? "where u.id = " + id[0] : "")
+							+ " order by u.id");
 			while (rs.next()) {
 				User user = new User();
 				Role role = new Role();
@@ -156,7 +145,7 @@ public class UserDAOImpl implements UserDAO {
 		return users;
 
 	}
-	
+
 	public User getUser(String name) {
 
 		List<User> users = new ArrayList<User>();
@@ -164,9 +153,9 @@ public class UserDAOImpl implements UserDAO {
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 
 			connection.setAutoCommit(false);
-			ResultSet rs = st.executeQuery("select u.id, u.name, u.password, r.id, r.name, r.permission from mydb.users u "
-					+ "join mydb.roles r on r.id = u.role_id "
-					+ "where u.name = '" + name + "' order by u.id");
+			ResultSet rs = st
+					.executeQuery("select u.id, u.name, u.password, r.id, r.name, r.permission from mydb.users u "
+							+ "join mydb.roles r on r.id = u.role_id " + "where u.name = '" + name + "' order by u.id");
 			while (rs.next()) {
 				Role role = new Role();
 				role.setId(rs.getInt("r.id"));
@@ -199,14 +188,13 @@ public class UserDAOImpl implements UserDAO {
 
 		boolean result = false;
 
-		try (Connection connection = cp.takeConnection();Statement st = connection.createStatement();) {
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 			connection.setAutoCommit(false);
 			result = st.executeUpdate("insert into mydb.users(name,role_id,password) values ('" + name + "'," + role_id
 					+ ",'" + password + "')") > 0;
 			connection.commit();
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -222,7 +210,8 @@ public class UserDAOImpl implements UserDAO {
 
 		boolean result = false;
 
-		try (Connection connection = cp.takeConnection();PreparedStatement st = connection.prepareStatement("delete from mydb.users where name = ?");) {
+		try (Connection connection = cp.takeConnection();
+				PreparedStatement st = connection.prepareStatement("delete from mydb.users where name = ?");) {
 			connection.setAutoCommit(false);
 			st.setString(1, name);
 
@@ -230,7 +219,6 @@ public class UserDAOImpl implements UserDAO {
 			connection.commit();
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -242,7 +230,8 @@ public class UserDAOImpl implements UserDAO {
 
 		boolean result = false;
 
-		try (Connection connection = cp.takeConnection();PreparedStatement st = connection.prepareStatement("select * from mydb.users where name = ?");) {
+		try (Connection connection = cp.takeConnection();
+				PreparedStatement st = connection.prepareStatement("select * from mydb.users where name = ?");) {
 			connection.setAutoCommit(false);
 			st.setString(1, name);
 
@@ -251,19 +240,18 @@ public class UserDAOImpl implements UserDAO {
 			connection.commit();
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		return result;
 
 	}
-	
+
 	public List<User> findUsersByRole(Integer roleId) {
-		
+
 		List<User> users = new ArrayList<User>();
 		String query = "select u.id, u.name, u.password, r.id, r.name, r.permission from mydb.users u "
-						+ "join mydb.roles r on r.id = u.role_id where r.id = ? order by u.id";
+				+ "join mydb.roles r on r.id = u.role_id where r.id = ? order by u.id";
 
 		try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement(query);) {
 			st.setInt(1, roleId);
@@ -287,6 +275,5 @@ public class UserDAOImpl implements UserDAO {
 
 		return users;
 	}
-
 
 }

@@ -32,9 +32,8 @@
 		
 			<%
 			
-				User user = (User) session.getAttribute("user");%>
-
-			<% 
+				User user = (User) session.getAttribute("user");
+				 
 				DrugManagerService drugService = (DrugManagerService)application.getAttribute("drugService");
 				OrderManagerService orderService = (OrderManagerService)application.getAttribute("orderService");
 				String[] drugIdsStr = request.getParameter("drugIds").split(",");

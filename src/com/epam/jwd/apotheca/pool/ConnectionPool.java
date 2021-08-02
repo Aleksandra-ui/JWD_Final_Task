@@ -5,16 +5,16 @@ import java.sql.SQLException;
 
 public interface ConnectionPool {
 
-    Connection takeConnection() throws SQLException;
+	Connection takeConnection() throws SQLException;
 
-    void releaseConnection(Connection connection);
+	void releaseConnection(Connection connection);
 
-    void init() throws CouldNotInitializeConnectionPoolException;
+	void init() throws CouldNotInitializeConnectionPoolException;
 
-    void destroy();
+	void destroy();
 
-    static ConnectionPool retrieve() {
-    	return ConcurrentConnectionPool.INSTANCE;
-    }
+	static ConnectionPool retrieve() {
+		return ConcurrentConnectionPool.INSTANCE;
+	}
 
 }

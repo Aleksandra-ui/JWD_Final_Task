@@ -13,7 +13,6 @@ public class LastFilter implements Filter {
 
 	@Override
 	public void destroy() {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -21,14 +20,13 @@ public class LastFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
 			throws IOException, ServletException {
 		System.out.println("before last filter");
-		filterChain.doFilter(request, response);//передаём управл.след.фильтру
+		filterChain.doFilter(request, response);
 		System.out.println("after last filter");
-		
+
 	}
 
 	@Override
 	public void init(FilterConfig arg0) throws ServletException {
-		// TODO Auto-generated method stub
 
 	}
 

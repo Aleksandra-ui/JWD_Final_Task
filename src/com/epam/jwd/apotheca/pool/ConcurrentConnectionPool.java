@@ -20,8 +20,8 @@ public class ConcurrentConnectionPool implements ConnectionPool {
 	private static final int CONNECTIONS_GROW_FACTOR = 4;
 
 	private final AtomicBoolean initialized;
-	private final Queue<ProxyConnection> availableConnections;//only unused connections
-	private AtomicInteger connectionsOpened;//all connections' amount
+	private final Queue<ProxyConnection> availableConnections;// only unused connections
+	private AtomicInteger connectionsOpened;// all connections' amount
 	private final Lock lock;
 
 	private ConcurrentConnectionPool() {
@@ -41,30 +41,29 @@ public class ConcurrentConnectionPool implements ConnectionPool {
 			final int currentOpenedConnections = connectionsOpened.get();
 			if (availableConnections.size() <= currentOpenedConnections / CONNECTIONS_GROW_FACTOR
 					&& currentOpenedConnections < MAX_CONNECTIONS_AMOUNT) {
-				// grow connection pool size
 				connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "root", "root");
 				final ProxyConnection proxyConnection = new ProxyConnection(connection);
 				availableConnections.add(proxyConnection);
 				connectionsOpened.getAndIncrement();
 				System.out.println("connection added, available connections: " + availableConnections.size()
 						+ ", connections opened: " + connectionsOpened.get());
-	
-			} else if (availableConnections.size() == 0 && connection==null) {
+
+			} else if (availableConnections.size() == 0 && connection == null) {
 				System.out.println("no available connections");
 			} else {
-				System.out.println("available connections: " + availableConnections.size()
-				+ ", connections opened: " + connectionsOpened.get());
+				System.out.println("available connections: " + availableConnections.size() + ", connections opened: "
+						+ connectionsOpened.get());
 			}
 		} finally {
 			lock.unlock();
 		}
-		
+
 		return connection;
 	}
 
 	@Override
 	public void releaseConnection(Connection connection) {
-		
+
 		lock.lock();
 		try {
 			if (connection != null) {
@@ -73,11 +72,11 @@ public class ConcurrentConnectionPool implements ConnectionPool {
 				} else {
 					System.out.println("can't release connection");
 				}
-			} 
+			}
 		} finally {
 			lock.unlock();
 		}
-		
+
 	}
 
 	@Override
@@ -99,7 +98,7 @@ public class ConcurrentConnectionPool implements ConnectionPool {
 					throw new CouldNotInitializeConnectionPoolException("failed to open connection", e);
 				}
 				connectionsOpened.set(INIT_CONNECTIONS_AMOUNT);
-			} 
+			}
 		} finally {
 			lock.unlock();
 		}
@@ -119,7 +118,7 @@ public class ConcurrentConnectionPool implements ConnectionPool {
 				}
 				// close not available too
 				deregisterDrivers();
-			} 
+			}
 		} finally {
 			lock.unlock();
 		}
@@ -151,9 +150,9 @@ public class ConcurrentConnectionPool implements ConnectionPool {
 			}
 		}
 	}
-	
+
 	public static void main(String[] args) throws CouldNotInitializeConnectionPoolException {
 		ConnectionPool.retrieve().init();
-		
+
 	}
 }

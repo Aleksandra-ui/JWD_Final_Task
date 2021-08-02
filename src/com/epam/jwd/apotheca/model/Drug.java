@@ -1,6 +1,6 @@
 package com.epam.jwd.apotheca.model;
 
-public class Drug  implements Entity {
+public class Drug implements Entity {
 
 	private Integer id;
 	private String name;
@@ -8,44 +8,56 @@ public class Drug  implements Entity {
 	private Integer price;
 	private Double dose;
 	private Boolean prescription;
-	
+
 	@Override
 	public Integer getId() {
 		return id;
 	}
+
 	public void setId(Integer id) {
 		this.id = id;
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public Integer getQuantity() {
 		return quantity;
 	}
+
 	public void setQuantity(Integer quantity) {
 		this.quantity = quantity;
 	}
+
 	public Integer getPrice() {
 		return price;
 	}
+
 	public void setPrice(Integer price) {
 		this.price = price;
 	}
+
 	public Double getDose() {
 		return dose;
 	}
+
 	public void setDose(Double dose) {
 		this.dose = dose;
 	}
+
 	public boolean isPrescription() {
 		return prescription;
 	}
+
 	public void setPrescription(boolean prescription) {
 		this.prescription = prescription;
 	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -58,6 +70,7 @@ public class Drug  implements Entity {
 		result = prime * result + ((quantity == null) ? 0 : quantity.hashCode());
 		return result;
 	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -99,14 +112,11 @@ public class Drug  implements Entity {
 			return false;
 		return true;
 	}
+
 	@Override
 	public String toString() {
 		return "Drug [id=" + id + ", name=" + name + ", quantity=" + quantity + ", price=" + price + ", dose=" + dose
 				+ ", prescription=" + prescription + "]";
 	}
-	
-	
 
-	
-	
 }

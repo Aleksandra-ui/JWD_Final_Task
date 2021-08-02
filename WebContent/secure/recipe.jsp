@@ -20,17 +20,6 @@
 
 <script type="text/javascript">
 	drugIds = new Array(); 
-// 	a = window.location.href; //link to current page
-// 	paramLine = a.substring(a.indexOf('?') + 1);
-// 	params = paramLine.split("&");
-// 	const DRUG_ID = "drugIds=";
-// 	for ( param of params ) {
-// 		if (param.startsWith(DRUG_ID)) {
-// 			drugIds = param.substring(param.indexOf(DRUG_ID) + DRUG_ID.length + 1).split(","); //array of ids of chosen drugs
-// 		}
-// 	}
-
-	
 </script>
 
 <body onload="readDrugs();fillDaySelect();/*fillWithDrugIds()*/">
@@ -63,12 +52,10 @@
 				drugIds.push(drugId.value);
 				var opt = document.createElement("option");
 				var drugName = document.getElementById("checkbox" + drugId.value);
-				opt.text = drugName.value; //document.getElementById("TextBox4").value;
+				opt.text = drugName.value;
 				opt.id = "selectedDrug" + drugId.value;
 				recipe.options.add(opt);
-// 				recipe.style.display = 'inline-block';
 				button.style.display = 'inline-block';
-// 				button.style.display = 'inline-block';
 				div.style.display = 'inline-block';
 				
 			}
@@ -80,7 +67,6 @@
 				
 				recipe.removeChild(opt);
 				if ( recipe.options.length == 0){
-// 					recipe.style.display = 'none';
 					button.style.display = 'none';
 					div.style.display = 'none';
 				}
@@ -126,54 +112,19 @@
 		
 	}
 	
-// 	function fillWithDrugIds(){
-// 		var select = document.getElementById("ListBox1");
-// 		var arr = select.options;
-// 		var unique = true;
-		
-// 		if ( drugIds.length > 0 ) {
-// 			select.style.display="inline-block";
-// 		}	
-		
-// 		for ( id of drugIds ) {
-// 			var opt = document.createElement("option");
-// 			var drugName = document.getElementById("checkbox" + id);
-// 			opt.text = drugName.value;
-// 			opt.id = "selectedDrug" + id;
-// 			for (i = 0; i < arr.length; i++) {
-// 				  if (arr[i].id == opt.id) {
-// 					  unique = false;
-// 				  }
-// 			}
-// 			if ( unique ) {
-// 				document.getElementById("ListBox1").options.add(opt);	
-// 			}
-// 		}
-	
-// 	}
-	
 	function displayParams() {
         params = window.location.href;
-        //alert(params);
         params = "" + params.substring(params.indexOf('?') + 1);
         pp = params.split('&');
-        //alert(pp);
         retVal = [];
         for (i = 0; i < pp.length; i++) {
             keyVal = pp[i].split("=");
-            //alert("Key = " + keyVal[0] + "\nValue = " + keyVal[1]);
             retVal.push(keyVal[0] + " : " + keyVal[1]);
         }
- 		//alert("RetVal " + retVal);
-        
     }
 	
 	function changeSelectVisibility() {
 		
-// 		var select = document.getElementById("ListBox1");
-// 		var button = document.getElementById("Submit1");
-// 		select.style.display = (drugIds.length == 0) ? 'none' : 'inline-block'; 
-// 		button.style.display = (drugIds.length == 0) ? 'none' : 'inline-block';
 		var div = document.getElementById("div");
  		div.style.display = (drugIds.length == 0) ? 'none' : 'inline-block'; 
 		
@@ -204,13 +155,11 @@
 	
 	function fillDaySelect() {
 		
-		//alert("select");
 		var year = document.getElementById('Year');
 		var month = document.getElementById('Month');
 		var day = document.getElementById('Day');
 		var yearOpt = year.options[year.selectedIndex];
 		var monthOpt = month.options[month.selectedIndex];
-		//alert(monthOpt);
 		if (monthOpt.id == 'february'){
 			var dayOpt = document.getElementById('30');
 			dayOpt.hidden = true;
@@ -237,20 +186,17 @@
 	}
 	
 	function gatherDrugIds() {
-		//alert("i");
 		var select = document.getElementById("ListBox1");
 	    var drugsContainer = select.getElementsByTagName('option');
-	    //alert("k");
 	    var hiddenValue = "";
-	    //alert(hiddenValue);
-	    
+	  
 	    for (var idx = 0; idx < drugsContainer.length; idx++) {
 	    	hiddenValue += drugsContainer[idx].id.substr(12); 
 	    	   if (idx < (drugsContainer.length -1))  {
 	               hiddenValue += ",";
 	           }
 	    }
-	    //alert(hiddenValue);
+	   
 	    document.getElementById("selectedIds").value = hiddenValue; 
 	}
 	
@@ -283,12 +229,6 @@
 		Integer pagesCount = drugs.size() / pageSize + ((drugs.size() % pageSize) == 0 ? 0 : 1);
 		request.setAttribute("pagesCount", pagesCount);
 		%>
-		
-<%-- 		<c:set scope="request" var="pagesCount" value="${drugs.size() / pageSize + ((drugs.size() % pageSize) == 0 ? 0 : 1)}"/> --%>
-		
-<%-- 		<c:out value="${param.pageSize}"/> --%>
-<%-- 		<c:set scope="request" var="currentPage" value="${empty param.currentPage ? 1 : param.currentPage}"/> --%>
-<%-- 		<c:set scope="request" var="pageSize" value="${empty param.pageSize ? 5 : param.pageSize}"/> --%>
 		
 		<c:forEach var="displayPage" begin="1" end="${pagesCount}">
 			<c:choose>

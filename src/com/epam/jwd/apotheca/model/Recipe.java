@@ -1,26 +1,28 @@
 package com.epam.jwd.apotheca.model;
 
-import java.sql.Timestamp;
 import java.sql.Date;
 import java.util.List;
 
 public class Recipe implements Entity {
 
-	
 	private Integer id;
 	private Integer userId;
 	private List<Integer> drugIds;
 	private Integer doctorId;
 	private Date expieryDate;
+
 	public Integer getId() {
 		return id;
 	}
+
 	public void setId(Integer id) {
 		this.id = id;
 	}
+
 	public Integer getUserId() {
 		return userId;
 	}
+
 	public void setUserId(Integer userId) {
 		this.userId = userId;
 	}
@@ -28,23 +30,27 @@ public class Recipe implements Entity {
 	public List<Integer> getDrugIds() {
 		return drugIds;
 	}
+
 	public void setDrugIds(List<Integer> drugIds) {
 		this.drugIds = drugIds;
 	}
+
 	public Integer getDoctorId() {
 		return doctorId;
 	}
+
 	public void setDoctorId(Integer doctorId) {
 		this.doctorId = doctorId;
 	}
+
 	public Date getExpieryDate() {
 		return expieryDate;
 	}
+
 	public void setExpieryDate(Date expieryDate) {
 		this.expieryDate = expieryDate;
 	}
-	
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -56,6 +62,7 @@ public class Recipe implements Entity {
 		result = prime * result + ((userId == null) ? 0 : userId.hashCode());
 		return result;
 	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -92,12 +99,11 @@ public class Recipe implements Entity {
 			return false;
 		return true;
 	}
+
 	@Override
 	public String toString() {
 		return "Recipe [id=" + id + ", userId=" + userId + ", drugIds=" + drugIds + ", doctorId=" + doctorId
 				+ ", expieryDate=" + expieryDate + "]";
 	}
-	
-	
-	
+
 }

@@ -2,7 +2,6 @@ package com.epam.jwd.apotheca.dao.impl;
 
 import java.util.ArrayList;
 import java.sql.Date;
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -12,11 +11,8 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.epam.jwd.apotheca.dao.api.DrugDAO;
 import com.epam.jwd.apotheca.dao.api.RecipeDAO;
 import com.epam.jwd.apotheca.dao.api.UserDAO;
-import com.epam.jwd.apotheca.dao.impl.RecipeDAOImpl;
-import com.epam.jwd.apotheca.dao.impl.UserDAOImpl;
 import com.epam.jwd.apotheca.model.Recipe;
 import com.epam.jwd.apotheca.model.User;
 import com.epam.jwd.apotheca.pool.ConnectionPool;
@@ -107,7 +103,6 @@ public class RecipeDAOTest {
 		try {
 			utilDate = format.parse("2021/09/10");
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	    Date sqlDate = new Date(utilDate.getTime());
