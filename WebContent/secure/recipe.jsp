@@ -1,7 +1,6 @@
 <%@page import="com.epam.jwd.apotheca.controller.DrugManagerService"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8" import="java.util.ResourceBundle, java.util.List, com.epam.jwd.apotheca.model.Drug, com.epam.jwd.apotheca.model.User, com.epam.jwd.apotheca.controller.UserManagerService,
-    com.epam.jwd.apotheca.dao.api.UserDAO, java.util.stream.Collectors, java.util.stream.Stream, java.util.function.Predicate, java.util.ArrayList" %>
+    pageEncoding="UTF-8" import="java.util.ResourceBundle,java.util.List,com.epam.jwd.apotheca.model.Drug,com.epam.jwd.apotheca.model.User,com.epam.jwd.apotheca.controller.UserManagerService,com.epam.jwd.apotheca.dao.api.UserDAO,java.util.stream.Collectors,java.util.stream.Stream,java.util.function.Predicate,java.util.ArrayList" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>   
 <%@ include file = "/mainMenu.jsp" %>

@@ -1,4 +1,4 @@
-package com.epam.jwd.apotheca.dao.impl;
+package test.com.epam.jwd.apotheca.dao.impl;
 
 import java.util.ArrayList;
 import java.sql.Date;
@@ -15,6 +15,8 @@ import org.junit.Test;
 import com.epam.jwd.apotheca.dao.api.DrugDAO;
 import com.epam.jwd.apotheca.dao.api.RecipeDAO;
 import com.epam.jwd.apotheca.dao.api.UserDAO;
+import com.epam.jwd.apotheca.dao.impl.RecipeDAOImpl;
+import com.epam.jwd.apotheca.dao.impl.UserDAOImpl;
 import com.epam.jwd.apotheca.model.Recipe;
 import com.epam.jwd.apotheca.model.User;
 import com.epam.jwd.apotheca.pool.ConnectionPool;

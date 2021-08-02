@@ -1,4 +1,4 @@
-package com.epam.jwd.apotheca.dao.impl;
+package test.com.epam.jwd.apotheca.dao.impl;
 
 import org.junit.Assert;
 
@@ -13,6 +13,9 @@ import org.junit.Test;
 import com.epam.jwd.apotheca.dao.api.DrugDAO;
 import com.epam.jwd.apotheca.dao.api.OrderDAO;
 import com.epam.jwd.apotheca.dao.api.UserDAO;
+import com.epam.jwd.apotheca.dao.impl.DrugDAOImpl;
+import com.epam.jwd.apotheca.dao.impl.OrderDAOImpl;
+import com.epam.jwd.apotheca.dao.impl.UserDAOImpl;
 import com.epam.jwd.apotheca.model.Drug;
 import com.epam.jwd.apotheca.model.Order;
 import com.epam.jwd.apotheca.model.Role;

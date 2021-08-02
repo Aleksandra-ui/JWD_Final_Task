@@ -1,8 +1,7 @@
 <%@page import="com.epam.jwd.apotheca.controller.DrugManagerService"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"
-	import="java.util.ResourceBundle, java.util.List, com.epam.jwd.apotheca.model.Drug, com.epam.jwd.apotheca.model.User, com.epam.jwd.apotheca.controller.UserManagerService,
-    com.epam.jwd.apotheca.controller.RecipeManagerService, com.epam.jwd.apotheca.model.Recipe, java.util.Map, java.util.HashMap, java.sql.Date"%>
+	import="java.util.ResourceBundle,java.util.List,com.epam.jwd.apotheca.model.Drug,com.epam.jwd.apotheca.model.User,com.epam.jwd.apotheca.controller.UserManagerService,com.epam.jwd.apotheca.controller.RecipeManagerService,com.epam.jwd.apotheca.model.Recipe,java.util.Map,java.util.HashMap,java.sql.Date"%>
 <%--     <%@ taglib uri="" prefix="c" %> --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>

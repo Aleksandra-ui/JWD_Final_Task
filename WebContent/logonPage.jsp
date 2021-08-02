@@ -1,7 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"
-	import = "com.epam.jwd.apotheca.controller.UserManagerService, com.epam.jwd.apotheca.model.User,
-	 java.util.List, java.util.Calendar, com.epam.jwd.apotheca.model.Role, com.epam.jwd.apotheca.dao.api.UserDAO"%>
+	import = "com.epam.jwd.apotheca.controller.UserManagerService,com.epam.jwd.apotheca.model.User,java.util.List,java.util.Calendar,com.epam.jwd.apotheca.model.Role,com.epam.jwd.apotheca.dao.api.UserDAO"%>
 
 <!DOCTYPE html>
 <html>

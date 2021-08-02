@@ -1,6 +1,6 @@
 <%@page import="com.epam.jwd.apotheca.controller.DrugManagerService"%>
 <%@page import="com.epam.jwd.apotheca.dao.api.UserDAO"%>
-<%@page import="com.epam.jwd.apotheca.controller.UserManagerService, com.epam.jwd.apotheca.model.User, com.epam.jwd.apotheca.controller.RecipeManagerService,
+<%@page import="com.epam.jwd.apotheca.controller.UserManagerService,com.epam.jwd.apotheca.model.User,com.epam.jwd.apotheca.controller.RecipeManagerService,
 java.util.List, com.epam.jwd.apotheca.model.Recipe, com.epam.jwd.apotheca.model.Drug"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>

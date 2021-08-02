@@ -1,5 +1,5 @@
 <ul>
 	<c:forEach var="u" items="${users }">
-		<li>name: ${u.name} | password: ${u.password} | role: ${u.role.name }</li>				
+		<li>name: ${u.name} | role: ${u.role.name }</li>				
 	</c:forEach>
 </ul> 
