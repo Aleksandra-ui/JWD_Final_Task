@@ -14,10 +14,10 @@ import java.util.Set;
 
 import com.epam.jwd.apotheca.dao.api.DrugDAO;
 import com.epam.jwd.apotheca.dao.api.OrderDAO;
+import com.epam.jwd.apotheca.exception.CouldNotInitializeConnectionPoolException;
 import com.epam.jwd.apotheca.model.Drug;
 import com.epam.jwd.apotheca.model.Order;
 import com.epam.jwd.apotheca.pool.ConnectionPool;
-import com.epam.jwd.apotheca.pool.CouldNotInitializeConnectionPoolException;
 
 public class OrderDAOImpl implements OrderDAO {
 

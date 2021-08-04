@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.epam.jwd.apotheca.dao.api.RecipeDAO;
+import com.epam.jwd.apotheca.exception.CouldNotInitializeConnectionPoolException;
 import com.epam.jwd.apotheca.model.Recipe;
 import com.epam.jwd.apotheca.model.User;
 import com.epam.jwd.apotheca.pool.ConnectionPool;
-import com.epam.jwd.apotheca.pool.CouldNotInitializeConnectionPoolException;
 
 public class RecipeDAOImpl implements RecipeDAO {
 

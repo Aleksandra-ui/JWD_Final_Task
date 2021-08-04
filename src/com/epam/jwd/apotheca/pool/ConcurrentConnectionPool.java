@@ -12,6 +12,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import com.epam.jwd.apotheca.exception.CouldNotInitializeConnectionPoolException;
+
 public class ConcurrentConnectionPool implements ConnectionPool {
 	public static final ConcurrentConnectionPool INSTANCE = new ConcurrentConnectionPool();
 

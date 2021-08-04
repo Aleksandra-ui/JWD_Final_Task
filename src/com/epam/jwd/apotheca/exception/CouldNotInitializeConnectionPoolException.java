@@ -1,4 +1,4 @@
-package com.epam.jwd.apotheca.pool;
+package com.epam.jwd.apotheca.exception;
 
 public class CouldNotInitializeConnectionPoolException extends Exception {
 
