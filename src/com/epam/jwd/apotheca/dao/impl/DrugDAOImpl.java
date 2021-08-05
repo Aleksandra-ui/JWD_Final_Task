@@ -97,11 +97,6 @@ public class DrugDAOImpl implements DrugDAO {
 		return drug;
 	}
 
-	@Override
-	public List<Drug> findAllById(Integer id) {
-		return null;
-	}
-
 	public List<Drug> findByRange(Integer start, Integer end) {
 
 		List<Drug> drugs = new ArrayList<Drug>();

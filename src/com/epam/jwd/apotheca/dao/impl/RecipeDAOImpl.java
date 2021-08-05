@@ -6,10 +6,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import com.epam.jwd.apotheca.dao.api.DrugDAO;
 import com.epam.jwd.apotheca.dao.api.RecipeDAO;
 import com.epam.jwd.apotheca.exception.CouldNotInitializeConnectionPoolException;
+import com.epam.jwd.apotheca.model.Drug;
+import com.epam.jwd.apotheca.model.Order;
 import com.epam.jwd.apotheca.model.Recipe;
 import com.epam.jwd.apotheca.model.User;
 import com.epam.jwd.apotheca.pool.ConnectionPool;
@@ -28,22 +35,100 @@ public class RecipeDAOImpl implements RecipeDAO {
 
 	@Override
 	public List<Recipe> findAll() {
-		return null;
+		
+		List<Recipe> recipes = new ArrayList<Recipe>();
+		Set<Integer> ids = new HashSet<Integer>();
+
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement()) {
+
+			ResultSet rs = st.executeQuery("select id from mydb.recipe");
+			while (rs.next()) {
+				ids.add(rs.getInt(1));
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		try (Connection connection = cp.takeConnection();
+				PreparedStatement st = connection.prepareStatement(
+						"select user_id, drug_id, doctor_id, expiery_date from mydb.recipe where id = ?");) {
+
+			for (Integer id : ids) {
+				st.setInt(1, id);
+				ResultSet rs = st.executeQuery();
+				Recipe recipe = new Recipe();
+				List<Integer> drugIds = new ArrayList<>();
+				recipe.setId(id);
+				if (rs.next()) {
+					recipe.setUserId(rs.getInt("user_id"));
+					recipe.setExpieryDate(rs.getDate("expiery_date"));
+					recipe.setDoctorId(rs.getInt("doctor_id"));
+					drugIds.add(rs.getInt("drug_id"));
+				}
+				while (rs.next()) {
+					drugIds.add(rs.getInt("drug_id"));
+				}
+				recipe.setDrugIds(drugIds);
+				recipes.add(recipe);
+
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return recipes;
+		
 	}
 
 	@Override
-	public List<Recipe> findAllById(Integer id) {
-		return null;
-	}
-
-	@Override
-	public Recipe update(Recipe entity) {
-		return null;
+	public Recipe update(Recipe recipe) {
+		
+		boolean result = true;
+		String query = "update mydb.recipe set expiery_date = ? where id = ? and drug_id = ? and user_id = ?";
+		
+		try (Connection connection = cp.takeConnection();
+				PreparedStatement st = connection.prepareStatement(query)) {
+			connection.setAutoCommit(false);
+			st.setInt(2, recipe.getId());
+			st.setInt(4, recipe.getUserId());
+			st.setDate(1, recipe.getExpieryDate());
+			
+			for (Integer drugId : recipe.getDrugIds()) {
+				st.setInt(3, drugId);
+				if ( st.executeUpdate() <= 0 ) {
+					result = false;
+				}
+				connection.commit();
+			}			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return result ? recipe : null;
+		
 	}
 
 	@Override
 	public boolean delete(Integer id) {
-		return false;
+		
+		boolean result = false;
+		String query = "delete from mydb.recipe where id = ?";
+
+		try (Connection connection = cp.takeConnection();
+				PreparedStatement st = connection.prepareStatement(query)) {
+			connection.setAutoCommit(false);
+			st.setInt(1, id);
+			result = st.executeUpdate() > 0;
+			connection.commit();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return result;
+	
 	}
 
 	@Override
@@ -185,11 +270,6 @@ public class RecipeDAOImpl implements RecipeDAO {
 			return true;
 		}
 
-	}
-
-	public static void main(String[] args) {
-		RecipeDAOImpl r = new RecipeDAOImpl();
-		System.out.println(r.getMaxId());
 	}
 
 }

@@ -17,6 +17,8 @@ import com.epam.jwd.apotheca.pool.ConnectionPool;
 
 public class UserDAOImpl implements UserDAO {
 
+	private ConnectionPool cp = ConnectionPool.retrieve();
+	
 	public UserDAOImpl() {
 		try {
 			cp.init();
@@ -26,8 +28,8 @@ public class UserDAOImpl implements UserDAO {
 	}
 
 	@Override
-	public User save(User entity) {
-		return createUser(entity);
+	public User save(User user) {
+		return createUser(user.getName(), user.getRole().getId(), user.getPassword());
 	}
 
 	@Override
@@ -57,11 +59,6 @@ public class UserDAOImpl implements UserDAO {
 	}
 
 	@Override
-	public List<User> findAllById(Integer id) {
-		return getUsers(id);
-	}
-
-	@Override
 	public User findById(Integer id) {
 
 		List<User> users = getUsers(id);
@@ -85,32 +82,6 @@ public class UserDAOImpl implements UserDAO {
 		}
 
 		return result ? entity : null;
-	}
-
-	private ConnectionPool cp = ConnectionPool.retrieve();
-
-	public static void main(String[] args) {
-		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "root", "root");
-				Statement st = conn.createStatement();) {
-			conn.setAutoCommit(false);
-			System.out.println(st.executeUpdate("update mydb.users set name = 'b' where id = 2"));
-			System.out.println(st.executeUpdate("delete from mydb.users where id = 3;"));
-			ResultSet rs = st.executeQuery("SELECT * FROM USERS WHERE ROLE_ID = 3");
-			while (rs.next()) {
-				User user = new User();
-				user.setName(rs.getString("name"));
-				user.setRole(new Role());
-				user.setPassword(rs.getString("password"));
-				user.setId(rs.getInt("id"));
-				System.out.println(user);
-			}
-			conn.commit();
-			conn.rollback();
-			rs.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		System.out.println("helloworld");
 	}
 
 	public List<User> getUsers(Integer... id) {
@@ -175,12 +146,6 @@ public class UserDAOImpl implements UserDAO {
 		}
 
 		return users.isEmpty() ? null : users.get(0);
-
-	}
-
-	public User createUser(User user) {
-
-		return createUser(user.getName(), user.getRole().getId(), user.getPassword());
 
 	}
 

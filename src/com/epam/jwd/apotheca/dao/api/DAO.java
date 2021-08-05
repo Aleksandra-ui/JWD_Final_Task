@@ -9,8 +9,8 @@ public interface DAO<T extends Entity> {
     T save(T entity);
 
     List<T> findAll();
-
-    List<T> findAllById(Integer id);
+//
+//    List<T> findAllById(Integer id);
 
     T update(T entity);
 

@@ -1,4 +1,4 @@
-<%@page import="com.epam.jwd.apotheca.controller.UserManagerService, com.epam.jwd.apotheca.model.User"%>
+<%@page import="com.epam.jwd.apotheca.controller.UserManagerService, com.epam.jwd.apotheca.model.User, java.util.Locale, java.util.ResourceBundle"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
@@ -23,11 +23,13 @@
 	
 </style>
 
-
 	<%
 		UserManagerService userService = (UserManagerService)application.getAttribute("userService");
  		request.setAttribute("canPrescribe", userService.canPrescribe((User)session.getAttribute("user")));
  		request.setAttribute("canAddDrugs", userService.canAddDrugs((User)session.getAttribute("user")));
+	
+		Locale locale = new Locale("en", "US");
+		ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 	%>
 
 	<ul>
@@ -42,7 +44,7 @@
 			<li class="menu-item"><a href="/apotheca/secure/orders.jsp">Your orders</a></li>
 		</c:if> 
 		<c:if test="${canAddDrugs}">
-			<li class="menu-item"><a href="/apotheca/drugs.jsp">Create drug</a></li>
+			<li class="menu-item"><a href="/apotheca/secure/createDrug.jsp">Create drug</a></li>
 		</c:if> 
 		<li class="menu-item">
 			<c:choose>

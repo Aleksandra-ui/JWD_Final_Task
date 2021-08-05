@@ -81,7 +81,7 @@ public class OrderDAOImpl implements OrderDAO {
 
 		try (Connection connection = cp.takeConnection();
 				PreparedStatement st = connection.prepareStatement(
-						"select drug_id, amount, user_id, order_date from mydb.orders where id = ?");) {
+						"select drug_id, amount, user_id, order_date from mydb.orders where id = ?")) {
 
 			for (Integer id : ids) {
 				st.setInt(1, id);
@@ -111,21 +111,42 @@ public class OrderDAOImpl implements OrderDAO {
 	}
 
 	@Override
-	public List<Order> findAllById(Integer id) {
-		return null;
-	}
-
-	@Override
-	public Order update(Order entity) {
-		return null;
+	public Order update(Order order) {
+		
+		boolean result = true;
+		String query = "update mydb.orders set amount = ?, order_date = ?"
+				+ "where id = ? and drug_id = ? and user_id = ?";
+		
+		try (Connection connection = cp.takeConnection();
+				PreparedStatement st = connection.prepareStatement(query)) {
+			connection.setAutoCommit(false);
+			st.setInt(3, order.getId());
+			st.setInt(5, order.getUserId());
+			st.setDate(2, order.getDate());
+			
+			for (Map.Entry<Drug, Integer> e : order.getDrugs().entrySet()) {
+				st.setInt(4, e.getKey().getId());
+				st.setInt(1, e.getValue());
+				if ( st.executeUpdate() <= 0 ) {
+					result = false;
+				}
+				connection.commit();
+			}			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return result ? order : null;
+		
 	}
 
 	@Override
 	public boolean delete(Integer id) {
 		boolean result = false;
+		String query = "delete from mydb.orders where id = ?";
 
 		try (Connection connection = cp.takeConnection();
-				PreparedStatement st = connection.prepareStatement("delete from mydb.orders where id = ?");) {
+				PreparedStatement st = connection.prepareStatement(query)) {
 			connection.setAutoCommit(false);
 			st.setInt(1, id);
 

@@ -70,7 +70,7 @@ public class UserDAOTest {
 		role.setId(2);
 		role.setName("pharmacist");
 		user.setRole(role);
-		assert ((UserDAOImpl) userDAO).createUser(user) != null;
+		assert ((UserDAOImpl) userDAO).save(user) != null;
 		List<User> users = ((UserDAOImpl) userDAO).getUsers();
 		assert users.size() > 0;
 

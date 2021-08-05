@@ -1,4 +1,4 @@
-<%@page import="com.epam.jwd.apotheca.controller.DrugManagerService"%>
+<%@page import="com.epam.jwd.apotheca.controller.DrugManagerService, java.util.Locale"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"
 	import="java.util.ResourceBundle,java.util.List,com.epam.jwd.apotheca.model.Drug,com.epam.jwd.apotheca.model.User,com.epam.jwd.apotheca.controller.UserManagerService,com.epam.jwd.apotheca.controller.RecipeManagerService,com.epam.jwd.apotheca.model.Recipe,java.util.Map,java.util.HashMap,java.sql.Date"%>
@@ -9,7 +9,10 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title><%=ResourceBundle.getBundle("Drugs").getString("drugs.list")%></title>
+
+<%@ include file = "/mainMenu.jsp" %>
+
+<title><%=rb.getString("drugs.list")%></title>
 </head>
 <script type="text/javascript">
 	drugIds = new Array(); 
@@ -255,11 +258,10 @@
 		}
 	
 	</script>
-	
-	<%@ include file = "/mainMenu.jsp" %>
+
 	<div style="margin-top: 10px;"></div>
 
-	<span style="text-align: center;"><%=ResourceBundle.getBundle("Drugs").getString("drugs.welcome")%></span>
+	<span style="text-align: center;"><%=rb.getString("drugs.welcome")%></span>
 
 	<%
 	DrugManagerService service = (DrugManagerService) application.getAttribute("drugService");
@@ -420,7 +422,6 @@
 						<c:forEach items="${fn:split(param.drugIds,',')}" var="aDrug">
 							<c:if test="${aDrug == idStr}">
 								<option id="selectedDrug${idStr}" value="${idStr}">
-<%-- 									<c:set var="price"><script>document.write(${drug.price} * (localStorage.getItem("amount" + ${drug.id}) != null ? localStorage.getItem("amount" + ${drug.id}) : 1));</script></c:set> --%>
 									${drug.name}&nbsp;|&nbsp;${drug.dose}&nbsp;|&nbsp;${drug.price}&nbsp;|&nbsp;<script>document.write(localStorage.getItem("amount" + ${drug.id}) != null ? localStorage.getItem("amount" + ${drug.id}) : 1);</script>
 								</option>
 							</c:if>
