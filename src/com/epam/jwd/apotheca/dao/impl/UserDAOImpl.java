@@ -1,7 +1,6 @@
 package com.epam.jwd.apotheca.dao.impl;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -212,6 +211,7 @@ public class UserDAOImpl implements UserDAO {
 
 	}
 
+	@Override
 	public List<User> findUsersByRole(Integer roleId) {
 
 		List<User> users = new ArrayList<User>();

@@ -16,5 +16,7 @@ public interface UserDAO extends DAO<User> {
 	User findById(Integer id);
 	
 	List<User> findUsersByRole(Integer roleId);
+	
+	User getUser(String name);
 
 }

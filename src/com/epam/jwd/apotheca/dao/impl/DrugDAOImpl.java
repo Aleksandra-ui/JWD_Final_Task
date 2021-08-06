@@ -226,6 +226,7 @@ public class DrugDAOImpl implements DrugDAO {
 		return drugs;
 	}
 
+	@Override
 	public Drug findDrug(String name, Double dose) {
 
 		Drug drug = null;

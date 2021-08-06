@@ -8,8 +8,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.epam.jwd.apotheca.exception.CouldNotInitializeConnectionPoolException;
+import com.epam.jwd.apotheca.pool.ConnectionPool;
 
-public class ConcurrentConnectionTest {
+public class ConcurrentConnectionPoolTest {
 
 	private static ConnectionPool cp;
 

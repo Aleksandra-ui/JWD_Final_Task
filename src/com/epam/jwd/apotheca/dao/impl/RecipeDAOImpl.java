@@ -6,17 +6,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import com.epam.jwd.apotheca.dao.api.DrugDAO;
 import com.epam.jwd.apotheca.dao.api.RecipeDAO;
 import com.epam.jwd.apotheca.exception.CouldNotInitializeConnectionPoolException;
-import com.epam.jwd.apotheca.model.Drug;
-import com.epam.jwd.apotheca.model.Order;
 import com.epam.jwd.apotheca.model.Recipe;
 import com.epam.jwd.apotheca.model.User;
 import com.epam.jwd.apotheca.pool.ConnectionPool;
@@ -154,6 +149,7 @@ public class RecipeDAOImpl implements RecipeDAO {
 		return recipes;
 	}
 
+	@Override
 	public List<Recipe> findRecipeByDoctor(User doctor) {
 
 		String query = "select distinct r.id from mydb.recipe r"
@@ -250,6 +246,7 @@ public class RecipeDAOImpl implements RecipeDAO {
 		return recipeInDB;
 	}
 
+	@Override
 	public boolean deleteRecipe(Integer id, Integer userId, Integer drugId) {
 
 		String query = "delete from mydb.recipe where id = ? and user_id = ? and drug_id = ?";

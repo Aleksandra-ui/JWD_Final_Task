@@ -10,7 +10,7 @@ public interface DrugDAO extends DAO<Drug> {
 	
 	List<Drug> findByRange(Integer start, Integer end);
 	
-	Drug findDrug(String name, Double dose) ;
+	Drug findDrug(String name, Double dose);
 	
 	List<Drug> findByIds(Integer... ids);
 	

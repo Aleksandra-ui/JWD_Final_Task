@@ -213,6 +213,7 @@ public class OrderDAOImpl implements OrderDAO {
 
 	}
 
+	@Override
 	public List<Order> findOrdersByUser(Integer userId) {
 
 		Set<Integer> ids = new HashSet<Integer>();

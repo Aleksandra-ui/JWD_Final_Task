@@ -15,4 +15,6 @@ public interface RecipeDAO extends DAO<Recipe> {
 	
 	List<Recipe> findRecipeByDoctor(User doctor);
 	
+	boolean deleteRecipe(Integer id, Integer userId, Integer drugId);
+	
 }
