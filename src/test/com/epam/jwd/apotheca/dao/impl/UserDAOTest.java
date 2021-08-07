@@ -32,31 +32,33 @@ public class UserDAOTest {
 
 		boolean found = false;
 		for (User user : users) {
-			if ("b".equalsIgnoreCase(user.getName())) {
+			if ("Tatyana Lebedeva".equalsIgnoreCase(user.getName())) {
 				found = true;
 				break;
 			}
 		}
 
 		assert found;
-		System.gc();
 	}
 
 	@Test
 	public void testCreateUser() {
 
-		assert ((UserDAOImpl) userDAO).createUser("ccc", 3, "ccc") != null;
+		User user = ((UserDAOImpl) userDAO).createUser("ccc", 3, "ccc"); 
+		assert user != null;
 		List<User> users = ((UserDAOImpl) userDAO).getUsers();
 		assert users.size() > 0;
 
 		boolean found = false;
-		for (User user : users) {
-			if ("ccc".equalsIgnoreCase(user.getName())) {
+		for (User u : users) {
+			if ("ccc".equalsIgnoreCase(u.getName())) {
 				found = true;
 				break;
 			}
 		}
 		assert found;
+		
+		userDAO.delete(user.getId());
 
 	}
 
@@ -70,7 +72,8 @@ public class UserDAOTest {
 		role.setId(2);
 		role.setName("pharmacist");
 		user.setRole(role);
-		assert ((UserDAOImpl) userDAO).save(user) != null;
+		user = ((UserDAOImpl) userDAO).save(user);
+		assert user != null;
 		List<User> users = ((UserDAOImpl) userDAO).getUsers();
 		assert users.size() > 0;
 
@@ -82,6 +85,8 @@ public class UserDAOTest {
 			}
 		}
 		assert found;
+		
+		userDAO.delete(user.getId());
 
 	}
 
@@ -141,12 +146,12 @@ public class UserDAOTest {
 	public void testSave() {
 
 		User user = new User();
-		user.setName("in");
+		user.setName("abc");
 		Role role = new Role();
 		role.setId(2);
 		role.setName("pharmacist");
 		user.setRole(role);
-		user.setPassword("ni");
+		user.setPassword("abc");
 
 		user = userDAO.save(user);
 
@@ -208,7 +213,6 @@ public class UserDAOTest {
 	@Test
 	public void testFindUsersByRole() {
 		System.out.println(userDAO.findUsersByRole(UserDAO.PERM_CLIENT));
-		;
 	}
 
 }

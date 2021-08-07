@@ -178,7 +178,7 @@ public class OrderDAOImpl implements OrderDAO {
 	@Override
 	public Order findOrder(Integer id) {
 
-		String query = "select o.id, o.order_date, o.user_id, o.drug_id, o.amount, d.name, d.price, d.dose from mydb.orders o "
+		String query = "select o.id, o.order_date, o.user_id, o.drug_id, o.amount, d.name, d.price, d.dose, d.quantity, d.prescription from mydb.orders o "
 				+ "join mydb.drugs d on o.drug_id = d.id " + "where o.id = ? " + "order by o.id;";
 		Order order = null;
 
@@ -199,6 +199,8 @@ public class OrderDAOImpl implements OrderDAO {
 				drug.setName(rs.getString("d.name"));
 				drug.setPrice(rs.getInt("d.price"));
 				drug.setDose(rs.getDouble("d.dose"));
+				drug.setPrescription(rs.getBoolean("d.prescription"));
+				drug.setQuantity(rs.getInt("d.quantity"));
 				drugs.put(drug, rs.getInt("o.amount"));
 			}
 			if (order != null) {

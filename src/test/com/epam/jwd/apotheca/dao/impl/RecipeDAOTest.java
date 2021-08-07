@@ -39,24 +39,28 @@ public class RecipeDAOTest {
 		Recipe recipeInDB;
 		Recipe found;
 		Recipe recipe = new Recipe();
-		recipe.setDoctorId(12);
-		recipe.setUserId(2);
+		recipe.setDoctorId(16);
+		recipe.setUserId(20);
 		List<Integer> drugIds = new ArrayList<>();
-		drugIds.add(16);
+		drugIds.add(2);
 		
 		recipe.setDrugIds(drugIds);
-		Date date = new Date(876767678);
-		recipe.setExpieryDate(date);
+		SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
+	    java.util.Date utilDate = null;
+		try {
+			utilDate = format.parse("2022/12/03");
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+	    Date sqlDate = new Date(utilDate.getTime());
+		recipe.setExpieryDate(sqlDate);
 		recipeInDB = recipeDAO.save(recipe);
 		Integer id = recipeInDB.getId();
 		recipe.setId(id);
 		found = recipeDAO.findRecipe(id);
 		Assert.assertEquals(recipe,found);
-	}
-	
-	@Test
-	public void testFindRecipes() {
 		
+		recipeDAO.delete(id);
 	}
 
 	@Test
@@ -74,7 +78,6 @@ public class RecipeDAOTest {
 		try {
 			utilDate = format.parse("2022/12/03");
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	    Date sqlDate = new Date(utilDate.getTime());
@@ -83,44 +86,44 @@ public class RecipeDAOTest {
 		if ( recipeInDB != null ) {
 			Integer id = recipeInDB.getId();
 			recipe.setId(id);
-			System.out.println(recipe);
-			System.out.println(recipeInDB);
-			Assert.assertEquals ( recipe.getExpieryDate(),(recipeInDB.getExpieryDate()));
+			Assert.assertEquals ( recipe, recipeInDB );
 		}
+		
+		recipeDAO.delete(recipeInDB.getId());
 	}
 	
-	@Test
-	public void testDeleteRecipe() {
-		Recipe recipe = new Recipe();
-		recipe.setDoctorId(4);
-		recipe.setUserId(13);
-		List<Integer> drugIds = new ArrayList<>();
-		drugIds.add(6);
-		drugIds.add(14);
-		recipe.setDrugIds(drugIds);
-		SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
-	    java.util.Date utilDate = null;
-		try {
-			utilDate = format.parse("2021/09/10");
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-	    Date sqlDate = new Date(utilDate.getTime());
-		recipe.setExpieryDate(sqlDate);
-		Integer id = recipeDAO.save(recipe).getId();
-		
-		((RecipeDAOImpl)recipeDAO).deleteRecipe(id, 13, 6);
-		Recipe recipeInDB = recipeDAO.findRecipe(id);
-		List<Integer> drugIds2 = recipeInDB.getDrugIds();
-		assert ! (drugIds2.contains(6));
-	}
+//	@Test
+//	public void testDeleteRecipe() {
+//		Recipe recipe = new Recipe();
+//		recipe.setDoctorId(12);
+//		recipe.setUserId(13);
+//		List<Integer> drugIds = new ArrayList<>();
+//		drugIds.add(6);
+//		drugIds.add(14);
+//		recipe.setDrugIds(drugIds);
+//		SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
+//	    java.util.Date utilDate = null;
+//		try {
+//			utilDate = format.parse("2021/09/10");
+//		} catch (ParseException e) {
+//			e.printStackTrace();
+//		}
+//	    Date sqlDate = new Date(utilDate.getTime());
+//		recipe.setExpieryDate(sqlDate);
+//		Integer id = recipeDAO.save(recipe).getId();
+//		((RecipeDAOImpl)recipeDAO).deleteRecipe(id, 13, 6);
+//		Recipe recipeInDB = recipeDAO.findRecipe(id);
+//		List<Integer> drugIds2 = recipeInDB.getDrugIds();
+//		assert ! (drugIds2.contains(6));
+//		
+//		recipeDAO.delete(id);
+//	}
 	
 	@Test
 	public void testFindRecipesByDoctor() {
 		
-		User doctor = ((UserDAOImpl)userDAO).getUser("p");
+		User doctor = ((UserDAOImpl)userDAO).getUser("Aleksandr Udin");
 		List<Recipe> recipes = recipeDAO.findRecipeByDoctor(doctor);
-		System.out.println(recipes);
 		Assert.assertNotNull(recipes);
 		
 	}

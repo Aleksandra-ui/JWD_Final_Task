@@ -54,16 +54,6 @@ public class DrugDAOTest {
 	}
 
 	@Test
-	public void testFindAllById() {
-		
-	}
-
-	@Test
-	public void testUpdate() {
-		
-	}
-
-	@Test
 	public void testDelete() {
 		
 		Drug drug = new Drug();
@@ -82,13 +72,12 @@ public class DrugDAOTest {
 
 	@Test
 	public void testFindById() {
-		System.out.println(drugDAO.findById(1));;
+		System.out.println(drugDAO.findById(1));
 	}
 	
 	@Test
 	public void testFindByIds() {
 		List<Drug> drugs = drugDAO.findByIds(1, 6, 8, 14, 2, 9);
-		System.out.println("drugs size = " + drugs.size());
 		assert drugs.size() == 6;
 	}
 	
