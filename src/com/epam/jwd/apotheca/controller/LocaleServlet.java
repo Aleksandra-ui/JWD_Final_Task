@@ -1,8 +1,12 @@
 package com.epam.jwd.apotheca.controller;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,6 +32,24 @@ public class LocaleServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
+//		PrintWriter out = resp.getWriter();
+//		out.println("!!!!!");
+		
+//		Cookie cookie = new Cookie("locale", req.getParameter("locale"));
+//		resp.addCookie(cookie);
+//		resp.setContentType("text/html");
+//	 
+//	    Locale locale = null;
+//	    
+//	    if ("en".equals(req.getParameter("locale"))) {
+//		    locale = new Locale("en", "US");
+//	    } else {
+//	    	locale = new Locale("zh", "CHINESE");
+//	    }
+//	    ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
+//	    out.println(rb.getString("drugs.welcome"));
+	    
 		
 	}
 

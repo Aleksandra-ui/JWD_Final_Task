@@ -23,13 +23,62 @@
 	
 </style>
 
+<script type="text/javascript">
+	
+	function saveLang() {
+		//works
+		select = document.getElementById("lang");
+		selectedOpt = select.options[select.selectedIndex];
+		localStorage.setItem("lang", selectedOpt.id);
+	}
+	
+	function setLang() {
+		
+		optId = LocalStorage.getItem("lang");
+		document.getElementById(optId).setAttribute("selected","selected");
+		alert("successfully changed lang");
+	}
+	
+	function f() {
+		document.getElementById("zh").setAttribute("selected","selected");
+	}
+
+</script>
+
+	<form method="POST">
+		<select name="locale" id="lang" onchange="saveLang()">
+			<option id="en">english</option>
+			<option id="zh">chinese</option>
+		</select>
+		<input type="submit" value="change language" >
+	</form>
+
 	<%
 		UserManagerService userService = (UserManagerService)application.getAttribute("userService");
  		request.setAttribute("canPrescribe", userService.canPrescribe((User)session.getAttribute("user")));
  		request.setAttribute("canAddDrugs", userService.canAddDrugs((User)session.getAttribute("user")));
 	
-		Locale locale = new Locale("en", "US");
-		ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
+ 		Locale locale = null;
+ 		if ("chinese".equals(request.getParameter("locale"))) {
+			locale = new Locale("zh", "CHINESE");
+			Cookie cookie = new Cookie("lang", "zh");
+			response.addCookie(cookie);
+ 		} else if ("english".equals(request.getParameter("locale"))) {
+ 			locale = new Locale("en", "US");
+ 			Cookie cookie = new Cookie("lang", "en");
+			response.addCookie(cookie);
+ 		} else {
+ 			//if null
+ 			String lang = request.getCookies()[request.getCookies().length - 1].getValue();
+ 			if ("en".equals(lang)) {
+ 				locale = new Locale("en", "US");
+ 			} else {
+ 				locale = new Locale("zh", "CHINESE");
+ 			}
+ 		}
+ 		
+ 		ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
+		
 	%>
 
 	<ul>

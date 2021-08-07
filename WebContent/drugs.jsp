@@ -314,7 +314,7 @@
 							test="${displayPage == (empty param.currentPage ? 1 : param.currentPage)}">${displayPage} &nbsp;</c:when>
 						<c:otherwise>
 							<a
-								href="/apotheca/drugs.jsp?pageSize=${empty param.pageSize ? 5 : param.pageSize}&currentPage=${displayPage}" onclick="changeURL(this);">${displayPage}</a>&nbsp;</c:otherwise>
+								href="/apotheca/drugs.jsp?pageSize=${empty param.pageSize ? 5 : param.pageSize}&currentPage=${displayPage}" ononclick="changeURL(this)">${displayPage}</a>&nbsp;</c:otherwise>
 					</c:choose>
 				</c:forEach>
 
@@ -354,8 +354,7 @@
 				}
 				request.setAttribute("drugsFromRecipe", drugsFromRecipe);
 				%>
-				<%-- 			<jsp:useBean id="drugList" beanName="visibleDrugs" type="List<Drug>" scope="request"/> --%>
-				<%--  		    <c:set scope="request" var="drugsList" value="${visibleDrugs}"/> --%>
+				
 				<c:choose>
 					<c:when test="${not empty drugsList}">
 						<c:forEach items="${drugsList}" var="d">
@@ -444,7 +443,6 @@
 	<c:forEach items="${visibleDrugs}" var="drug" begin="0"
 		end="${visibleDrugs.size}">
 		<c:out value="${drug}" default="---"></c:out>
-		<%-- 		<c:out value="${drug.name}" default="---" ></c:out> --%>
 		<c:out value="<br/>"></c:out>
 	</c:forEach>
 
