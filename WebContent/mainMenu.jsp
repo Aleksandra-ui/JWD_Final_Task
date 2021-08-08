@@ -68,7 +68,6 @@
  			Cookie cookie = new Cookie("lang", "en");
 			response.addCookie(cookie);
  		} else {
- 			//if null
  			String lang = request.getCookies()[request.getCookies().length - 1].getValue();
  			if ("en".equals(lang)) {
  				locale = new Locale("en", "US");
@@ -76,8 +75,6 @@
  				locale = new Locale("zh", "CHINESE");
  			}
  		}
- 		
- 		ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 		
 	%>
 

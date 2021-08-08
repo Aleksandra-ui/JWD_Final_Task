@@ -4,14 +4,17 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Orders of user "${sessionScope.user.name}"</title>
+<%@ include file = "/mainMenu.jsp" %>
+<%
+ResourceBundle rb = ResourceBundle.getBundle("Orders", locale);
+%>
+<title><%=rb.getString("orders.title")%> "${sessionScope.user.name}"</title>
 </head>
 <body>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ include file = "/mainMenu.jsp" %>
 
-	Orders page for "${sessionScope.user.name}"
+	<%=rb.getString("orders.page")%> "${sessionScope.user.name}"
 	
 	<%
 		User user = (User)session.getAttribute("user");

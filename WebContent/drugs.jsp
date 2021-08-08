@@ -11,7 +11,9 @@
 <meta charset="UTF-8">
 
 <%@ include file = "/mainMenu.jsp" %>
-
+<%
+ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
+%>
 <title><%=rb.getString("drugs.list")%></title>
 </head>
 <script type="text/javascript">
