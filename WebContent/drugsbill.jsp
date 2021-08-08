@@ -32,6 +32,7 @@
 		
 			<%
 			
+				response.addHeader("Location", "/index.jsp");
 				User user = (User) session.getAttribute("user");
 				 
 				DrugManagerService drugService = (DrugManagerService)application.getAttribute("drugService");
