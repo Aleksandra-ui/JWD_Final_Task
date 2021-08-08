@@ -32,14 +32,13 @@ public class AuthorizationFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		
-		logger.info("entering {}", AuthorizationFilter.class.getName());
+		logger.info("entering authorization filter");
 		HttpSession session = ((HttpServletRequest) request).getSession();
 		User user = (User) session.getAttribute("user");
 		if (user == null) {
 			((HttpServletResponse) response).sendRedirect(APOTHECA_LOGON_PAGE_JSP);
 		}
-		logger.info("X");
-		logger.error("leaving " );
+		logger.error("leaving authorization filter");
 		
 	}
 
