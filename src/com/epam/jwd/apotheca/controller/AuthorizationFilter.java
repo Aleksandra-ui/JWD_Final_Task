@@ -12,11 +12,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+
+import org.slf4j.LoggerFactory;
+
 import com.epam.jwd.apotheca.model.User;
 
 public class AuthorizationFilter implements Filter {
 
 	public static final String APOTHECA_LOGON_PAGE_JSP = "/apotheca/logonPage.jsp";
+	org.slf4j.Logger logger = LoggerFactory.getLogger(AuthorizationFilter.class);
+	
 
 	@Override
 	public void destroy() {
@@ -27,12 +32,14 @@ public class AuthorizationFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		
+		logger.info("entering {}", AuthorizationFilter.class.getName());
 		HttpSession session = ((HttpServletRequest) request).getSession();
 		User user = (User) session.getAttribute("user");
 		if (user == null) {
 			((HttpServletResponse) response).sendRedirect(APOTHECA_LOGON_PAGE_JSP);
 		}
-		chain.doFilter(request, response);
+		logger.info("X");
+		logger.error("leaving " );
 		
 	}
 

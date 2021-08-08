@@ -59,6 +59,7 @@
  		request.setAttribute("canAddDrugs", userService.canAddDrugs((User)session.getAttribute("user")));
 	
  		Locale locale = null;
+ 		String lang = null;
  		if ("chinese".equals(request.getParameter("locale"))) {
 			locale = new Locale("zh", "CHINESE");
 			Cookie cookie = new Cookie("lang", "zh");
@@ -68,7 +69,11 @@
  			Cookie cookie = new Cookie("lang", "en");
 			response.addCookie(cookie);
  		} else {
- 			String lang = request.getCookies()[request.getCookies().length - 1].getValue();
+ 			if (request.getCookies() != null) {
+ 				lang = request.getCookies()[request.getCookies().length - 1].getValue();
+ 			} else {
+ 				lang = "en";
+ 			}
  			if ("en".equals(lang)) {
  				locale = new Locale("en", "US");
  			} else {

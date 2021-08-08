@@ -161,7 +161,8 @@ public class DrugDAOTest {
 		assert (drugs.contains(drug1InDb) );
 		
 		drugDAO.delete(drug1InDb.getId());
-		
+		Logger logger = LoggerFactory.getLogger(DrugDAOTest.class);
+		logger.info("X");
 	}
 
 }
