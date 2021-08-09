@@ -10,6 +10,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.epam.jwd.apotheca.dao.api.RecipeDAO;
 import com.epam.jwd.apotheca.exception.CouldNotInitializeConnectionPoolException;
 import com.epam.jwd.apotheca.model.Recipe;
@@ -19,6 +22,7 @@ import com.epam.jwd.apotheca.pool.ConnectionPool;
 public class RecipeDAOImpl implements RecipeDAO {
 
 	private ConnectionPool cp = ConnectionPool.retrieve();
+	private static final Logger logger = LoggerFactory.getLogger(RecipeDAOImpl.class);
 
 	public RecipeDAOImpl() {
 		try {
@@ -33,21 +37,23 @@ public class RecipeDAOImpl implements RecipeDAO {
 		
 		List<Recipe> recipes = new ArrayList<Recipe>();
 		Set<Integer> ids = new HashSet<Integer>();
+		String query1 = "select id from mydb.recipe";
+		String query2 = "select user_id, drug_id, doctor_id, expiery_date from mydb.recipe where id = ?";
 
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement()) {
 
-			ResultSet rs = st.executeQuery("select id from mydb.recipe");
+			ResultSet rs = st.executeQuery(query1);
 			while (rs.next()) {
 				ids.add(rs.getInt(1));
 			}
 
 		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to find all recipes");
 			e.printStackTrace();
 		}
 
 		try (Connection connection = cp.takeConnection();
-				PreparedStatement st = connection.prepareStatement(
-						"select user_id, drug_id, doctor_id, expiery_date from mydb.recipe where id = ?");) {
+				PreparedStatement st = connection.prepareStatement(query2);) {
 
 			for (Integer id : ids) {
 				st.setInt(1, id);
@@ -70,9 +76,11 @@ public class RecipeDAOImpl implements RecipeDAO {
 			}
 
 		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to find all recipes");
 			e.printStackTrace();
 		}
 
+		logger.info("found all recipes");
 		return recipes;
 		
 	}
@@ -98,9 +106,11 @@ public class RecipeDAOImpl implements RecipeDAO {
 				connection.commit();
 			}			
 		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to update a recipe");
 			e.printStackTrace();
 		}
 		
+		logger.info("updated a recipe");
 		return result ? recipe : null;
 		
 	}
@@ -119,9 +129,11 @@ public class RecipeDAOImpl implements RecipeDAO {
 			connection.commit();
 
 		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to delete a recipe");
 			e.printStackTrace();
 		}
 
+		logger.info("deleted a recipe");
 		return result;
 	
 	}
@@ -143,9 +155,11 @@ public class RecipeDAOImpl implements RecipeDAO {
 			}
 			rs.close();
 		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to find recipes by user");
 			e.printStackTrace();
 		}
 
+		logger.info("found recipes by user");
 		return recipes;
 	}
 
@@ -166,9 +180,11 @@ public class RecipeDAOImpl implements RecipeDAO {
 			}
 			rs.close();
 		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to find recipes by doctor");
 			e.printStackTrace();
 		}
 
+		logger.info("found recipes by doctor");
 		return recipes;
 	}
 
@@ -198,13 +214,15 @@ public class RecipeDAOImpl implements RecipeDAO {
 			}
 			rs.close();
 		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to find a recipe");
 			e.printStackTrace();
 		}
 
+		logger.info("found a recipe");
 		return recipe;
 	}
 
-	public Integer getMaxId() {
+	private Integer getMaxId() {
 		String query = "select max(id) from mydb.recipe";
 		Integer id = null;
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
@@ -235,6 +253,7 @@ public class RecipeDAOImpl implements RecipeDAO {
 			connection.commit();
 
 		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to save a recipe");
 			e.printStackTrace();
 		}
 
@@ -243,6 +262,7 @@ public class RecipeDAOImpl implements RecipeDAO {
 			recipeInDB = findRecipe(id);
 		}
 
+		logger.info("saved a recipe");
 		return recipeInDB;
 	}
 
@@ -256,14 +276,17 @@ public class RecipeDAOImpl implements RecipeDAO {
 			st.setInt(3, drugId);
 			st.executeUpdate();
 		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to delete a recipe");
 			e.printStackTrace();
 		}
 
 		Recipe recipe = findRecipe(id);
 		List<Integer> drugIds = recipe.getDrugIds();
 		if (drugIds.contains(drugId)) {
+			logger.info("failed to delete a recipe");
 			return false;
 		} else {
+			logger.info("deleted a recipe");
 			return true;
 		}
 

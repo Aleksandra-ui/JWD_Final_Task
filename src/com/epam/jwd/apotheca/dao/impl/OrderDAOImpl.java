@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.epam.jwd.apotheca.dao.api.DrugDAO;
 import com.epam.jwd.apotheca.dao.api.OrderDAO;
 import com.epam.jwd.apotheca.exception.CouldNotInitializeConnectionPoolException;
@@ -22,6 +25,7 @@ import com.epam.jwd.apotheca.pool.ConnectionPool;
 public class OrderDAOImpl implements OrderDAO {
 
 	private ConnectionPool cp = ConnectionPool.retrieve();
+	private static final Logger logger = LoggerFactory.getLogger(OrderDAOImpl.class);
 
 	public OrderDAOImpl() {
 		try {
@@ -49,6 +53,7 @@ public class OrderDAOImpl implements OrderDAO {
 			connection.commit();
 
 		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to save an order");
 			e.printStackTrace();
 		}
 
@@ -57,6 +62,7 @@ public class OrderDAOImpl implements OrderDAO {
 			orderInDB = findOrder(id);
 		}
 
+		logger.info("saved an order");
 		return orderInDB;
 
 	}
@@ -67,21 +73,23 @@ public class OrderDAOImpl implements OrderDAO {
 		List<Order> orders = new ArrayList<Order>();
 		Set<Integer> ids = new HashSet<Integer>();
 		DrugDAO drugDAO = new DrugDAOImpl();
+		String query1 = "select id from mydb.orders";
+		String query2 = "select drug_id, amount, user_id, order_date from mydb.orders where id = ?";
 
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 
-			ResultSet rs = st.executeQuery("select id from mydb.orders");
+			ResultSet rs = st.executeQuery(query1);
 			while (rs.next()) {
 				ids.add(rs.getInt(1));
 			}
 
 		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to find all orders");
 			e.printStackTrace();
 		}
 
 		try (Connection connection = cp.takeConnection();
-				PreparedStatement st = connection.prepareStatement(
-						"select drug_id, amount, user_id, order_date from mydb.orders where id = ?")) {
+				PreparedStatement st = connection.prepareStatement(query2)) {
 
 			for (Integer id : ids) {
 				st.setInt(1, id);
@@ -103,9 +111,11 @@ public class OrderDAOImpl implements OrderDAO {
 			}
 
 		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to find all orders");
 			e.printStackTrace();
 		}
 
+		logger.info("find all orders");
 		return orders;
 
 	}
@@ -133,9 +143,11 @@ public class OrderDAOImpl implements OrderDAO {
 				connection.commit();
 			}			
 		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to update an order");
 			e.printStackTrace();
 		}
 		
+		logger.info("updated an order");
 		return result ? order : null;
 		
 	}
@@ -154,13 +166,15 @@ public class OrderDAOImpl implements OrderDAO {
 			connection.commit();
 
 		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to delete an order");
 			e.printStackTrace();
 		}
 
+		logger.info("deleted an order");
 		return result;
 	}
 
-	public Integer getMaxId() {
+	private Integer getMaxId() {
 		String query = "select max(id) from mydb.orders";
 		Integer id = null;
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
@@ -208,9 +222,11 @@ public class OrderDAOImpl implements OrderDAO {
 			}
 			rs.close();
 		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to find an order by id");
 			e.printStackTrace();
 		}
 
+		logger.info("found an order by id");
 		return order;
 
 	}
@@ -221,22 +237,25 @@ public class OrderDAOImpl implements OrderDAO {
 		Set<Integer> ids = new HashSet<Integer>();
 		List<Order> orders = new ArrayList<Order>();
 		DrugDAO drugDAO = new DrugDAOImpl();
+		String query1 = "select id from mydb.orders where user_id = ? order by id";
+		String query2 = "select drug_id, amount, order_date from mydb.orders where id = ?";
 
 		try (Connection connection = cp.takeConnection();
 				PreparedStatement st = connection
-						.prepareStatement("select id from mydb.orders where user_id = ? order by id");) {
+						.prepareStatement(query1);) {
 			st.setInt(1, userId);
 			ResultSet rs = st.executeQuery();
 			while (rs.next()) {
 				ids.add(rs.getInt(1));
 			}
 		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to find orders by users");
 			e.printStackTrace();
 		}
 
 		try (Connection connection = cp.takeConnection();
 				PreparedStatement st = connection
-						.prepareStatement("select drug_id, amount, order_date from mydb.orders where id = ?");) {
+						.prepareStatement(query2);) {
 
 			for (Integer id : ids) {
 				st.setInt(1, id);
@@ -258,9 +277,11 @@ public class OrderDAOImpl implements OrderDAO {
 			}
 
 		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to find orders by user");
 			e.printStackTrace();
 		}
 
+		logger.info("found orders by user");
 		return orders;
 
 	}

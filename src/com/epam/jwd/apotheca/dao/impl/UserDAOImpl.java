@@ -8,6 +8,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.epam.jwd.apotheca.dao.api.UserDAO;
 import com.epam.jwd.apotheca.exception.CouldNotInitializeConnectionPoolException;
 import com.epam.jwd.apotheca.model.Role;
@@ -17,6 +20,7 @@ import com.epam.jwd.apotheca.pool.ConnectionPool;
 public class UserDAOImpl implements UserDAO {
 
 	private ConnectionPool cp = ConnectionPool.retrieve();
+	private static final Logger logger = LoggerFactory.getLogger(UserDAOImpl.class);
 	
 	public UserDAOImpl() {
 		try {
@@ -35,9 +39,10 @@ public class UserDAOImpl implements UserDAO {
 	public boolean delete(Integer id) {
 
 		boolean result = false;
+		String query = "delete from mydb.users where id = ?";
 
 		try (Connection connection = cp.takeConnection();
-				PreparedStatement st = connection.prepareStatement("delete from mydb.users where id = ?");) {
+				PreparedStatement st = connection.prepareStatement(query);) {
 			connection.setAutoCommit(false);
 			st.setInt(1, id);
 
@@ -45,9 +50,11 @@ public class UserDAOImpl implements UserDAO {
 			connection.commit();
 
 		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to delete a user");
 			e.printStackTrace();
 		}
 
+		logger.info("deleted a user");
 		return result;
 
 	}
@@ -68,32 +75,32 @@ public class UserDAOImpl implements UserDAO {
 	@Override
 	public User update(User entity) {
 		boolean result = false;
+		String query = "update mydb.users set name = '" + entity.getName() + "', role_id = '" + entity.getRole().getId()
+				+ "', password = '" + entity.getPassword() + "' where id = " + entity.getId();
 
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 			connection.setAutoCommit(false);
-			result = st.executeUpdate(
-					"update mydb.users set name = '" + entity.getName() + "', role_id = '" + entity.getRole().getId()
-							+ "', password = '" + entity.getPassword() + "' where id = " + entity.getId()) > 0;
+			result = st.executeUpdate(query) > 0;
 			connection.commit();
 			result = true;
 		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to update a user");
 			e.printStackTrace();
 		}
 
+		logger.info("updated a user");
 		return result ? entity : null;
 	}
 
 	public List<User> getUsers(Integer... id) {
 
 		List<User> users = new ArrayList<User>();
+		String query = "select u.id, u.name, u.password, r.id, r.name, r.permission from mydb.users u "
+				+ "join mydb.roles r on r.id = u.role_id " + (id.length > 0 ? "where u.id = " + id[0] : "")
+				+ " order by u.id";
 
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
-
-			connection.setAutoCommit(false);
-			ResultSet rs = st
-					.executeQuery("select u.id, u.name, u.password, r.id, r.name, r.permission from mydb.users u "
-							+ "join mydb.roles r on r.id = u.role_id " + (id.length > 0 ? "where u.id = " + id[0] : "")
-							+ " order by u.id");
+			ResultSet rs = st.executeQuery(query);
 			while (rs.next()) {
 				User user = new User();
 				Role role = new Role();
@@ -106,12 +113,13 @@ public class UserDAOImpl implements UserDAO {
 				user.setId(rs.getInt("u.id"));
 				users.add(user);
 			}
-			connection.commit();
 			rs.close();
 		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to find users");
 			e.printStackTrace();
 		}
 
+		logger.info("found users");
 		return users;
 
 	}
@@ -119,13 +127,12 @@ public class UserDAOImpl implements UserDAO {
 	public User getUser(String name) {
 
 		List<User> users = new ArrayList<User>();
+		String query = "select u.id, u.name, u.password, r.id, r.name, r.permission from mydb.users u "
+				+ "join mydb.roles r on r.id = u.role_id " + "where u.name = '" + name + "' order by u.id";
 
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
-
-			connection.setAutoCommit(false);
 			ResultSet rs = st
-					.executeQuery("select u.id, u.name, u.password, r.id, r.name, r.permission from mydb.users u "
-							+ "join mydb.roles r on r.id = u.role_id " + "where u.name = '" + name + "' order by u.id");
+					.executeQuery(query);
 			while (rs.next()) {
 				Role role = new Role();
 				role.setId(rs.getInt("r.id"));
@@ -138,12 +145,13 @@ public class UserDAOImpl implements UserDAO {
 				user.setId(rs.getInt("u.id"));
 				users.add(user);
 			}
-			connection.commit();
 			rs.close();
 		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to find a user by name");
 			e.printStackTrace();
 		}
 
+		logger.info("found a user by name");
 		return users.isEmpty() ? null : users.get(0);
 
 	}
@@ -151,14 +159,16 @@ public class UserDAOImpl implements UserDAO {
 	public User createUser(String name, Integer role_id, String password) {
 
 		boolean result = false;
+		String query = "insert into mydb.users(name,role_id,password) values ('" + name + "'," + role_id
+				+ ",'" + password + "')";
 
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 			connection.setAutoCommit(false);
-			result = st.executeUpdate("insert into mydb.users(name,role_id,password) values ('" + name + "'," + role_id
-					+ ",'" + password + "')") > 0;
+			result = st.executeUpdate(query) > 0;
 			connection.commit();
 
 		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to create a user");
 			e.printStackTrace();
 		}
 
@@ -166,6 +176,7 @@ public class UserDAOImpl implements UserDAO {
 		if (result) {
 			user = getUser(name);
 		}
+		logger.info("created a user");
 		return user;
 
 	}
@@ -183,9 +194,11 @@ public class UserDAOImpl implements UserDAO {
 			connection.commit();
 
 		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to delete a user");
 			e.printStackTrace();
 		}
 
+		logger.info("deleted a user");
 		return result;
 
 	}
@@ -193,16 +206,15 @@ public class UserDAOImpl implements UserDAO {
 	public boolean hasUser(String name) {
 
 		boolean result = false;
+		String query = "select * from mydb.users where name = ?";
 
 		try (Connection connection = cp.takeConnection();
-				PreparedStatement st = connection.prepareStatement("select * from mydb.users where name = ?");) {
-			connection.setAutoCommit(false);
+				PreparedStatement st = connection.prepareStatement(query);) {
 			st.setString(1, name);
 
 			ResultSet rs = st.executeQuery();
 			result = rs.next();
-			connection.commit();
-
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -235,9 +247,11 @@ public class UserDAOImpl implements UserDAO {
 			}
 			rs.close();
 		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to find users by role");
 			e.printStackTrace();
 		}
 
+		logger.info("found users by role");
 		return users;
 	}
 

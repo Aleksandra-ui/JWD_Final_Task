@@ -8,6 +8,10 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.epam.jwd.apotheca.controller.AuthorizationFilter;
 import com.epam.jwd.apotheca.dao.api.DrugDAO;
 import com.epam.jwd.apotheca.model.Drug;
 import com.epam.jwd.apotheca.pool.ConnectionPool;
@@ -15,6 +19,7 @@ import com.epam.jwd.apotheca.pool.ConnectionPool;
 public class DrugDAOImpl implements DrugDAO {
 
 	private ConnectionPool cp = ConnectionPool.retrieve();
+	private static final Logger logger = LoggerFactory.getLogger(DrugDAOImpl.class);
 
 	@Override
 	public Drug save(Drug entity) {
@@ -30,11 +35,11 @@ public class DrugDAOImpl implements DrugDAO {
 			String sql = "INSERT INTO mydb.drugs(name,quantity,price,dose,prescription) VALUES ('" + name + "',"
 					+ String.valueOf(quantity) + "," + String.valueOf(price) + "," + String.valueOf(dose) + ","
 					+ (prescription ? "1" : "0") + ")";
-			System.out.println(sql);
 			result = st.executeUpdate(sql) > 0;
 			connection.commit();
 
 		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to save a drug");
 			e.printStackTrace();
 		}
 
@@ -43,7 +48,9 @@ public class DrugDAOImpl implements DrugDAO {
 			drug = findDrug(name, dose);
 		}
 
+		logger.info("drug saved");
 		return drug;
+		
 	}
 
 	@Override
@@ -60,8 +67,10 @@ public class DrugDAOImpl implements DrugDAO {
 			}
 			rs.close();
 		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to find all drugs");
 			e.printStackTrace();
 		}
+		logger.info("found all drugs");
 		return drugs;
 
 	}
@@ -80,8 +89,10 @@ public class DrugDAOImpl implements DrugDAO {
 			}
 			rs.close();
 		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to find all prescripted drugs");
 			e.printStackTrace();
 		}
+		logger.info("found all prescripted drugs");
 		return drugs;
 
 	}
@@ -114,8 +125,10 @@ public class DrugDAOImpl implements DrugDAO {
 			}
 			rs.close();
 		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to find a range of drugs");
 			e.printStackTrace();
 		}
+		logger.info("found a range of drugs");
 		return drugs;
 
 	}
@@ -138,8 +151,10 @@ public class DrugDAOImpl implements DrugDAO {
 			}
 			rs.close();
 		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to find a range of prescripted drugs");
 			e.printStackTrace();
 		}
+		logger.info("found a range of prescripted drugs");
 		return drugs;
 
 	}
@@ -147,17 +162,20 @@ public class DrugDAOImpl implements DrugDAO {
 	@Override
 	public Drug update(Drug entity) {
 		boolean result = false;
+		String query = "update mydb.drugs set quantity = " + entity.getQuantity() + ", price = "
+				+ entity.getPrice() + ", prescription = " + (entity.isPrescription() ? "1" : "0") + " where id = "
+				+ entity.getId();
 
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 			connection.setAutoCommit(false);
-			result = st.executeUpdate("update mydb.drugs set quantity = " + entity.getQuantity() + ", price = "
-					+ entity.getPrice() + ", prescription = " + (entity.isPrescription() ? "1" : "0") + " where id = "
-					+ entity.getId()) > 0;
+			result = st.executeUpdate(query) > 0;
 			connection.commit();
 		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to update a drug");
 			e.printStackTrace();
 		}
 
+		logger.info("updated a drug");
 		return result ? entity : null;
 	}
 
@@ -169,9 +187,11 @@ public class DrugDAOImpl implements DrugDAO {
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 			result = st.executeUpdate(query) > 0;
 		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to delete a drug");
 			e.printStackTrace();
 		}
 
+		logger.info("deleted a drug");
 		return result;
 	}
 
@@ -179,7 +199,9 @@ public class DrugDAOImpl implements DrugDAO {
 	public Drug findById(Integer id) {
 
 		List<Drug> drugs = findByIds(id);
+		logger.info("found a drug by id");
 		return drugs.size() == 0 ? null : drugs.get(0);
+		
 	}
 
 	public List<Drug> findByIds(Integer... ids) {
@@ -202,27 +224,32 @@ public class DrugDAOImpl implements DrugDAO {
 			}
 			rs.close();
 		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to find drugs by ids");
 			e.printStackTrace();
 		}
+		logger.info("found drugs by ids");
 		return drugs;
 	}
 
 	public List<Drug> findByName(String name) {
 		List<Drug> drugs = new ArrayList<Drug>();
+		String query = "select id,name,quantity,price,dose,prescription from mydb.drugs WHERE NAME = '"
+				+ name + "' order by id";
 
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 
 			ResultSet rs = st
-					.executeQuery("select id,name,quantity,price,dose,prescription from mydb.drugs WHERE NAME = '"
-							+ name + "' order by id");
+					.executeQuery(query);
 			while (rs.next()) {
 				drugs.add(readDrug(rs));
 			}
 			rs.close();
 		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to find drugs by name");
 			e.printStackTrace();
 		}
 
+		logger.info("found drugs by name");
 		return drugs;
 	}
 
@@ -242,9 +269,11 @@ public class DrugDAOImpl implements DrugDAO {
 			}
 
 		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to find a drug by name and dose");
 			e.printStackTrace();
 		}
 
+		logger.info("found a drug by name and dose");
 		return drug;
 
 	}

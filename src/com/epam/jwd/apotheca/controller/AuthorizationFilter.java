@@ -12,38 +12,37 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-
-import org.slf4j.LoggerFactory;
-
 import com.epam.jwd.apotheca.model.User;
 
 public class AuthorizationFilter implements Filter {
 
-	public static final String APOTHECA_LOGON_PAGE_JSP = "/apotheca/logonPage.jsp";
-	org.slf4j.Logger logger = LoggerFactory.getLogger(AuthorizationFilter.class);
-	
-
 	@Override
 	public void destroy() {
+		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
+		System.out.println("before authorization filter");
+
+		HttpSession session = ((HttpServletRequest)request).getSession();
+		User user = (User)session.getAttribute("user");
+		if (user==null) {
+			((HttpServletResponse)response).sendRedirect("/apotheca/logonPage.jsp");
+			return;
+		} 
 		
-		logger.info("entering authorization filter");
-		HttpSession session = ((HttpServletRequest) request).getSession();
-		User user = (User) session.getAttribute("user");
-		if (user == null) {
-			((HttpServletResponse) response).sendRedirect(APOTHECA_LOGON_PAGE_JSP);
-		}
-		logger.error("leaving authorization filter");
+		System.out.println("after authorization filter");
+		chain.doFilter(request, response);
 		
+
 	}
 
 	@Override
 	public void init(FilterConfig arg0) throws ServletException {
+		// TODO Auto-generated method stub
 
 	}
 

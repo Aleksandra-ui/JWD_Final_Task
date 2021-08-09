@@ -1,4 +1,5 @@
-<%@page import="com.epam.jwd.apotheca.controller.UserManagerService, com.epam.jwd.apotheca.model.User, java.util.Locale, java.util.ResourceBundle"%>
+<%@page import="com.epam.jwd.apotheca.controller.UserManagerService, com.epam.jwd.apotheca.model.User, java.util.Locale, java.util.ResourceBundle,
+java.util.Map,java.util.HashMap"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
@@ -47,8 +48,8 @@
 
 	<form method="POST">
 		<select name="locale" id="lang" onchange="saveLang()">
-			<option id="en">english</option>
-			<option id="zh">chinese</option>
+			<option id="en" value ="en">english</option>
+			<option id="zh" value ="zh">chinese</option>
 		</select>
 		<input type="submit" value="change language" >
 	</form>
@@ -59,27 +60,64 @@
  		request.setAttribute("canAddDrugs", userService.canAddDrugs((User)session.getAttribute("user")));
 	
  		Locale locale = null;
- 		String lang = null;
- 		if ("chinese".equals(request.getParameter("locale"))) {
-			locale = new Locale("zh", "CHINESE");
-			Cookie cookie = new Cookie("lang", "zh");
+ 		
+ 		Map<String,String[]> langMap = new HashMap<String,String[]>(); 
+ 		langMap.put("zh", new String[]{"zh","CHINESE"});
+ 		langMap.put("en", new String[]{"en","US"});
+ 		
+ 		Cookie cookie = null;
+ 		if (langMap.containsKey(request.getParameter("locale"))) {
+ 			String[] value = langMap.get(request.getParameter("locale"));
+			locale = new Locale(value[0], value[1]);
+			if ( request.getCookies()!= null) {
+				for (Cookie c : request.getCookies() ) {
+					if ("lang".equals(c.getName())) {
+						if ( !value[0].equals(c.getValue())) {
+							c.setValue(value[0]);
+						}
+						cookie = c;
+					}
+				}
+			}
+			if ( cookie == null ) {
+				cookie = new Cookie("lang", value[0]);
+			}
 			response.addCookie(cookie);
- 		} else if ("english".equals(request.getParameter("locale"))) {
- 			locale = new Locale("en", "US");
- 			Cookie cookie = new Cookie("lang", "en");
-			response.addCookie(cookie);
- 		} else {
- 			if (request.getCookies() != null) {
- 				lang = request.getCookies()[request.getCookies().length - 1].getValue();
- 			} else {
- 				lang = "en";
- 			}
- 			if ("en".equals(lang)) {
- 				locale = new Locale("en", "US");
- 			} else {
- 				locale = new Locale("zh", "CHINESE");
- 			}
+			
+ 		} 
+ 		
+ 		if ( cookie == null ) {
+ 			for ( Cookie c : request.getCookies() ) {
+ 	 			if ("lang".equals(c.getName())) {
+ 	 				cookie = c;
+ 	 			}
+ 	 		}
  		}
+ 		
+ 		if (cookie != null) {
+ 			String[] value = langMap.get(cookie.getValue());
+			locale = locale ==null ? new Locale(value[0], value[1]) : locale;
+ 		} else {
+ 			locale = new Locale("en", "US");
+ 			response.addCookie(new Cookie("lang", "en"));
+ 		}
+ 		
+//  		else if ("english".equals(request.getParameter("locale"))) {
+//  			locale = new Locale("en", "US");
+//  			Cookie cookie = new Cookie("lang", "en");
+// 			response.addCookie(cookie);
+//  		} else {
+//  			if (request.getCookies() != null) {
+//  				lang = request.getCookies()[request.getCookies().length - 1].getValue();
+//  			} else {
+//  				lang = "en";
+//  			}
+//  			if ("en".equals(lang)) {
+//  				locale = new Locale("en", "US");
+//  			} else {
+//  				locale = new Locale("zh", "CHINESE");
+//  			}
+//  		}
 		
 	%>
 
