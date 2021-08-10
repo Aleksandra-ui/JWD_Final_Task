@@ -37,55 +37,6 @@ public class OrderDAOTest {
 		ConnectionPool.retrieve().destroy();
 	}
 
-//	@Test
-//	public void testSave() {
-//
-//		Order order = new Order();
-//		Map<Drug, Integer> drugs = new HashMap<>();
-//
-//		for (int i = 0; i < 3; i++) {
-//
-//			Drug d1 = drugDAO.findDrug("drug" + i, Double.valueOf(i));
-//			if (d1 == null) {
-//				d1 = new Drug();
-//				d1.setName("drug" + i);
-//				d1.setDose(Double.valueOf(i));
-//				d1.setPrice(i);
-//				d1.setQuantity(1);
-//				d1.setPrescription(false);
-//				d1 = drugDAO.save(d1);
-//			}
-//
-//			drugs.put(d1, i + 2);
-//		}
-//
-//		User u = ((UserDAOImpl) userDAO).getUser("g");
-//		if (u == null) {
-//			u = new User();
-//			u.setName("g");
-//			u.setPassword("m");
-//			Role role = new Role();
-//			role.setName("client");
-//			role.setId(3);
-//			u.setRole(role);
-//			u = userDAO.save(u);
-//		}
-//
-//		order.setDrugs(drugs);
-//		order.setDate(new Date(System.currentTimeMillis()));
-//		order.setUserId(u.getId());
-//		Order order2 = orderDAO.save(order);
-//		order.setId(order2.getId());
-//		Assert.assertEquals(order, order2);
-//		
-//		for (Drug d : drugs.keySet()) {
-//			drugDAO.delete(d.getId());
-//		}
-//		userDAO.delete(u.getId());
-//		orderDAO.delete(order.getId());
-//
-//	}
-
 	@Test
 	public void testFindAll() {
 		for (Order o : orderDAO.findAll()) {

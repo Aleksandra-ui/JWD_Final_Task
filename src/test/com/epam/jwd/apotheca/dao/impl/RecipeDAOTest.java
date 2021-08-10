@@ -92,33 +92,6 @@ public class RecipeDAOTest {
 		recipeDAO.delete(recipeInDB.getId());
 	}
 	
-//	@Test
-//	public void testDeleteRecipe() {
-//		Recipe recipe = new Recipe();
-//		recipe.setDoctorId(12);
-//		recipe.setUserId(13);
-//		List<Integer> drugIds = new ArrayList<>();
-//		drugIds.add(6);
-//		drugIds.add(14);
-//		recipe.setDrugIds(drugIds);
-//		SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
-//	    java.util.Date utilDate = null;
-//		try {
-//			utilDate = format.parse("2021/09/10");
-//		} catch (ParseException e) {
-//			e.printStackTrace();
-//		}
-//	    Date sqlDate = new Date(utilDate.getTime());
-//		recipe.setExpieryDate(sqlDate);
-//		Integer id = recipeDAO.save(recipe).getId();
-//		((RecipeDAOImpl)recipeDAO).deleteRecipe(id, 13, 6);
-//		Recipe recipeInDB = recipeDAO.findRecipe(id);
-//		List<Integer> drugIds2 = recipeInDB.getDrugIds();
-//		assert ! (drugIds2.contains(6));
-//		
-//		recipeDAO.delete(id);
-//	}
-	
 	@Test
 	public void testFindRecipesByDoctor() {
 		

@@ -55,6 +55,7 @@ java.util.Map,java.util.HashMap"%>
 	</form>
 
 	<%
+	
 		UserManagerService userService = (UserManagerService)application.getAttribute("userService");
  		request.setAttribute("canPrescribe", userService.canPrescribe((User)session.getAttribute("user")));
  		request.setAttribute("canAddDrugs", userService.canAddDrugs((User)session.getAttribute("user")));
@@ -96,28 +97,11 @@ java.util.Map,java.util.HashMap"%>
  		
  		if (cookie != null) {
  			String[] value = langMap.get(cookie.getValue());
-			locale = locale ==null ? new Locale(value[0], value[1]) : locale;
+			locale = locale == null ? new Locale(value[0], value[1]) : locale;
  		} else {
  			locale = new Locale("en", "US");
  			response.addCookie(new Cookie("lang", "en"));
  		}
- 		
-//  		else if ("english".equals(request.getParameter("locale"))) {
-//  			locale = new Locale("en", "US");
-//  			Cookie cookie = new Cookie("lang", "en");
-// 			response.addCookie(cookie);
-//  		} else {
-//  			if (request.getCookies() != null) {
-//  				lang = request.getCookies()[request.getCookies().length - 1].getValue();
-//  			} else {
-//  				lang = "en";
-//  			}
-//  			if ("en".equals(lang)) {
-//  				locale = new Locale("en", "US");
-//  			} else {
-//  				locale = new Locale("zh", "CHINESE");
-//  			}
-//  		}
 		
 	%>
 
