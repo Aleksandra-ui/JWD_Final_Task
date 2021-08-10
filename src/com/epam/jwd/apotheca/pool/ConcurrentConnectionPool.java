@@ -12,6 +12,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.epam.jwd.apotheca.dao.impl.DrugDAOImpl;
 import com.epam.jwd.apotheca.exception.CouldNotInitializeConnectionPoolException;
 
 public class ConcurrentConnectionPool implements ConnectionPool {
@@ -25,6 +29,8 @@ public class ConcurrentConnectionPool implements ConnectionPool {
 	private final Queue<ProxyConnection> availableConnections;// only unused connections
 	private AtomicInteger connectionsOpened;// all connections' amount
 	private final Lock lock;
+	
+	private static final Logger logger = LoggerFactory.getLogger(ConcurrentConnectionPool.class);
 
 	private ConcurrentConnectionPool() {
 		initialized = new AtomicBoolean(false);
@@ -47,13 +53,13 @@ public class ConcurrentConnectionPool implements ConnectionPool {
 				final ProxyConnection proxyConnection = new ProxyConnection(connection);
 				availableConnections.add(proxyConnection);
 				connectionsOpened.getAndIncrement();
-				System.out.println("connection added, available connections: " + availableConnections.size()
+				logger.info("connection added, available connections: " + availableConnections.size()
 						+ ", connections opened: " + connectionsOpened.get());
 
 			} else if (availableConnections.size() == 0 && connection == null) {
-				System.out.println("no available connections");
+				logger.info("no available connections");
 			} else {
-				System.out.println("available connections: " + availableConnections.size() + ", connections opened: "
+				logger.info("available connections: " + availableConnections.size() + ", connections opened: "
 						+ connectionsOpened.get());
 			}
 		} finally {
@@ -72,7 +78,7 @@ public class ConcurrentConnectionPool implements ConnectionPool {
 				if (connection instanceof ProxyConnection) {
 					availableConnections.add((ProxyConnection) connection);
 				} else {
-					System.out.println("can't release connection");
+					logger.error("can't release connection");
 				}
 			}
 		} finally {
@@ -95,6 +101,7 @@ public class ConcurrentConnectionPool implements ConnectionPool {
 						availableConnections.add(proxyConnection);
 					}
 				} catch (SQLException e) {
+					logger.error("catched SQL exception while initializing connection pool");
 					e.printStackTrace();
 					initialized.set(false);
 					throw new CouldNotInitializeConnectionPoolException("failed to open connection", e);
@@ -118,7 +125,6 @@ public class ConcurrentConnectionPool implements ConnectionPool {
 						e.printStackTrace();
 					}
 				}
-				// close not available too
 				deregisterDrivers();
 			}
 		} finally {
@@ -127,13 +133,13 @@ public class ConcurrentConnectionPool implements ConnectionPool {
 	}
 
 	private void registerDrivers() throws CouldNotInitializeConnectionPoolException {
-		System.out.println("sql drivers registration start...");
+		logger.info("sql drivers registration start...");
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			DriverManager.registerDriver(DriverManager.getDriver("jdbc:mysql://localhost:3306/mydb"));
-			System.out.println("registration successful");
+			logger.info("registration successful");
 		} catch (SQLException | ClassNotFoundException e) {
-			System.out.println("registration unsuccessful");
+			logger.error("registration unsuccessful");
 			e.printStackTrace();
 			initialized.set(false);
 			throw new CouldNotInitializeConnectionPoolException("driver registration failed", e);
@@ -141,20 +147,16 @@ public class ConcurrentConnectionPool implements ConnectionPool {
 	}
 
 	private void deregisterDrivers() {
-		System.out.println("sql drivers unregistering start...");
+		logger.info("sql drivers unregistering start...");
 		final Enumeration<Driver> drivers = DriverManager.getDrivers();
 		while (drivers.hasMoreElements()) {
 			try {
 				DriverManager.deregisterDriver(drivers.nextElement());
 			} catch (SQLException e) {
 				e.printStackTrace();
-				System.out.println("unregistering drivers failed");
+				logger.error("unregistering drivers failed");
 			}
 		}
 	}
-
-	public static void main(String[] args) throws CouldNotInitializeConnectionPoolException {
-		ConnectionPool.retrieve().init();
-
-	}
+	
 }
