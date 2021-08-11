@@ -16,31 +16,66 @@
 	 <c:if test="${ empty sessionScope.user }">
     	<c:redirect url="/drugs.jsp"/>
      </c:if>
+
+	<table border="1" style="width: 50%">
+		<caption>Bought drugs</caption>
+		<thead align="center">
+			<tr>
+				<th>name</th>
+				<th>dose</th>
+				<th>amount</th>
+				<th>price</th>
+			</tr>
+		</thead>
+
+		<tbody align="center">
 		
 			<%
-					
-			User user = (User) session.getAttribute("user");
-			 
-			DrugManagerService drugService = (DrugManagerService)application.getAttribute("drugService");
-			OrderManagerService orderService = (OrderManagerService)application.getAttribute("orderService");
-			String[] drugIdsStr = request.getParameter("drugIds").split(",");
-			List<Drug> drugs = drugService.getDrugs(drugIdsStr); 
-			Map<Drug, Integer> amountsById = new HashMap<Drug, Integer>();
 
-			request.setAttribute("drugsList", drugs);
+						DrugManagerService drugService = (DrugManagerService)application.getAttribute("drugService");
+
+						String[] drugIdsStr = request.getParameter("drugIds").split(",");
+						List<Drug> drugs = drugService.getDrugs(drugIdsStr); 
+						Map<Drug, Integer> amountsById = new HashMap<Drug, Integer>();
 			
-			String[] amountsStr = request.getParameter("amounts").split(",");
-			for ( int i = 0; i < drugIdsStr.length; i ++ ) {
-				amountsById.put(drugs.get(i), Integer.valueOf(amountsStr[i]));
-			}
-			request.setAttribute("amountsById", amountsById);
+						request.setAttribute("drugsList", drugs);
 						
-			orderService.buy(user.getId(), amountsById);
-			
-			response.setStatus(307);
-			response.addHeader("Location", "drugsBillTerm.jsp");
+						String[] amountsStr = request.getParameter("amounts").split(",");
+						for ( int i = 0; i < drugIdsStr.length; i ++ ) {
+							amountsById.put(drugs.get(i), Integer.valueOf(amountsStr[i]));
+						}
+						request.setAttribute("amountsById", amountsById);
+												
+						Integer total = 0;
+						for ( Drug d : drugs ) {
+							total += d.getPrice() * amountsById.get(d); 
+						}
 
 			%>
+			
+			<c:choose>
+				<c:when test="${not empty drugsList}">
+					<c:forEach items="${drugsList}" var="d">
+						<tr
+							bgcolor=<c:out value="${not d.prescription ? 'LightGreen' : 'LightPink'}"/>>
+							<td><c:out value="${d.name}" /></td>
+							<td><c:out value="${d.dose }" /></td>
+							<td><c:out value="${amountsById[d]}" /></td>
+							<td><c:out value="${d.price }" /></td>
+						</tr>
+					</c:forEach>
+				</c:when>
+				<c:otherwise>
+					<tr>
+						<td colspan="6">no records found</td>
+					</tr>
+				</c:otherwise>
+			</c:choose>
+
+		</tbody>
+	</table>
+	
+	total: <%= total %>
 
 </body>
 </html>

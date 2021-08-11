@@ -411,7 +411,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 			</tbody>
 		</table>
 
-		<form action="drugsBill.jsp" method="POST">
+		<form action="buyDrugs.jsp" method="POST">
 			<div id = "div" <c:if test="${fn:length(param.drugIds) == 0}">style="display:none"</c:if>>
 				<select multiple id="ListBox1">
 					<%
