@@ -185,7 +185,9 @@ public class DrugDAOImpl implements DrugDAO {
 		String query = "delete from mydb.drugs where id = " + id;
 		boolean result = false;
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
+			connection.setAutoCommit(false);
 			result = st.executeUpdate(query) > 0;
+			connection.commit();
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to delete a drug");
 			e.printStackTrace();

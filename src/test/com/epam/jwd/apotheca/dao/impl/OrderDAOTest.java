@@ -84,11 +84,12 @@ public class OrderDAOTest {
 		Order order2 = orderDAO.findOrder(order.getId());
 		Assert.assertEquals(order, order2);
 		
+		orderDAO.delete(order.getId());
 		for (Drug d : drugs.keySet()) {
 			drugDAO.delete(d.getId());
 		}
 		userDAO.delete(u.getId());
-		orderDAO.delete(order.getId());
+		
 	}
 
 	@Test
