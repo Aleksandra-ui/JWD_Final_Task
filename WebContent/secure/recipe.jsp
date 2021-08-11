@@ -292,7 +292,8 @@
 	</div>
 
 	<%
-	List<User> clients = userService.getClients();
+		UserManagerService userService = (UserManagerService)application.getAttribute("userService");
+		List<User> clients = userService.getClients();
 	%>
 
 	<form action = "createRecipe.jsp" method="POST">
