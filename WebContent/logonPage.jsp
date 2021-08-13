@@ -4,7 +4,10 @@
 
 <!DOCTYPE html>
 <html>
-<%@ include file="head.html" %>
+<head>
+<meta charset="UTF-8">
+<title>Logon page</title>
+</head>
 <body>
 
 	<%
