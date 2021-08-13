@@ -27,7 +27,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Orders", locale);
 	%>
 	
 	<table border = "1" style="width:50%" >
-		<caption>List of orders</caption>
+		<caption><%=rb.getString("orders.list")%></caption>
 		<thead align ="center">
 			<tr>
 				<th>#</th>

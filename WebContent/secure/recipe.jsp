@@ -14,7 +14,10 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title><%=ResourceBundle.getBundle("Drugs").getString("drugs.list") %></title>
+<%
+ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
+%>
+<title><%=rb.getString("drugs.list") %></title>
 </head>
 
 <script type="text/javascript">
@@ -201,7 +204,7 @@
 	
 </script>
 
-	<%=ResourceBundle.getBundle("Drugs").getString("drugs.welcome") %>
+	<%=rb.getString("drugs.welcome") %>
 	
 	<%
 		DrugManagerService drugService = (DrugManagerService) application.getAttribute("drugService");
@@ -239,7 +242,7 @@
 		</div>
 	</div>
 	<table border = "1" style="width:50%" >
-		<caption>List of drugs</caption>
+		<caption><%=rb.getString("drugs.list")%></caption>
 		<thead align ="center">
 			<tr>
 				<th>#</th>
@@ -292,7 +295,6 @@
 	</div>
 
 	<%
-		UserManagerService userService = (UserManagerService)application.getAttribute("userService");
 		List<User> clients = userService.getClients();
 	%>
 

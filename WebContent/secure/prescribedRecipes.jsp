@@ -1,30 +1,34 @@
 <%@page import="com.epam.jwd.apotheca.controller.DrugManagerService"%>
 <%@page import="com.epam.jwd.apotheca.dao.api.UserDAO"%>
 <%@page import="com.epam.jwd.apotheca.controller.UserManagerService,com.epam.jwd.apotheca.model.User,com.epam.jwd.apotheca.controller.RecipeManagerService,
-java.util.List, com.epam.jwd.apotheca.model.Recipe, com.epam.jwd.apotheca.model.Drug"%>
+java.util.List, com.epam.jwd.apotheca.model.Recipe, com.epam.jwd.apotheca.model.Drug, java.util.ResourceBundle"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ include file = "/mainMenu.jsp" %>  
+<%
+ResourceBundle rb = ResourceBundle.getBundle("Recipes", locale);
+%> 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Recipes by doctor</title>
+
+<title><%=rb.getString("recipes.list")%></title>
 </head>
 <body>
 		<form method="GET">
-		<label for="doctor">Enter doctor's name</label>
+		<label for="doctor"><%=rb.getString("recipes.prompt") %></label>
 		<input id="doctor" name="doctor"></input>
 		</form>
 		<%
-			UserManagerService userService = (UserManagerService) application.getAttribute("userService");
 			DrugManagerService drugService = (DrugManagerService) application.getAttribute("drugService");
 			String doctorName = request.getParameter("doctor");
 			if ( doctorName != null ) {
 				User doctor = userService.getUser(doctorName);
-				if ( doctor.getRole().getId() != UserDAO.ROLE_DOCTOR ) {
+				if ( doctor == null || doctor.getRole().getId() != UserDAO.ROLE_DOCTOR ) {
 		%>
-					<p>There's no such doctor</p>
+					<p><%=rb.getString("recipes.message")%></p>
 		<%			
 				} else {
 					RecipeManagerService recipeService = (RecipeManagerService) application.getAttribute("recipeService");
@@ -32,7 +36,7 @@ java.util.List, com.epam.jwd.apotheca.model.Recipe, com.epam.jwd.apotheca.model.
 					request.setAttribute("recipes", recipes);
 		%>
 				<table border = "1" style="width:50%" >
-					<caption>List of recipes</caption>
+					<caption><%=rb.getString("recipes.list")%></caption>
 					<thead align ="center">
 						<tr>
 							<th>#</th>

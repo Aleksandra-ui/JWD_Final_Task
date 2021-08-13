@@ -323,7 +323,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 			</div>
 		</div>
 		<table border="1" style="width: 50%">
-			<caption>List of drugs</caption>
+			<caption><%=rb.getString("drugs.list")%></caption>
 			<thead align="center">
 				<tr>
 					<th>#</th>

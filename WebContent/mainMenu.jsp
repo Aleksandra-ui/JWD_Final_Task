@@ -24,30 +24,8 @@ java.util.Map,java.util.HashMap"%>
 	
 </style>
 
-<script type="text/javascript">
-	
-	function saveLang() {
-		//works
-		select = document.getElementById("lang");
-		selectedOpt = select.options[select.selectedIndex];
-		localStorage.setItem("lang", selectedOpt.id);
-	}
-	
-	function setLang() {
-		
-		optId = LocalStorage.getItem("lang");
-		document.getElementById(optId).setAttribute("selected","selected");
-		alert("successfully changed lang");
-	}
-	
-	function f() {
-		document.getElementById("zh").setAttribute("selected","selected");
-	}
-
-</script>
-
 	<form method="POST">
-		<select name="locale" id="lang" onchange="saveLang()">
+		<select name="locale" id="lang">
 			<option id="en" value ="en">english</option>
 			<option id="zh" value ="zh">chinese</option>
 		</select>
@@ -55,6 +33,10 @@ java.util.Map,java.util.HashMap"%>
 	</form>
 
 	<%
+	
+		UserManagerService userService = (UserManagerService)application.getAttribute("userService");
+		request.setAttribute("canPrescribe", userService.canPrescribe((User)session.getAttribute("user")));
+		request.setAttribute("canAddDrugs", userService.canAddDrugs((User)session.getAttribute("user")));
 	
 		Locale locale = null;
 		Cookie cookie = null;
