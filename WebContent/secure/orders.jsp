@@ -31,9 +31,9 @@ ResourceBundle rb = ResourceBundle.getBundle("Orders", locale);
 		<thead align ="center">
 			<tr>
 				<th>#</th>
-				<th>drug</th>
-				<th>amount</th>
-				<th>date</th>
+				<th><%=rb.getString("orders.drug")%></th>
+				<th><%=rb.getString("orders.amount")%></th>
+				<th><%=rb.getString("orders.date")%></th>
 			</tr>
 		</thead>
 		
@@ -52,7 +52,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Orders", locale);
 					</c:forEach>
 				</c:when>
 				<c:otherwise>
-					<tr><td colspan="6">no records found</td></tr>
+					<tr><td colspan="6"><%=rb.getString("orders.absence")%></td></tr>
 				</c:otherwise>
 			</c:choose>
 		

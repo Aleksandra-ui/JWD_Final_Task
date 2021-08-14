@@ -402,7 +402,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 					</c:when>
 					<c:otherwise>
 						<tr>
-							<td colspan="6"><%=rb.getString("drugs.absence") %></td>
+							<td colspan="6"><%=rb.getString("drugs.absence")%></td>
 						</tr>
 					</c:otherwise>
 				</c:choose>
@@ -453,7 +453,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 	UserManagerService uService = (UserManagerService) application.getAttribute("userService");
 	if (uService.canAddDrugs(user)) {
 	%>
-	<a href="/apotheca/secure/createDrug.jsp">create drug</a>
+	<a href="/apotheca/secure/createDrug.jsp"><%=rb.getString("drugs.create")%></a>
 	<%
 	}
 	%>

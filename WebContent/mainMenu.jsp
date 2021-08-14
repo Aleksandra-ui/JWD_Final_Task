@@ -24,14 +24,6 @@ java.util.Map,java.util.HashMap"%>
 	
 </style>
 
-	<form method="POST">
-		<select name="locale" id="lang">
-			<option id="en" value ="en">english</option>
-			<option id="zh" value ="zh">chinese</option>
-		</select>
-		<input type="submit" value="change language" >
-	</form>
-
 	<%
 	
 		UserManagerService userService = (UserManagerService)application.getAttribute("userService");
@@ -86,6 +78,14 @@ java.util.Map,java.util.HashMap"%>
 		ResourceBundle rb0 = ResourceBundle.getBundle("Menu", locale);
 		
 	%>
+	
+	<form method="POST">
+		<select name="locale" id="lang">
+			<option id="en" value ="en">english</option>
+			<option id="zh" value ="zh">chinese</option>
+		</select>
+		<input type="submit" value="<%=rb0.getString("menu.locale")%>" >
+	</form>
 
 	<ul>
 		<li class="menu-item"><a href="/apotheca/drugs.jsp"><%=rb0.getString("menu.drugs")%></a></li>
