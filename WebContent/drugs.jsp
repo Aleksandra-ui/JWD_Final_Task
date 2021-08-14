@@ -78,7 +78,6 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 				}
 			}
 			printTotal();
-
 		} 
 	
 		function addRemoveFromCart(checkbox, drugId) {
@@ -158,7 +157,6 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 	    }
 		
 		function changeSelectVisibility() {
-
 			var div = document.getElementById("div");
 	 		div.style.display = (drugIds.length == 0) ? 'none' : 'inline-block'; 
 			
@@ -276,21 +274,21 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 	<div>
 		<div style="overflow: hidden">
 			<div style="float: left">
-				Records: from
+				<%=rb.getString("drugs.records1")%>
 				<%=currentPage * pageSize - pageSize + 1%>
-				to
+				<%=rb.getString("drugs.records2")%>
 				<%=currentPage * pageSize - pageSize + 1
 		+ ((drugs.size() % pageSize != 0
 				&& drugs.size() / pageSize * pageSize + 1 == currentPage * pageSize - pageSize + 1)
 						? drugs.size() % pageSize
 						: pageSize)
 		- 1%>
-				of
+				<%=rb.getString("drugs.records3")%>
 				<%=drugs.size()%>
 			</div>
 			<span style="float: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 			<div style="float: left">
-				records per page:&nbsp; <select name="pageSize"
+				<%=rb.getString("drugs.records4")%>:&nbsp; <select name="pageSize"
 					onChange="changePageSize(this);">
 					<option
 						${(empty param.pageSize or param.pageSize == 5) ? "selected='true'" : "" }
@@ -327,14 +325,14 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 			<thead align="center">
 				<tr>
 					<th>#</th>
-					<th>name</th>
-					<th>dose</th>
-					<th>quantity</th>
-					<th>price</th>
-					<th>prescription</th>
-					<th>amount</th>
-					<th>expiery date</th>
-					<th>add to cart</th>
+					<th><%=rb.getString("drugs.name")%></th>
+					<th><%=rb.getString("drugs.dose")%></th>
+					<th><%=rb.getString("drugs.quantity")%></th>
+					<th><%=rb.getString("drugs.price")%></th>
+					<th><%=rb.getString("drugs.prescription")%></th>
+					<th><%=rb.getString("drugs.amount")%></th>
+					<th><%=rb.getString("drugs.date")%></th>
+					<th><%=rb.getString("drugs.cart")%></th>
 				</tr>
 			</thead>
 
@@ -393,7 +391,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 												<c:out value="${present ? 'checked' : ''}"/> />
 											<input type="hidden" id="checkbox${d.id}" value="${d.name}&nbsp;|&nbsp;${d.dose}&nbsp;|&nbsp;${d.price}"/>
 										</c:when>
-										<c:otherwise>recipe required</c:otherwise> 
+										<c:otherwise><%=rb.getString("drugs.requirement") %></c:otherwise> 
 									</c:choose>
 									
 								</td>
@@ -403,7 +401,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 					</c:when>
 					<c:otherwise>
 						<tr>
-							<td colspan="6">no records found</td>
+							<td colspan="6"><%=rb.getString("drugs.no") %></td>
 						</tr>
 					</c:otherwise>
 				</c:choose>
@@ -430,12 +428,12 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 					</c:forEach>
 				</select>
 				<button id="Submit1" type="button" onclick="removeOptionsSelected();printTotal()"
-					<c:if test="${fn:length(param.drugIds) == 0}">style="display:none"</c:if>>delete</button>
+					<c:if test="${fn:length(param.drugIds) == 0}">style="display:none"</c:if>><%=rb.getString("drugs.delete")%></button>
 				<input hidden="true" id="selectedIds"  name="drugIds" id="hiddenInput"  />
-				<label for="total">total</label>
+				<label for="total"><%=rb.getString("drugs.total")%></label>
 				<input id="total" readonly></input>
 				<input hidden="true" name="amounts" id="amounts"/>
-				<input type="submit" value="buy drugs" onclick="gatherDrugIds();gatherAmounts()"/>
+				<input type="submit" value="<%=rb.getString("drugs.buy")%>" onclick="gatherDrugIds();gatherAmounts()"/>
 			</div>
 			
 		</form>
