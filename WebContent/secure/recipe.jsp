@@ -204,7 +204,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 	
 </script>
 
-	<%=rb.getString("drugs.welcome") %>
+	<%=rb.getString("drugs.welcome")%>
 	
 	<%
 		DrugManagerService drugService = (DrugManagerService) application.getAttribute("drugService");
@@ -215,10 +215,10 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 	
 	<div>
 	<div style="overflow: hidden">
-		<div style="float: left">Records: from <%= currentPage*pageSize - pageSize + 1 %> to <%= currentPage*pageSize - pageSize + 1 + ( (drugs.size() % pageSize != 0 && drugs.size() / pageSize * pageSize + 1 == currentPage*pageSize - pageSize + 1)? drugs.size() % pageSize : pageSize ) - 1 %> of <%= drugs.size()%> </div>
+		<div style="float: left"><%=rb.getString("drugs.records1")%> <%= currentPage*pageSize - pageSize + 1 %> <%=rb.getString("drugs.records2")%> <%= currentPage*pageSize - pageSize + 1 + ( (drugs.size() % pageSize != 0 && drugs.size() / pageSize * pageSize + 1 == currentPage*pageSize - pageSize + 1)? drugs.size() % pageSize : pageSize ) - 1 %> <%=rb.getString("drugs.records3")%> <%= drugs.size()%> </div>
 		<span style="float: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 		<div style="float: left">
-			records per page:&nbsp;
+			<%=rb.getString("drugs.records4")%>:&nbsp;
 			<select name="pageSize" onChange = "changePageSize(this);"> <!-- checking if there is a value in the first part of an and -->
 				<option  ${param.pageSize  == 5 ? "selected='true'" : "" } value="/apotheca/secure/recipe.jsp?pageSize=5">5</option>
 				<option  ${param.pageSize  == 10 ? "selected='true'" : "" } value="/apotheca/secure/recipe.jsp?pageSize=10" >10</option>
@@ -246,11 +246,11 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 		<thead align ="center">
 			<tr>
 				<th>#</th>
-				<th>name</th>
-				<th>dose</th>
-				<th>quantity</th>
-				<th>price</th>
-				<th>prescription</th>
+				<th><%=rb.getString("drugs.name")%></th>
+				<th><%=rb.getString("drugs.dose")%></th>
+				<th><%=rb.getString("drugs.quantity")%></th>
+				<th><%=rb.getString("drugs.price")%></th>
+				<th><%=rb.getString("drugs.add")%></th>
 			</tr>
 		</thead>
 		
@@ -316,7 +316,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 				</c:forEach>
 			</select>
 			<button id="Submit1" type="button" onclick="removeOptionsSelected();"
-				<c:if test="${fn:length(param.drugIds) == 0}">style="display:none"</c:if>>delete</button>
+				<c:if test="${fn:length(param.drugIds) == 0}">style="display:none"</c:if>><%=rb.getString("drugs.delete")%></button>
 	
 			<input hidden="true" id="selectedIds"  name="recipeDrugIds" id="hiddenInput"  />
 			<select id="ListBoxUsers" name="clientName">
@@ -358,7 +358,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 				<option id="30" hidden="true">30</option>	
 				<option id="31" hidden="true">31</option>	
 			</select>   
-			<input type="submit" value="create recipe" onclick="gatherDrugIds()"/>
+			<input type="submit" value="<%=rb.getString("drugs.recipe")%>" onclick="gatherDrugIds()"/>
 		</div>
 	</form>
 
