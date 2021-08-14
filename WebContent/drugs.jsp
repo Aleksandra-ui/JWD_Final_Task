@@ -363,12 +363,13 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 								bgcolor=<c:out value="${not d.prescription ? 'LightGreen' : 'LightPink'}"/>>
 								<td><c:out value="${d.id}" /></td>
 								<td><c:out value="${d.name}" /></td>
-								<%-- 				<td><%=d.getName() %></td> --%>
 								<td><c:out value="${d.dose }" /></td>
 								<td><c:out value="${d.quantity }" /></td>
 								<td><c:out value="${d.price }" /></td>
-								<td><c:out value="${d.prescription ? 'yes' : 'no'}" /></td>
-								<%-- 				<td><%=d.isPrescription() ? "yes" : "no" %></td> --%>
+								<td>
+									<c:if test="${d.prescription}"><%=rb.getString("drugs.yes")%></c:if>
+									<c:if test="${not d.prescription}"><%=rb.getString("drugs.no")%></c:if>
+								</td>
 								<td><input type="number" value=0 disabled
 									id="amount${d.id}" onchange="printAmount(${d.id });printTotal()" onkeyup="saveAmount(this);"/></td>
 								<td><c:if test="${not empty drugsFromRecipe[d.id] }">
@@ -401,7 +402,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 					</c:when>
 					<c:otherwise>
 						<tr>
-							<td colspan="6"><%=rb.getString("drugs.no") %></td>
+							<td colspan="6"><%=rb.getString("drugs.absence") %></td>
 						</tr>
 					</c:otherwise>
 				</c:choose>

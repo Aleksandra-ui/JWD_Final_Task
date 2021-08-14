@@ -69,7 +69,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 				</c:when>
 				<c:otherwise>
 					<tr>
-						<td colspan="6"><%=rb.getString("drugs.no")%></td>
+						<td colspan="6"><%=rb.getString("drugs.absence")%></td>
 					</tr>
 				</c:otherwise>
 			</c:choose>
