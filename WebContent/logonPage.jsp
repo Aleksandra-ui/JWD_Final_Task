@@ -6,7 +6,12 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Logon page</title>
+	
+<%@ include file = "/mainMenu.jsp" %>
+<%
+ResourceBundle rb = ResourceBundle.getBundle("LogonPage", locale);
+%>
+<title><%=rb.getString("logon.title")%></title>
 </head>
 <body>
 
@@ -63,29 +68,32 @@
 		
 	%>
 	
-	<%@ include file = "/mainMenu.jsp" %>
-	
 	<div>
 		<c:if test="${empty sessionScope.user }">
 			<c:if test="${not empty param.name }">
-				<p><font color = "red">User ${param.name } is absent.
-				Do you want to <a href="/apotheca/logonPage.jsp?register=1&name=${ param.name }&pass=${ param.pass }">register</a>?</font></p>
+				<p><font color = "red"><%=rb.getString("logon.message1")%> ${param.name } <%=rb.getString("logon.message2")%>
+				 <a href="/apotheca/logonPage.jsp?register=1&name=${ param.name }&pass=${ param.pass }"><%=rb.getString("logon.message3")%></a>?</font></p>
 			</c:if>
-			<p>please login</p>
+			<p><%=rb.getString("logon.prompt")%></p>
 			<form action="/apotheca/logonPage.jsp" method="post">
-				<label for="name">name: </label><input name="name" type="text" id="name" value = "user"/> <br />
-				<label for="name">password: </label><input name="pass" type="password" id="pass" value = "password"/> <br>
-				<input type="submit" value = "login"/>
+				<label for="name"><%=rb.getString("logon.name")%> </label><input name="name" type="text" id="name" value = "user"/> <br />
+				<label for="name"><%=rb.getString("logon.password")%> </label><input name="pass" type="password" id="pass" value = "password"/> <br>
+				<input type="submit" value = "<%=rb.getString("logon.login")%>"/>
 			</form>
 		</c:if>
 	</div>
 
-	<br />
+	<br/>
 
 <%
 	request.setAttribute("users", service.getUsers());
 %>
-<%@ include file = "users.jsp" %>
+<ul>
+	<c:forEach var="u" items="${users }">
+		<li><%=rb.getString("logon.name")%>: ${u.name} | <%=rb.getString("logon.role")%>: ${u.role.name }</li>				
+	</c:forEach>
+</ul> 
+
 
 </body>
 </html>

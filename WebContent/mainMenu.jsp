@@ -83,30 +83,32 @@ java.util.Map,java.util.HashMap"%>
 			}
 		}
 		
+		ResourceBundle rb0 = ResourceBundle.getBundle("Menu", locale);
+		
 	%>
 
 	<ul>
-		<li class="menu-item"><a href="/apotheca/drugs.jsp">List of drugs</a></li>
+		<li class="menu-item"><a href="/apotheca/drugs.jsp"><%=rb0.getString("menu.drugs")%></a></li>
 		<c:if test="${ canPrescribe }">
-			<li class="menu-item"><a href="/apotheca/secure/recipe.jsp">Prescribe recipe</a></li>
+			<li class="menu-item"><a href="/apotheca/secure/recipe.jsp"><%=rb0.getString("menu.prescribe")%></a></li>
 		</c:if> 
 		<c:if test="${ canPrescribe }">
-			<li class="menu-item"><a href="/apotheca/secure/prescribedRecipes.jsp">Prescribed recipes</a></li>
+			<li class="menu-item"><a href="/apotheca/secure/prescribedRecipes.jsp"><%=rb0.getString("menu.recipes")%></a></li>
 		</c:if> 
 		<c:if test="${not empty sessionScope.user }">
-			<li class="menu-item"><a href="/apotheca/secure/orders.jsp">Your orders</a></li>
+			<li class="menu-item"><a href="/apotheca/secure/orders.jsp"><%=rb0.getString("menu.orders")%></a></li>
 		</c:if> 
 		<c:if test="${canAddDrugs}">
-			<li class="menu-item"><a href="/apotheca/secure/createDrug.jsp">Create drug</a></li>
+			<li class="menu-item"><a href="/apotheca/secure/createDrug.jsp"><%=rb0.getString("menu.create")%></a></li>
 		</c:if> 
 		<li class="menu-item">
 			<c:choose>
-				<c:when test="${not empty sessionScope.user}"><font color = "blue">logged user: ${sessionScope.user.name}</font></c:when>
-				<c:otherwise>Please <a href="/apotheca/logonPage.jsp">logon</a></c:otherwise>
+				<c:when test="${not empty sessionScope.user}"><font color = "blue"><%=rb0.getString("menu.user")%>: ${sessionScope.user.name}</font></c:when>
+				<c:otherwise><%=rb0.getString("menu.logon1")%> <a href="/apotheca/logonPage.jsp"><%=rb0.getString("menu.logon2")%></a></c:otherwise>
 			</c:choose>
 		</li>
 		<li class="last-item">
-			<c:if test="${not empty sessionScope.user}"><a href="/apotheca/logonPage.jsp?logoff=1">Log off</a></c:if>
+			<c:if test="${not empty sessionScope.user}"><a href="/apotheca/logonPage.jsp?logoff=1"><%=rb0.getString("menu.logoff")%></a></c:if>
 		</li>
 	</ul>
 	<br/>

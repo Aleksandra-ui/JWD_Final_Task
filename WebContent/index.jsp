@@ -4,13 +4,16 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Hello</title>
+
+<%@ include file = "/mainMenu.jsp" %>
+<%
+ResourceBundle rb = ResourceBundle.getBundle("Index", locale);
+%>
+<title><%=rb.getString("index.title")%></title>
 </head>
 <body>
-
-	<%@ include file = "/mainMenu.jsp" %>
 	
-	Start page 
+	<div><%=rb.getString("index.page")%></div> 
 	
 </body>
 </html>
