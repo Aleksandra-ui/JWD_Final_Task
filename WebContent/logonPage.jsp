@@ -9,20 +9,15 @@
 	
 <%@ include file = "/mainMenu.jsp" %>
 <%
-ResourceBundle rb = ResourceBundle.getBundle("LogonPage", locale);
-%>
-<title><%=rb.getString("logon.title")%></title>
-</head>
-<body>
-
-	<%
+	ResourceBundle rb = ResourceBundle.getBundle("LogonPage", locale);
+	
 	Integer visitsSession = (Integer) session.getAttribute("visits");
 	if (visitsSession == null) {
 		visitsSession = 0;
 	}
-
+	
 	UserManagerService service = (UserManagerService) application.getAttribute("userService");
-
+	
 	visitsSession++;
 	System.out.println(service.getUserDAO());
 	List<User> users = service.getUsers();
@@ -30,7 +25,7 @@ ResourceBundle rb = ResourceBundle.getBundle("LogonPage", locale);
 	String userPass = request.getParameter("pass");
 	String userLogoff = request.getParameter("logoff");
 	String register = request.getParameter("register");
-
+	
 	User user = (User)session.getAttribute("user");
 	
 	if ( user == null ) {
@@ -65,9 +60,11 @@ ResourceBundle rb = ResourceBundle.getBundle("LogonPage", locale);
 		session.removeAttribute("user");
 		user = null;
 	}
-		
-	%>
-	
+%>
+<title><%=rb.getString("logon.title")%></title>
+</head>
+<body>
+
 	<div>
 		<c:if test="${empty sessionScope.user }">
 			<c:if test="${not empty param.name }">

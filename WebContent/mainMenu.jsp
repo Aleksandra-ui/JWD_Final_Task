@@ -37,13 +37,15 @@ java.util.Map,java.util.HashMap"%>
  		langMap.put("en", new String[]{"en","US"});
  		
  		Cookie cookie = null;
+ 		//if user clicked "change language"
  		if (langMap.containsKey(request.getParameter("locale"))) {
  			String[] value = langMap.get(request.getParameter("locale"));
+ 			//setting locale
 			locale = new Locale(value[0], value[1]);
-			if ( request.getCookies()!= null) {
+			if ( request.getCookies()!= null ) {
 				for (Cookie c : request.getCookies() ) {
 					if ("lang".equals(c.getName())) {
-						if ( !value[0].equals(c.getValue())) {
+						if ( !value[0].equals(c.getValue()) ) {
 							c.setValue(value[0]);
 						}
 						cookie = c;
@@ -53,11 +55,13 @@ java.util.Map,java.util.HashMap"%>
 			if ( cookie == null ) {
 				cookie = new Cookie("lang", value[0]);
 			}
+			//setting certain value into cookie
 			response.addCookie(cookie);
-			
  		} 
  		
+ 		//if page was uploaded without clicking "change language"
  		if ( cookie == null ) {
+ 			//searching for locale in cookies
  			for ( Cookie c : request.getCookies() ) {
  	 			if ("lang".equals(c.getName())) {
  	 				cookie = c;
@@ -65,9 +69,11 @@ java.util.Map,java.util.HashMap"%>
  	 		}
  		}
  		
+ 		//if we have already set locale, we do not change it. otherwise, we take the value from cookie
  		if (cookie != null) {
  			String[] value = langMap.get(cookie.getValue());
 			locale = locale == null ? new Locale(value[0], value[1]) : locale;
+		//if user uploaded the page for the first time
  		} else {
  			locale = new Locale("en", "US");
  			response.addCookie(new Cookie("lang", "en"));
