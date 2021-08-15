@@ -30,50 +30,48 @@ java.util.Map,java.util.HashMap"%>
 		request.setAttribute("canPrescribe", userService.canPrescribe((User)session.getAttribute("user")));
 		request.setAttribute("canAddDrugs", userService.canAddDrugs((User)session.getAttribute("user")));
 	
-		Locale locale = null;
-		Cookie cookie = null;
-		Map<String,String> lang = new HashMap<String,String>();
-		lang.put("en", "US");
-		lang.put("zh", "CHINESE");
-		
-		//if user clicked "change language"
-		if (lang.containsKey(request.getParameter("locale"))){
-			String value = lang.get(request.getParameter("locale"));
-			//setting locale
-			locale = new Locale(request.getParameter("locale"),value);
-			//setting cookie
-			for (Cookie c : request.getCookies()){
-				if ("lang".equals(c.getName())){
-					if (! request.getParameter("locale").equals(c.getValue())) {
-						c.setValue(request.getParameter("locale"));
+ 		Locale locale = null;
+ 		
+ 		Map<String,String[]> langMap = new HashMap<String,String[]>(); 
+ 		langMap.put("zh", new String[]{"zh","CHINESE"});
+ 		langMap.put("en", new String[]{"en","US"});
+ 		
+ 		Cookie cookie = null;
+ 		if (langMap.containsKey(request.getParameter("locale"))) {
+ 			String[] value = langMap.get(request.getParameter("locale"));
+			locale = new Locale(value[0], value[1]);
+			if ( request.getCookies()!= null) {
+				for (Cookie c : request.getCookies() ) {
+					if ("lang".equals(c.getName())) {
+						if ( !value[0].equals(c.getValue())) {
+							c.setValue(value[0]);
+						}
+						cookie = c;
 					}
-					cookie = c;
 				}
 			}
-			//if cookie is not found
-			if (cookie == null){
-				cookie = new Cookie("lang",request.getParameter("locale"));
+			if ( cookie == null ) {
+				cookie = new Cookie("lang", value[0]);
 			}
-			//if cookie with such name already exists, it will be replaced
 			response.addCookie(cookie);
-		} else {
-		//if user refreshes page without clicking "change language"
-			for (Cookie c : request.getCookies()) {
-				if ("lang".equals(c.getName())){
-					cookie = c;
-				}
-			}
-			//if cookie is found
-			if (cookie != null) {
-				String value = lang.get(cookie.getValue());
-				locale = new Locale(cookie.getValue(), value);
-			} else {
-			//if cookie is not found
-				locale = new Locale("en", "US");
-				cookie = new Cookie("lang","en");
-				response.addCookie(cookie);
-			}
-		}
+			
+ 		} 
+ 		
+ 		if ( cookie == null ) {
+ 			for ( Cookie c : request.getCookies() ) {
+ 	 			if ("lang".equals(c.getName())) {
+ 	 				cookie = c;
+ 	 			}
+ 	 		}
+ 		}
+ 		
+ 		if (cookie != null) {
+ 			String[] value = langMap.get(cookie.getValue());
+			locale = locale == null ? new Locale(value[0], value[1]) : locale;
+ 		} else {
+ 			locale = new Locale("en", "US");
+ 			response.addCookie(new Cookie("lang", "en"));
+ 		}
 		
 		ResourceBundle rb0 = ResourceBundle.getBundle("Menu", locale);
 		
