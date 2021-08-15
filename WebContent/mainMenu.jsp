@@ -21,7 +21,6 @@ java.util.Map,java.util.HashMap"%>
 		margin-left: 10px; 
 		margin-right: 10px; 
 	}
-	
 </style>
 
 	<%

@@ -14,10 +14,6 @@ public class Order implements Entity {
 		return id;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
 	public Map<Drug, Integer> getDrugs() {
 		return drugs;
 	}

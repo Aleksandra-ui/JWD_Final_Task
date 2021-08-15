@@ -35,10 +35,6 @@ public class User implements Entity {
 		return id;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
 	@Override
 	public String toString() {
 		return "User [name=" + name + ", role=" + role + ", password=" + password + ", id=" + id + "]";
