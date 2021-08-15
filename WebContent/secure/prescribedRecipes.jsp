@@ -40,10 +40,10 @@ ResourceBundle rb = ResourceBundle.getBundle("Recipes", locale);
 					<thead align ="center">
 						<tr>
 							<th>#</th>
-							<th>client</th>
-							<th>drug</th>
-							<th>dose</th>
-							<th>expiery date</th>
+							<th><%=rb.getString("recipes.client")%></th>
+							<th><%=rb.getString("recipes.drug")%></th>
+							<th><%=rb.getString("recipes.dose")%></th>
+							<th><%=rb.getString("recipes.date")%></th>
 						</tr>
 					</thead>
 					<tbody align ="center">

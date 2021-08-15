@@ -5,11 +5,13 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<%@ include file = "/mainMenu.jsp" %>
+<%
+ResourceBundle rb = ResourceBundle.getBundle("CreateRecipe", locale);
+%> 
+<title><%=rb.getString("create.title")%></title>
 </head>
 <body>
-	
-	<%@ include file = "/mainMenu.jsp" %>
 	
 	<c:if test="${ empty param.recipeDrugIds }">
     	<c:redirect url="/secure/recipe.jsp"/>
@@ -53,18 +55,18 @@
 	%>
 	
 	<font color="blue">
-		the recipe was prescribed to ${param.clientName} by ${ sessionScope.doctorName } and is valid through ${param.day} ${param.month} ${param.year}
+		<%=rb.getString("create.message1")%> ${param.clientName} <%=rb.getString("create.message2")%> ${ sessionScope.doctorName } <%=rb.getString("create.message3")%> ${param.day} ${param.month} ${param.year}
 	</font>
 
 	<table border="1" style="width: 50%">
-		<caption>Drugs in recipe</caption>
+		<caption><%=rb.getString("create.caption")%></caption>
 		<thead align="center">
 			<tr>
 				<th>#</th>
-				<th>name</th>
-				<th>dose</th>
-				<th>quantity</th>
-				<th>price</th>
+				<th><%=rb.getString("create.name")%></th>
+				<th><%=rb.getString("create.dose")%></th>
+				<th><%=rb.getString("create.quantity")%></th>
+				<th><%=rb.getString("create.price")%></th>
 			</tr>
 		</thead>
 
@@ -81,7 +83,7 @@
 		</tbody>
 	</table>
 	
-	<a href="recipe.jsp">Create new recipe</a>
+	<a href="recipe.jsp"><%=rb.getString("create.link")%></a>
 
 </body>
 </html>
