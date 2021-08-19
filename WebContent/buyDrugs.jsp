@@ -35,11 +35,15 @@
 				request.setAttribute("amountsById", amountsById);
 							
 				orderService.buy(user.getId(), amountsById);
-				
-				response.setStatus(307);
-				response.addHeader("Location", "drugsBill.jsp");
 
 			%>
+			
+			 
+    		<c:redirect url="/drugsBill.jsp">
+    			<c:param name="drugIds">${param.drugIds }</c:param>
+    			<c:param name="amounts">${param.amounts }</c:param>
+    		</c:redirect>
+     		
 
 </body>
 </html>
