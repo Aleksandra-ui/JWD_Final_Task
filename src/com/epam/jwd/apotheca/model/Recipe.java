@@ -102,4 +102,8 @@ public class Recipe implements Entity {
 				+ ", expieryDate=" + expieryDate + "]";
 	}
 
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
 }

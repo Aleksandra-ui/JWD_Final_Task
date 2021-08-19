@@ -115,4 +115,8 @@ public class Drug implements Entity {
 				+ ", prescription=" + prescription + "]";
 	}
 
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
 }

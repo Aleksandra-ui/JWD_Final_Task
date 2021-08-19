@@ -90,4 +90,8 @@ public class Order implements Entity {
 		return "Order [id=" + id + ", drugs=" + drugs + ", userId=" + userId + ", date=" + date + "]";
 	}
 
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
 }

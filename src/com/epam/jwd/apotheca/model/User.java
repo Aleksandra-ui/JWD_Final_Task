@@ -83,4 +83,8 @@ public class User implements Entity {
 		return true;
 	}
 
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
 }
