@@ -12,20 +12,24 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.epam.jwd.apotheca.dao.impl.DrugDAOImpl;
 import com.epam.jwd.apotheca.model.User;
 
 public class AuthorizationFilter implements Filter {
 
+	private static final Logger logger = LoggerFactory.getLogger(AuthorizationFilter.class);
+	
 	@Override
 	public void destroy() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-		System.out.println("before authorization filter");
+		logger.info("before authorization filter");
 
 		HttpSession session = ((HttpServletRequest)request).getSession();
 		User user = (User)session.getAttribute("user");
@@ -34,16 +38,12 @@ public class AuthorizationFilter implements Filter {
 			return;
 		} 
 		
-		System.out.println("after authorization filter");
+		logger.info("after authorization filter");
 		chain.doFilter(request, response);
-		
-
 	}
 
 	@Override
 	public void init(FilterConfig arg0) throws ServletException {
-		// TODO Auto-generated method stub
-
 	}
 
 }
