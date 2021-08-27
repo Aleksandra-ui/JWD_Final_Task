@@ -59,9 +59,10 @@ java.util.Map,java.util.HashMap"%>
  		} 
  		
  		//if page was uploaded without clicking "change language"
- 		if ( cookie == null ) {
+ 		Cookie[] cookies = request.getCookies();
+ 		if ( cookie == null && cookies != null ) {
  			//searching for locale in cookies
- 			for ( Cookie c : request.getCookies() ) {
+ 			for ( Cookie c : cookies ) {
  	 			if ("lang".equals(c.getName())) {
  	 				cookie = c;
  	 			}
