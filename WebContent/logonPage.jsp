@@ -72,7 +72,7 @@
 				 <a href="/apotheca/logonPage.jsp?register=1&name=${ param.name }&pass=${ param.pass }"><%=rb.getString("logon.message3")%></a>?</font></p>
 			</c:if>
 			<p><%=rb.getString("logon.prompt")%></p>
-			<form action="/apotheca" method="post">
+			<form action="/apotheca/logonPage.jsp" method="post">
 				<label for="name"><%=rb.getString("logon.name")%> </label><input name="name" type="text" id="name" value = "user"/> <br />
 				<label for="name"><%=rb.getString("logon.password")%> </label><input name="pass" type="password" id="pass" value = "password"/> <br>
 				<input type="submit" value = "<%=rb.getString("logon.login")%>"/>
