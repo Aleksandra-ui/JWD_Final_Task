@@ -9,11 +9,19 @@ import com.epam.jwd.apotheca.dao.impl.DrugDAOImpl;
 import com.epam.jwd.apotheca.model.Drug;
 
 public class DrugManagerService {
-
+	
+	private static DrugManagerService instance;
 	private DrugDAO drugDAO;
-
-	public DrugManagerService() {
-		drugDAO = new DrugDAOImpl();
+	
+	private DrugManagerService() {
+		drugDAO = DrugDAOImpl.getInstance();
+	}
+	
+	public static DrugManagerService getInstance() {
+		if (instance == null) {
+			instance = new DrugManagerService();
+		}
+		return instance;
 	}
 
 	public DrugDAO getDrugDAO() {
@@ -69,6 +77,10 @@ public class DrugManagerService {
 		Arrays.asList(ids).stream().forEach(id -> intIds.add(Integer.valueOf(id)));
 		return drugDAO.findByIds(intIds.toArray(new Integer[intIds.size()]));
 
+	}
+	
+	public Integer getTotalCount() {
+		return drugDAO.getTotalCount();
 	}
 
 }

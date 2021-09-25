@@ -254,5 +254,27 @@ public class UserDAOImpl implements UserDAO {
 		logger.info("found users by role");
 		return users;
 	}
+	
+	@Override
+	public Integer getTotalCount() {
+		
+		int count = 0;
+		String query = "select count(id) from mydb.users";
+
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
+
+			ResultSet rs = st.executeQuery(query);
+			rs.next();
+			count = rs.getInt(1);
+			rs.close();
+		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to find all users count");
+			e.printStackTrace();
+		}
+		logger.info("found all users count");
+		return count;
+		
+	}
+
 
 }

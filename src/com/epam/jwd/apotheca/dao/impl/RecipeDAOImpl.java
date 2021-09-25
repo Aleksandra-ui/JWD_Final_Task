@@ -291,5 +291,27 @@ public class RecipeDAOImpl implements RecipeDAO {
 		}
 
 	}
+	
+	@Override
+	public Integer getTotalCount() {
+		
+		int count = 0;
+		String query = "select distinct count(id) from mydb.recipe";
+
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
+
+			ResultSet rs = st.executeQuery(query);
+			rs.next();
+			count = rs.getInt(1);
+			rs.close();
+		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to find all recipe count");
+			e.printStackTrace();
+		}
+		logger.info("found all recipe count");
+		return count;
+		
+	}
+
 
 }

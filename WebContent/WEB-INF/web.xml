@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>  
+<?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
-  <display-name>Apotheca</display-name>
   <description>web-app for buying drugs</description>
+  <display-name>Apotheca</display-name>
   <listener>
     <listener-class>com.epam.jwd.apotheca.controller.MyContextListener</listener-class>
   </listener>
@@ -9,9 +9,19 @@
     <filter-name>auth</filter-name>
     <filter-class>com.epam.jwd.apotheca.controller.AuthorizationFilter</filter-class>
   </filter>
+  <filter>
+    <display-name>ControllerFilter</display-name>
+    <filter-name>ControllerFilter</filter-name>
+    <filter-class>com.epam.jwd.apotheca.controller.ControllerFilter</filter-class>
+  </filter>
   <filter-mapping>
     <filter-name>auth</filter-name>
     <url-pattern>/secure/*</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>ControllerFilter</filter-name>
+    <url-pattern>*.run</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
   </filter-mapping>
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>

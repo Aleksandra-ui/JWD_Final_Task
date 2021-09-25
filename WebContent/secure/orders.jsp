@@ -19,7 +19,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Orders", locale);
 	<%
 		User user = (User)session.getAttribute("user");
 		OrderManagerService orderService = (OrderManagerService)application.getAttribute("orderService");
-		DrugManagerService drugService = (DrugManagerService)application.getAttribute("drugService");
+		DrugManagerService drugService = DrugManagerService.getInstance();
 		if (user != null) {
 			List<Order> orders = orderService.findOrdersByUser(user.getId());
 			request.setAttribute("orders", orders);

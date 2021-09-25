@@ -28,7 +28,7 @@ public class OrderDAOTest {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		orderDAO = new OrderDAOImpl();
-		drugDAO = new DrugDAOImpl();
+		drugDAO = DrugDAOImpl.getInstance();
 		userDAO = new UserDAOImpl();
 	}
 

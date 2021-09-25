@@ -15,7 +15,7 @@ ResourceBundle rb = ResourceBundle.getBundle("CreateDrug", locale);
 
 	
 	<%
-		DrugManagerService service = (DrugManagerService) application.getAttribute("drugService");
+		DrugManagerService service = DrugManagerService.getInstance();
 		String drugName = request.getParameter("drugName");
 		Integer quantity = (request.getParameter("quantity") == null || request.getParameter("quantity").equals("")) ? null : Integer.valueOf(request.getParameter("quantity"));
 		Integer price = (request.getParameter("price") == null || request.getParameter("price").equals("")) ? null : Integer.valueOf(request.getParameter("price"));

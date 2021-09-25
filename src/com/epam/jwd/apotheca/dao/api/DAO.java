@@ -13,5 +13,7 @@ public interface DAO<T extends Entity> {
     T update(T entity);
 
     boolean delete(Integer id);
+    
+    Integer getTotalCount();
 
 }

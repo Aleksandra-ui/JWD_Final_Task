@@ -34,7 +34,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 		
 			<%
 
-						DrugManagerService drugService = (DrugManagerService)application.getAttribute("drugService");
+						DrugManagerService drugService = DrugManagerService.getInstance();
 						Integer total = 0;
 						if (request.getParameter("drugIds") != null){
 							String[] drugIdsStr = request.getParameter("drugIds").split(",");

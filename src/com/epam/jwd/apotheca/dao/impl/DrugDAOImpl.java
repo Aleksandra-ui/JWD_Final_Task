@@ -18,8 +18,21 @@ import com.epam.jwd.apotheca.pool.ConnectionPool;
 
 public class DrugDAOImpl implements DrugDAO {
 
-	private ConnectionPool cp = ConnectionPool.retrieve();
+	private static DrugDAOImpl instance;
+	private ConnectionPool cp;
 	private static final Logger logger = LoggerFactory.getLogger(DrugDAOImpl.class);
+	
+	private DrugDAOImpl() {
+		super();
+		cp = ConnectionPool.retrieve();
+	}
+	
+	public static DrugDAOImpl getInstance() {
+		if ( instance == null ) {
+			instance = new DrugDAOImpl();
+		}
+		return instance;
+	}
 
 	@Override
 	public Drug save(Drug entity) {
@@ -57,11 +70,11 @@ public class DrugDAOImpl implements DrugDAO {
 	public List<Drug> findAll() {
 
 		List<Drug> drugs = new ArrayList<Drug>();
+		String query = "select id,name,quantity,price,dose,prescription from mydb.drugs order by id";
 
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 
-			ResultSet rs = st
-					.executeQuery("select id,name,quantity,price,dose,prescription from mydb.drugs order by id");
+			ResultSet rs = st.executeQuery(query);
 			while (rs.next()) {
 				drugs.add(readDrug(rs));
 			}
@@ -278,6 +291,27 @@ public class DrugDAOImpl implements DrugDAO {
 		logger.info("found a drug by name and dose");
 		return drug;
 
+	}
+
+	@Override
+	public Integer getTotalCount() {
+		
+		int count = 0;
+		String query = "select count(id) from mydb.drugs";
+
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
+
+			ResultSet rs = st.executeQuery(query);
+			rs.next();
+			count = rs.getInt(1);
+			rs.close();
+		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to find all drugs count");
+			e.printStackTrace();
+		}
+		logger.info("found all drugs count");
+		return count;
+		
 	}
 
 }

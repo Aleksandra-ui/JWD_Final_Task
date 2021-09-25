@@ -72,7 +72,7 @@ public class OrderDAOImpl implements OrderDAO {
 
 		List<Order> orders = new ArrayList<Order>();
 		Set<Integer> ids = new HashSet<Integer>();
-		DrugDAO drugDAO = new DrugDAOImpl();
+		DrugDAO drugDAO = DrugDAOImpl.getInstance();
 		String query1 = "select id from mydb.orders";
 		String query2 = "select drug_id, amount, user_id, order_date from mydb.orders where id = ?";
 
@@ -236,7 +236,7 @@ public class OrderDAOImpl implements OrderDAO {
 
 		Set<Integer> ids = new HashSet<Integer>();
 		List<Order> orders = new ArrayList<Order>();
-		DrugDAO drugDAO = new DrugDAOImpl();
+		DrugDAO drugDAO = DrugDAOImpl.getInstance();
 		String query1 = "select id from mydb.orders where user_id = ? order by id";
 		String query2 = "select drug_id, amount, order_date from mydb.orders where id = ?";
 
@@ -284,6 +284,27 @@ public class OrderDAOImpl implements OrderDAO {
 		logger.info("found orders by user");
 		return orders;
 
+	}
+	
+	@Override
+	public Integer getTotalCount() {
+		
+		int count = 0;
+		String query = "select distinct count(id) from mydb.orders";
+
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
+
+			ResultSet rs = st.executeQuery(query);
+			rs.next();
+			count = rs.getInt(1);
+			rs.close();
+		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to find all orders count");
+			e.printStackTrace();
+		}
+		logger.info("found all orders count");
+		return count;
+		
 	}
 
 }

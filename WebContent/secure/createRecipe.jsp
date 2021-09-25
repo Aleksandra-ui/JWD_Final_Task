@@ -20,7 +20,7 @@ ResourceBundle rb = ResourceBundle.getBundle("CreateRecipe", locale);
 	<%
 		RecipeManagerService service = new RecipeManagerService();
 		UserManagerService uService = new UserManagerService();
-		DrugManagerService dService = new DrugManagerService();
+		DrugManagerService dService = DrugManagerService.getInstance();
 		
 		Recipe recipe = new Recipe();
 		List<Integer> drugIds = new ArrayList<Integer>();

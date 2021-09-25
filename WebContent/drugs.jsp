@@ -264,8 +264,8 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 	<span style="text-align: center;"><%=rb.getString("drugs.welcome")%></span>
 
 	<%
-	DrugManagerService service = (DrugManagerService) application.getAttribute("drugService");
-	List<Drug> drugs = service.getDrugs();
+	DrugManagerService drugService = DrugManagerService.getInstance();
+	List<Drug> drugs = drugService.getDrugs();
 	int pageSize = request.getParameter("pageSize") == null ? 5 : Integer.valueOf(request.getParameter("pageSize"));
 	int currentPage = request.getParameter("currentPage") == null ? 1
 			: Integer.valueOf(request.getParameter("currentPage"));
@@ -314,7 +314,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 							test="${displayPage == (empty param.currentPage ? 1 : param.currentPage)}">${displayPage} &nbsp;</c:when>
 						<c:otherwise>
 							<a
-								href="/apotheca/drugs.jsp?pageSize=${empty param.pageSize ? 5 : param.pageSize}&currentPage=${displayPage}" ononclick="changeURL(this)">${displayPage}</a>&nbsp;</c:otherwise>
+								href="/apotheca/drugs.jsp?pageSize=${empty param.pageSize ? 5 : param.pageSize}&currentPage=${displayPage}" onclick="changeURL(this)">${displayPage}</a>&nbsp;</c:otherwise>
 					</c:choose>
 				</c:forEach>
 
@@ -338,7 +338,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 
 			<tbody align="center">
 				<%
-				List<Drug> visibleDrugs = service.getDrugs(pageSize * (currentPage - 1), pageSize);
+				List<Drug> visibleDrugs = drugService.getDrugs(pageSize * (currentPage - 1), pageSize);
 				request.setAttribute("drugsList", visibleDrugs);
 				RecipeManagerService recipeService = (RecipeManagerService) application.getAttribute("recipeService");
 				User user = (User) session.getAttribute("user");
@@ -414,7 +414,6 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 			<div id = "div" <c:if test="${fn:length(param.drugIds) == 0}">style="display:none"</c:if>>
 				<select multiple id="ListBox1">
 					<%
-					DrugManagerService drugService = (DrugManagerService) application.getAttribute("drugService");
 					request.setAttribute("allDrugs", drugService.getDrugs());
 					%>
 					<c:forEach items="${allDrugs}" var="drug">

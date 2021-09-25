@@ -22,7 +22,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Recipes", locale);
 		<input id="doctor" name="doctor"></input>
 		</form>
 		<%
-			DrugManagerService drugService = (DrugManagerService) application.getAttribute("drugService");
+			DrugManagerService drugService = DrugManagerService.getInstance();
 			String doctorName = request.getParameter("doctor");
 			if ( doctorName != null ) {
 				User doctor = userService.getUser(doctorName);

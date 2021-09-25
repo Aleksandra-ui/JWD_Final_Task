@@ -207,7 +207,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 	<%=rb.getString("drugs.welcome")%>
 	
 	<%
-		DrugManagerService drugService = (DrugManagerService) application.getAttribute("drugService");
+		DrugManagerService drugService = DrugManagerService.getInstance();
 		List<Drug> drugs = drugService.getPrescriptedDrugs();
 		int pageSize = request.getParameter("pageSize") == null ? 5 : Integer.valueOf(request.getParameter("pageSize"));
 		int currentPage = request.getParameter("currentPage") == null ? 1 : Integer.valueOf(request.getParameter("currentPage"));

@@ -22,7 +22,7 @@ public class DrugDAOTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		drugDAO = new DrugDAOImpl();
+		drugDAO = DrugDAOImpl.getInstance();
 	}
 	
 	@AfterClass

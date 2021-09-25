@@ -30,8 +30,6 @@ public class MyContextListener implements ServletContextListener {
 
 		UserManagerService userService = new UserManagerService();
 		context.setAttribute("userService", userService);
-		DrugManagerService drugService = new DrugManagerService();
-		context.setAttribute("drugService", drugService);
 		RecipeManagerService recipeService = new RecipeManagerService();
 		context.setAttribute("recipeService", recipeService);
 		OrderManagerService orderService = new OrderManagerService();

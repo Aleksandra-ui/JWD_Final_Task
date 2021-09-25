@@ -20,7 +20,7 @@
 			<%
 					
 				User user = (User) session.getAttribute("user");
-				DrugManagerService drugService = (DrugManagerService)application.getAttribute("drugService");
+				DrugManagerService drugService = DrugManagerService.getInstance();
 				OrderManagerService orderService = (OrderManagerService)application.getAttribute("orderService");
 				String[] drugIdsStr = request.getParameter("drugIds").split(",");
 				List<Drug> drugs = drugService.getDrugs(drugIdsStr); 
