@@ -14,4 +14,6 @@ public interface DrugDAO extends DAO<Drug> {
 	
 	List<Drug> findByIds(Integer... ids);
 	
+	Integer getPrescriptedCount();
+	
 }

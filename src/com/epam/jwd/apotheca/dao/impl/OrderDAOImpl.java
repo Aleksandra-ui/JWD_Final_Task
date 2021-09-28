@@ -55,6 +55,9 @@ public class OrderDAOImpl implements OrderDAO {
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to save an order");
 			e.printStackTrace();
+		} catch (NullPointerException e) {
+			logger.error("catched  exception while attempting to save an order");
+			e.printStackTrace();
 		}
 
 		Order orderInDB = null;
@@ -193,12 +196,11 @@ public class OrderDAOImpl implements OrderDAO {
 	public Order findOrder(Integer id) {
 
 		String query = "select o.id, o.order_date, o.user_id, o.drug_id, o.amount, d.name, d.price, d.dose, d.quantity, d.prescription from mydb.orders o "
-				+ "join mydb.drugs d on o.drug_id = d.id " + "where o.id = ? " + "order by o.id;";
+				+ "join mydb.drugs d on o.drug_id = d.id " + "where o.id = " + id + " order by o.id";
 		Order order = null;
 
-		try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement(query);) {
-			st.setInt(1, id);
-			ResultSet rs = st.executeQuery();
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
+			ResultSet rs = st.executeQuery(query);
 			Map<Drug, Integer> drugs = null;
 			while (rs.next()) {
 				if (order == null) {
@@ -290,7 +292,7 @@ public class OrderDAOImpl implements OrderDAO {
 	public Integer getTotalCount() {
 		
 		int count = 0;
-		String query = "select distinct count(id) from mydb.orders";
+		String query = "select count(distinct id) from mydb.orders";
 
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 

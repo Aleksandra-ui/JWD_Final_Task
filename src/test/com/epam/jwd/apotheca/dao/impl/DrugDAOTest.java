@@ -163,5 +163,26 @@ public class DrugDAOTest {
 		drugDAO.delete(drug1InDb.getId());
 
 	}
+	
+	@Test
+	public void testGetTotalCount() {
+		
+		int first = drugDAO.getTotalCount();
+		
+		Drug drug = new Drug();
+		drug.setDose(3.0);
+		drug.setName("Sedavit");
+		drug.setPrescription(false);
+		drug.setPrice(140);
+		drug.setQuantity(30);
+		drug = drugDAO.save(drug);
+		
+		int second = drugDAO.getTotalCount();
+		
+		drugDAO.delete(drug.getId());
+		
+		assert first == second - 1;
+		
+	}
 
 }

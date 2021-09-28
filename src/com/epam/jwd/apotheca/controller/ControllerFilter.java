@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.epam.jwd.apotheca.model.User;
 import com.mysql.fabric.Response;
 
 public class ControllerFilter implements Filter {
@@ -29,14 +30,14 @@ public class ControllerFilter implements Filter {
     	actionMapping.put("hello", new Hello());
     	actionMapping.put("bye", new Bye());
     	actionMapping.put("drugs", new Drugs());
-    	
+    	actionMapping.put("recipe", new Recipe());
     	
     }
 
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		
 		String path = ((HttpServletRequest)request).getServletPath();
-		String finalPath = path.substring(0, path.indexOf(".run")).replace("/", "");
+		String finalPath = path.substring(path.lastIndexOf("/"), path.indexOf(".run")).replace("/", "");
 		
 		logger.info("path: " + path);
 		logger.info("final path: " + finalPath);
@@ -44,6 +45,8 @@ public class ControllerFilter implements Filter {
 		if ( actionMapping.keySet().contains(finalPath) ) {
 			RunCommand command = actionMapping.get(finalPath);
 			command.setParams(request.getParameterMap());
+			command.setUser((User)
+					((HttpServletRequest)request).getSession().getAttribute("user"));
 			String value = command.run();
 			((HttpServletRequest)request).setAttribute("action", command);
 			logger.info(value);

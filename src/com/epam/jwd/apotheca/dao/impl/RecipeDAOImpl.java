@@ -296,7 +296,7 @@ public class RecipeDAOImpl implements RecipeDAO {
 	public Integer getTotalCount() {
 		
 		int count = 0;
-		String query = "select distinct count(id) from mydb.recipe";
+		String query = "select count(distinct id) from mydb.recipe";
 
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 

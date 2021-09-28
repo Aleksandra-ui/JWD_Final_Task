@@ -83,4 +83,8 @@ public class DrugManagerService {
 		return drugDAO.getTotalCount();
 	}
 
+	public Integer getPrescriptedCount() {
+		return drugDAO.getPrescriptedCount();
+	}
+	
 }

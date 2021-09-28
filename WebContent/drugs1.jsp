@@ -361,9 +361,9 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 								<td><input type="number" value=0 disabled
 									id="amount${d.id}" onchange="printAmount(${d.id });printTotal()" onkeyup="saveAmount(this);"/></td>
 								<td>
-<%-- 									<c:if test="${not empty drugsFromRecipe[d.id] }"> --%>
-<%-- 										<c:out value="${drugsFromRecipe[d.id] }" /> --%>
-<%-- 									</c:if> --%>
+									<c:if test="${not empty action.drugsFromRecipe[d.id] }">
+										<c:out value="${action.drugsFromRecipe[d.id] }" />
+									</c:if>
 								</td>
 								<td>
 									<c:set var="present" value="false"/>

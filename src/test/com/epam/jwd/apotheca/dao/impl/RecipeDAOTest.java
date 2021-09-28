@@ -14,6 +14,7 @@ import org.junit.Test;
 import com.epam.jwd.apotheca.dao.api.RecipeDAO;
 import com.epam.jwd.apotheca.dao.api.UserDAO;
 import com.epam.jwd.apotheca.model.Recipe;
+import com.epam.jwd.apotheca.model.Role;
 import com.epam.jwd.apotheca.model.User;
 import com.epam.jwd.apotheca.pool.ConnectionPool;
 
@@ -98,6 +99,37 @@ public class RecipeDAOTest {
 		User doctor = ((UserDAOImpl)userDAO).getUser("Aleksandr Udin");
 		List<Recipe> recipes = recipeDAO.findRecipeByDoctor(doctor);
 		Assert.assertNotNull(recipes);
+		
+	}
+	
+	@Test
+	public void testGetTotalCount() {
+		
+		int first = recipeDAO.getTotalCount();
+		
+		Recipe recipe = new Recipe();
+		recipe.setDoctorId(12);
+		recipe.setUserId(1);
+		List<Integer> drugIds = new ArrayList<>();
+		drugIds.add(1);
+		drugIds.add(2);
+		recipe.setDrugIds(drugIds);
+		SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
+	    java.util.Date utilDate = null;
+		try {
+			utilDate = format.parse("2022/12/03");
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+	    Date sqlDate = new Date(utilDate.getTime());
+		recipe.setExpieryDate(sqlDate);
+		recipe = recipeDAO.save(recipe);
+		
+		int second = recipeDAO.getTotalCount();
+		
+		userDAO.delete(recipe.getId());
+		
+		assert first == second - 1;
 		
 	}
 

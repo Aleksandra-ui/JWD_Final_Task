@@ -1,7 +1,9 @@
 package com.epam.jwd.apotheca.controller;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -9,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.epam.jwd.apotheca.model.Drug;
+import com.epam.jwd.apotheca.model.Recipe;
+import com.epam.jwd.apotheca.model.User;
 
 public class Drugs implements RunCommand {
 
@@ -19,15 +23,22 @@ public class Drugs implements RunCommand {
 	private Map<String, String[]> params;
 	private int pageSize;
 	private int currentPage;
+	private User user;
+	private Map<Integer, Date> drugsFromRecipe;
 
 	public Drugs() {
 		drugs = new ArrayList<Drug>();
+		drugsFromRecipe = new HashMap<Integer, Date>();
 	}
 
 	public int getTotalCount() {
 		return totalCount;
 	}
 	
+	public Map<Integer, Date> getDrugsFromRecipe() {
+		return drugsFromRecipe;
+	}
+
 	public int getPageSize() {
 		return pageSize;
 	}
@@ -48,7 +59,7 @@ public class Drugs implements RunCommand {
 		return drugs;
 	}
 
-	@Override
+	@Override      
 	public String run() {
 
 		logger.info("hello from Drugs!");
@@ -59,12 +70,29 @@ public class Drugs implements RunCommand {
 				: Integer.valueOf(params.get("currentPage")[0]);
 		drugs = service.getDrugs(pageSize * (currentPage - 1), pageSize);
 		actionTime = GregorianCalendar.getInstance().getTime().toString();
+		
+		RecipeManagerService recipeService =  new RecipeManagerService();
+		if (user != null) {
+			List<Recipe> recipesForUser = recipeService.findByUser(user);
+			for (Recipe recipe : recipesForUser) {
+				Date expieryDate = recipe.getExpieryDate();
+				for (Integer drugId : recipe.getDrugIds()) {
+					drugsFromRecipe.put(drugId, expieryDate);
+				}
+			}
+		}
+		
 		return actionTime;
 	}
 
 	@Override
 	public void setParams(Map<String, String[]> params) {
 		this.params = params;
+	}
+
+	@Override
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 }

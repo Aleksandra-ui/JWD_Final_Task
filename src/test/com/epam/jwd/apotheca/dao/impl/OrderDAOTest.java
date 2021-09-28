@@ -19,17 +19,27 @@ import com.epam.jwd.apotheca.model.Role;
 import com.epam.jwd.apotheca.model.User;
 import com.epam.jwd.apotheca.pool.ConnectionPool;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 public class OrderDAOTest {
 
 	private static OrderDAO orderDAO;
 	private static DrugDAO drugDAO;
 	private static UserDAO userDAO;
+	private static User user;
+	private static final Logger logger = LoggerFactory.getLogger(OrderDAOTest.class);
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		orderDAO = new OrderDAOImpl();
 		drugDAO = DrugDAOImpl.getInstance();
 		userDAO = new UserDAOImpl();
+		user = createStandardUser();
+		if ( userDAO.getUser(user.getName()) == null ) {
+			user = userDAO.save(user);
+		}
 	}
 
 	@AfterClass
@@ -45,7 +55,7 @@ public class OrderDAOTest {
 	}
 
 	@Test
-	public void testFindOrder() {
+	public void testFindOrder() throws InterruptedException {
 		Order order = new Order();
 		order.setDate(new Date(System.currentTimeMillis()));
 
@@ -73,6 +83,7 @@ public class OrderDAOTest {
 				d1.setQuantity(1);
 				d1.setPrescription(false);
 				d1 = drugDAO.save(d1);
+				logger.info("" + d1);
 			}
 
 			drugs.put(d1, i + 2);
@@ -81,6 +92,7 @@ public class OrderDAOTest {
 		order.setDrugs(drugs);
 		order.setUserId(u.getId());
 		order = orderDAO.save(order);
+		//Thread.currentThread().sleep(1000);
 		Order order2 = orderDAO.findOrder(order.getId());
 		Assert.assertEquals(order, order2);
 		
@@ -95,15 +107,43 @@ public class OrderDAOTest {
 	@Test
 	public void testFindOrdersByUser() {
 
-		User user = new User();
-		Role role = new Role();
-		Order order = new Order();
-		role.setId(UserDAO.ROLE_CLIENT);
+		Order order = createOrder(user);
+		order = orderDAO.save(order);
 
-		user.setName("name");
-		user.setPassword("name");
-		user.setRole(role);
-		user = userDAO.save(user);
+		Assert.assertEquals(order, ((OrderDAOImpl) orderDAO).findOrdersByUser(user.getId()).get(0));
+
+		orderDAO.delete(order.getId());
+		
+	}
+	
+	@Test
+	public void testGetTotalCount() throws InterruptedException {
+		
+		int first = orderDAO.getTotalCount();
+		
+		Order order1 = orderDAO.save(createOrder(user));
+		Order order2 = orderDAO.save(createOrder(user));
+		System.out.println(order1);
+		System.out.println(order2);
+		
+		int second = orderDAO.getTotalCount();
+		
+		orderDAO.delete(order1.getId());
+		orderDAO.delete(order2.getId());
+		
+		assert first == second - 2;
+		
+	}
+	
+	private Order createOrder(User user) {
+		
+		Order order = new Order();
+		User userFromDB = userDAO.getUser(user.getName());
+		if ( userFromDB == null ) {
+			user = userDAO.save(user);
+		} else {
+			user.setId(userFromDB.getId());
+		}
 
 		order.setDate(new Date(System.currentTimeMillis()));
 		order.setUserId(user.getId());
@@ -112,13 +152,22 @@ public class OrderDAOTest {
 		drugs.put(drugDAO.findById(2), 4);
 		order.setDrugs(drugs);
 
-		order = orderDAO.save(order);
+		return order;
+		
+	}
+	
+	private static User createStandardUser() {
+		
+		User user = new User();
+		Role role = new Role();
+		role.setId(UserDAO.ROLE_CLIENT);
 
-		Assert.assertEquals(order, ((OrderDAOImpl) orderDAO).findOrdersByUser(user.getId()).get(0));
-
-		orderDAO.delete(order.getId());
-		userDAO.delete(user.getId());
-
+		user.setName("Maksim Fiodorov");
+		user.setPassword("789");
+		user.setRole(role);
+		
+		return user;
+		
 	}
 
 }

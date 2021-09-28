@@ -92,9 +92,9 @@ java.util.Map,java.util.HashMap"%>
 	</form>
 
 	<ul>
-		<li class="menu-item"><a href="/apotheca/drugs.jsp"><%=rb0.getString("menu.drugs")%></a></li>
+		<li class="menu-item"><a href="/apotheca/drugs.run"><%=rb0.getString("menu.drugs")%></a></li>
 		<c:if test="${ canPrescribe }">
-			<li class="menu-item"><a href="/apotheca/secure/recipe.jsp"><%=rb0.getString("menu.prescribe")%></a></li>
+			<li class="menu-item"><a href="/apotheca/secure/recipe.run"><%=rb0.getString("menu.prescribe")%></a></li>
 		</c:if> 
 		<c:if test="${ canPrescribe }">
 			<li class="menu-item"><a href="/apotheca/secure/prescribedRecipes.jsp"><%=rb0.getString("menu.recipes")%></a></li>

@@ -272,13 +272,11 @@ public class DrugDAOImpl implements DrugDAO {
 	public Drug findDrug(String name, Double dose) {
 
 		Drug drug = null;
+		String query = "select id,name,quantity,price,dose,prescription from mydb.drugs where name = '" + name + "' and dose = " + dose + "";
 
 		try (Connection connection = cp.takeConnection();
-				PreparedStatement st = connection.prepareStatement(
-						"select id,name,quantity,price,dose,prescription from mydb.drugs where name = ? and dose = ?");) {
-			st.setString(1, name);
-			st.setDouble(2, dose);
-			ResultSet rs = st.executeQuery();
+				Statement st = connection.createStatement()) {
+			ResultSet rs = st.executeQuery(query);
 			if (rs.next()) {
 				drug = readDrug(rs);
 			}
@@ -305,13 +303,34 @@ public class DrugDAOImpl implements DrugDAO {
 			rs.next();
 			count = rs.getInt(1);
 			rs.close();
+			logger.info("found all drugs count");
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find all drugs count");
 			e.printStackTrace();
 		}
-		logger.info("found all drugs count");
+		
 		return count;
 		
+	}
+
+	@Override
+	public Integer getPrescriptedCount() {
+		int count = 0;
+		String query = "select count(id) from mydb.drugs where prescription = 1";
+
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
+
+			ResultSet rs = st.executeQuery(query);
+			rs.next();
+			count = rs.getInt(1);
+			rs.close();
+			logger.info("found prescripted drugs count");
+		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to find prescripted drugs count");
+			e.printStackTrace();
+		}
+		
+		return count;
 	}
 
 }
