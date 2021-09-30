@@ -14,6 +14,12 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 <title><%=rb.getString("drugs.list")%></title>
 </head>
 
+<style>
+	input.error{
+		background-color: #FFAAAA;
+	}
+</style>
+
 <script type="text/javascript">
 
 	drugIds = new Array(); 
@@ -250,6 +256,22 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 	localStorage.setItem(input.id, input.value);
 	
 	}
+	
+	function validateAmount(input) {
+		
+		result = false;
+		if (input.value < 1 || input.value > 100) {
+			input.className = "error";
+			document.getElementById("errorStatus").innerHTML = "<label style='color:red;'>Value exceeds allowed range</label>";
+		} else {
+			input.className = "";
+			document.getElementById("errorStatus").innerHTML = "";
+			result = true;
+		}
+		console.log("input " + input.id + ", value " + input.value + ", class " + input.className);
+		return result;
+		
+	}
 
 </script>
 
@@ -348,7 +370,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 						<c:forEach items="${action.drugs}" var="d">
 
 							<tr
-								bgcolor=<c:out value="${not d.prescription ? 'LightGreen' : 'LightPink'}"/>>
+								bgcolor=<c:out value="${not d.prescription ? 'LightGreen' : 'LightBlue'}"/>>
 								<td><c:out value="${d.id}" /></td>
 								<td><c:out value="${d.name}" /></td>
 								<td><c:out value="${d.dose }" /></td>
@@ -359,7 +381,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 									<c:if test="${not d.prescription}"><%=rb.getString("drugs.no")%></c:if>
 								</td>
 								<td><input type="number" value=0 disabled
-									id="amount${d.id}" onchange="printAmount(${d.id });printTotal()" onkeyup="saveAmount(this);"/></td>
+									id="amount${d.id}" onchange="if (validateAmount(amount${d.id})){printAmount(${d.id });printTotal()}" onkeyup="saveAmount(this);"/></td>
 								<td>
 									<c:if test="${not empty action.drugsFromRecipe[d.id] }">
 										<c:out value="${action.drugsFromRecipe[d.id] }" />
@@ -400,6 +422,8 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 
 			</tbody>
 		</table>
+		
+		<div id = "errorStatus"></div>
 
 		<form action="buyDrugs.jsp" method="POST">
 			<div id = "div" <c:if test="${fn:length(param.drugIds) == 0}">style="display:none"</c:if>>

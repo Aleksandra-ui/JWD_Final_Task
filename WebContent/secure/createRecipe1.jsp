@@ -13,77 +13,48 @@ ResourceBundle rb = ResourceBundle.getBundle("CreateRecipe", locale);
 </head>
 <body>
 	
-	<c:if test="${ empty param.recipeDrugIds }">
-    	<c:redirect url="/secure/recipe.jsp"/>
+	 <c:if test="${ empty param.recipeDrugIds }">
+    	<c:redirect url="/secure/recipe.run"/>
      </c:if>
+     
+    <div id = "errorMessages">
+   		<c:forEach items="${action.errorMessages}" var="message">
+   			<font color="red"><c:out value="${ message}"/></font>
+   			<br/>
+   		</c:forEach>
+    </div>
 	
-	<%
-		RecipeManagerService service = new RecipeManagerService();
-		UserManagerService uService = new UserManagerService();
-		DrugManagerService dService = DrugManagerService.getInstance();
-		
-		Recipe recipe = new Recipe();
-		List<Integer> drugIds = new ArrayList<Integer>();
-		Integer userId = uService.getUser(request.getParameter("clientName")).getId();
-		recipe.setUserId(userId);
- 		String[] strings = request.getParameter("recipeDrugIds").split(",");
- 		for ( String drug : strings ){
- 			if ( ! drug.equals("") ) {
- 				drugIds.add(Integer.valueOf(drug));	
- 			}
- 		}
- 		recipe.setDrugIds(drugIds);
-		recipe.setDoctorId(Integer.valueOf(request.getParameter("doctorId")));
-		String expieryDate = request.getParameter("year") + "/" + request.getParameter("month") + "/" + request.getParameter("day");
-		System.out.println(expieryDate);
-		SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
-	    java.util.Date utilDate = format.parse(expieryDate);
-	    Date sqlDate = new Date(utilDate.getTime());
-		recipe.setExpieryDate(sqlDate);
-		service.addRecipe(recipe);
-		
-		List<Drug> drugs = new ArrayList<Drug>();
-		for ( Integer id : drugIds ) {
-			drugs.add(dService.getDrug(id));
-		}
-		request.setAttribute("drugs", drugs);
-		
-		User doctor = uService.getUser(Integer.valueOf(request.getParameter("doctorId")));
-		String doctorName = doctor.getName();
-		session.setAttribute("doctorName", doctorName);
-		
-	%>
+	<c:if test="${empty action.errorMessages}">
+		<font color="blue">
+			<%=rb.getString("create.message1")%> ${param.clientName} <%=rb.getString("create.message2")%> ${ action.doctorName } <%=rb.getString("create.message3")%> ${param.day} ${param.month} ${param.year}
+		</font>
 	
-	<font color="blue">
-		<%=rb.getString("create.message1")%> ${param.clientName} <%=rb.getString("create.message2")%> ${ sessionScope.doctorName } <%=rb.getString("create.message3")%> ${param.day} ${param.month} ${param.year}
-	</font>
-
-	<table border="1" style="width: 50%">
-		<caption><%=rb.getString("create.caption")%></caption>
-		<thead align="center">
-			<tr>
-				<th>#</th>
-				<th><%=rb.getString("create.name")%></th>
-				<th><%=rb.getString("create.dose")%></th>
-				<th><%=rb.getString("create.quantity")%></th>
-				<th><%=rb.getString("create.price")%></th>
-			</tr>
-		</thead>
-
-		<tbody align="center">
-					<c:forEach items="${drugs}" var="d">
-						<tr bgcolor="LightPink">
-							<td><c:out value="${d.id}" /></td>
-							<td><c:out value="${d.name}" /></td>
-							<td><c:out value="${d.dose }" /></td>
-							<td><c:out value="${d.quantity }" /></td>
-							<td><c:out value="${d.price }" /></td>
-						</tr>
-					</c:forEach>
-		</tbody>
-	</table>
+		<table border="1" style="width: 50%">
+			<caption><%=rb.getString("create.caption")%></caption>
+			<thead align="center">
+				<tr>
+					<th>#</th>
+					<th><%=rb.getString("create.name")%></th>
+					<th><%=rb.getString("create.dose")%></th>
+					<th><%=rb.getString("create.quantity")%></th>
+					<th><%=rb.getString("create.price")%></th>
+				</tr>
+			</thead>
 	
-	<a href="recipe.jsp"><%=rb.getString("create.link")%></a>
-
+			<tbody align="center">
+						<c:forEach items="${action.drugs}" var="d">
+							<tr bgcolor="LightPink">
+								<td><c:out value="${d.id}" /></td>
+								<td><c:out value="${d.name}" /></td>
+								<td><c:out value="${d.dose }" /></td>
+								<td><c:out value="${d.quantity }" /></td>
+								<td><c:out value="${d.price }" /></td>
+							</tr>
+						</c:forEach>
+			</tbody>
+		</table>
+		<a href="recipe.run"><%=rb.getString("create.link")%></a>
+	</c:if>
+	
 </body>
 </html>

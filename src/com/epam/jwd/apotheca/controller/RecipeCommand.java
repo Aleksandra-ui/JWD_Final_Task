@@ -8,7 +8,7 @@ import com.epam.jwd.apotheca.model.Drug;
 import com.epam.jwd.apotheca.model.User;
 
 
-public class Recipe implements RunCommand {
+public class RecipeCommand implements RunCommand {
 
 	private User user;
 	private String actionTime;
@@ -20,7 +20,7 @@ public class Recipe implements RunCommand {
 	private int totalCount;
 	private List<User> clients;
 	
-	public Recipe() {
+	public RecipeCommand() {
 		drugs = new ArrayList<Drug>();
 	}
 	

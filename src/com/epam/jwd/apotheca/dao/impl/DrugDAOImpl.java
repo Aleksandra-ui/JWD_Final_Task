@@ -238,11 +238,11 @@ public class DrugDAOImpl implements DrugDAO {
 				drugs.add(readDrug(rs));
 			}
 			rs.close();
+			logger.info("found drugs by ids");
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find drugs by ids");
 			e.printStackTrace();
 		}
-		logger.info("found drugs by ids");
 		return drugs;
 	}
 

@@ -251,6 +251,7 @@ public class RecipeDAOImpl implements RecipeDAO {
 			}
 
 			connection.commit();
+			logger.info("saved a recipe");
 
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to save a recipe");
@@ -262,7 +263,7 @@ public class RecipeDAOImpl implements RecipeDAO {
 			recipeInDB = findRecipe(id);
 		}
 
-		logger.info("saved a recipe");
+		
 		return recipeInDB;
 	}
 

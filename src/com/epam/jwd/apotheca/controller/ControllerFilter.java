@@ -30,7 +30,8 @@ public class ControllerFilter implements Filter {
     	actionMapping.put("hello", new Hello());
     	actionMapping.put("bye", new Bye());
     	actionMapping.put("drugs", new Drugs());
-    	actionMapping.put("recipe", new Recipe());
+    	actionMapping.put("recipe", new RecipeCommand());
+    	actionMapping.put("createRecipe", new CreateRecipe());
     	
     }
 
