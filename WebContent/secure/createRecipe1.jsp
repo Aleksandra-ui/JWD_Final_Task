@@ -14,7 +14,7 @@ ResourceBundle rb = ResourceBundle.getBundle("CreateRecipe", locale);
 <body>
 	
 	 <c:if test="${ empty param.recipeDrugIds }">
-    	<c:redirect url="/secure/recipe.run"/>
+    	<c:redirect url="/recipe.run"/>
      </c:if>
      
     <div id = "errorMessages">

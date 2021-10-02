@@ -34,7 +34,7 @@ public class AuthorizationFilter implements Filter {
 		HttpSession session = ((HttpServletRequest)request).getSession();
 		User user = (User)session.getAttribute("user");
 		if (user==null) {
-			((HttpServletResponse)response).sendRedirect("/apotheca/logonPage.jsp");
+			((HttpServletResponse)response).sendRedirect("/apotheca/logon.run");
 			return;
 		} 
 		

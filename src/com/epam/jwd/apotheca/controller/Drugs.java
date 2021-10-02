@@ -94,5 +94,17 @@ public class Drugs implements RunCommand {
 	public void setUser(User user) {
 		this.user = user;
 	}
+	
+	@Override
+	public User getUser() {
+		
+		return user;
+	}
+
+	@Override
+	public boolean isSecure() {
+		
+		return false;
+	}
 
 }

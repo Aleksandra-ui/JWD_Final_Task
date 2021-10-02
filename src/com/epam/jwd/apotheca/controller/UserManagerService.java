@@ -23,6 +23,17 @@ public class UserManagerService {
 		}
 		return result;
 	}
+	
+	public boolean createUser(User user) {
+
+		boolean result = false;
+		User newUser = userDAO.save(user);
+		if (newUser != null) {
+			user = newUser;
+			result = true;
+		}
+		return result;
+	}
 
 	public UserDAO getUserDAO() {
 		return userDAO;

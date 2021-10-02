@@ -32,6 +32,8 @@ public class ControllerFilter implements Filter {
     	actionMapping.put("drugs", new Drugs());
     	actionMapping.put("recipe", new RecipeCommand());
     	actionMapping.put("createRecipe", new CreateRecipe());
+    	actionMapping.put("prescribedRecipes", new PrescribedRecipes());
+    	actionMapping.put("logon", new Logon());
     	
     }
 
@@ -45,10 +47,22 @@ public class ControllerFilter implements Filter {
 		
 		if ( actionMapping.keySet().contains(finalPath) ) {
 			RunCommand command = actionMapping.get(finalPath);
+			
+			User user = (User)((HttpServletRequest)request).getSession().getAttribute("user");
+			if ( command.isSecure() && user == null ) {
+				command = actionMapping.get("logon");
+			}
+			
 			command.setParams(request.getParameterMap());
-			command.setUser((User)
-					((HttpServletRequest)request).getSession().getAttribute("user"));
+			command.setUser(user);	
 			String value = command.run();
+			if (command instanceof Logon) {
+				if (command.getUser() == null) {
+					((HttpServletRequest)request).getSession().removeAttribute("user");
+				} else {
+					((HttpServletRequest)request).getSession().setAttribute("user", command.getUser());
+				}
+			}
 			((HttpServletRequest)request).setAttribute("action", command);
 			logger.info(value);
 			request.getRequestDispatcher(command.getView()).forward(request, response);

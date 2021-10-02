@@ -25,7 +25,7 @@ public class RecipeCommand implements RunCommand {
 	}
 	
 	public String getView() {
-		return "recipe1.jsp";
+		return "secure/recipe1.jsp";
 	}
 	
 	@Override
@@ -59,6 +59,12 @@ public class RecipeCommand implements RunCommand {
 	public void setUser(User user) {
 		this.user = user;
 	}
+	
+	@Override
+	public User getUser() {
+		
+		return user;
+	}
 
 	public int getPageSize() {
 		return pageSize;
@@ -82,6 +88,12 @@ public class RecipeCommand implements RunCommand {
 
 	public List<Drug> getAllPrescripted() {
 		return allPrescripted;
+	}
+
+	@Override
+	public boolean isSecure() {
+		
+		return true;
 	}
 
 }

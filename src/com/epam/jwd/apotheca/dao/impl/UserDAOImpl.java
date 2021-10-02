@@ -114,12 +114,13 @@ public class UserDAOImpl implements UserDAO {
 				users.add(user);
 			}
 			rs.close();
+			logger.info("found users");
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find users");
 			e.printStackTrace();
 		}
 
-		logger.info("found users");
+		
 		return users;
 
 	}

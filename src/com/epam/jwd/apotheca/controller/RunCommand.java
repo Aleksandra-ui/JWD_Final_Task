@@ -14,4 +14,8 @@ public interface RunCommand {
 	
 	void setUser(User user);
 	
+	User getUser();
+	
+	boolean isSecure();
+	
 }

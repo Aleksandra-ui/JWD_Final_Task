@@ -260,7 +260,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 			<c:choose>
 				<c:when test="${not empty action.drugs}">
 					<c:forEach items="${action.drugs}" var="d">
-						<tr bgcolor="LightPink">
+						<tr bgcolor="LightBlue">
 							<td><c:out value="${d.id}" /></td>
 							<td><c:out value="${d.name}" /></td>
 							<td><c:out value="${d.dose }" /></td>

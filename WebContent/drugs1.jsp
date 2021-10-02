@@ -278,6 +278,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 <body onload="readDrugs();setAmount();printTotal();">
 	<%
 		Drugs bean = (Drugs)request.getAttribute("action");
+	
 		Integer totalCount = bean.getTotalCount();
 		int pageSize = bean.getPageSize();
 		int currentPage = bean.getCurrentPage();

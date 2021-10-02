@@ -44,5 +44,17 @@ public class Bye implements RunCommand {
 		this.user = user;
 	}
 
+	@Override
+	public boolean isSecure() {
+		
+		return false;
+	}
+
+	@Override
+	public User getUser() {
+		
+		return user;
+	}
+
 
 }

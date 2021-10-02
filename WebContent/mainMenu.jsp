@@ -94,10 +94,10 @@ java.util.Map,java.util.HashMap"%>
 	<ul>
 		<li class="menu-item"><a href="/apotheca/drugs.run"><%=rb0.getString("menu.drugs")%></a></li>
 		<c:if test="${ canPrescribe }">
-			<li class="menu-item"><a href="/apotheca/secure/recipe.run"><%=rb0.getString("menu.prescribe")%></a></li>
+			<li class="menu-item"><a href="/apotheca/recipe.run"><%=rb0.getString("menu.prescribe")%></a></li>
 		</c:if> 
 		<c:if test="${ canPrescribe }">
-			<li class="menu-item"><a href="/apotheca/secure/prescribedRecipes.jsp"><%=rb0.getString("menu.recipes")%></a></li>
+			<li class="menu-item"><a href="/apotheca/prescribedRecipes.run"><%=rb0.getString("menu.recipes")%></a></li>
 		</c:if> 
 		<c:if test="${not empty sessionScope.user }">
 			<li class="menu-item"><a href="/apotheca/secure/orders.jsp"><%=rb0.getString("menu.orders")%></a></li>
@@ -108,11 +108,11 @@ java.util.Map,java.util.HashMap"%>
 		<li class="menu-item">
 			<c:choose>
 				<c:when test="${not empty sessionScope.user}"><font color = "blue"><%=rb0.getString("menu.user")%>: ${sessionScope.user.name}</font></c:when>
-				<c:otherwise><%=rb0.getString("menu.logon1")%> <a href="/apotheca/logonPage.jsp"><%=rb0.getString("menu.logon2")%></a></c:otherwise>
+				<c:otherwise><%=rb0.getString("menu.logon1")%> <a href="/apotheca/logon.run"><%=rb0.getString("menu.logon2")%></a></c:otherwise>
 			</c:choose>
 		</li>
 		<li class="last-item">
-			<c:if test="${not empty sessionScope.user}"><a href="/apotheca/logonPage.jsp?logoff=1"><%=rb0.getString("menu.logoff")%></a></c:if>
+			<c:if test="${not empty sessionScope.user}"><a href="/apotheca/logon.run?logoff=1"><%=rb0.getString("menu.logoff")%></a></c:if>
 		</li>
 	</ul>
 	<br/>
