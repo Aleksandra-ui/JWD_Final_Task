@@ -1,4 +1,4 @@
-package com.epam.jwd.apotheca.controller;
+package com.epam.jwd.apotheca.controller.action;
 
 import java.util.Map;
 

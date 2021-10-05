@@ -28,11 +28,11 @@ public class MyContextListener implements ServletContextListener {
 
 		ServletContext context = event.getServletContext();
 
-		UserManagerService userService = new UserManagerService();
+		UserManagerService userService = UserManagerService.getInstance();
 		context.setAttribute("userService", userService);
-		RecipeManagerService recipeService = new RecipeManagerService();
+		RecipeManagerService recipeService = RecipeManagerService.getInstance();
 		context.setAttribute("recipeService", recipeService);
-		OrderManagerService orderService = new OrderManagerService();
+		OrderManagerService orderService = OrderManagerService.getInstance();
 		context.setAttribute("orderService", orderService);
 		
 		Locale.setDefault(Locale.US);

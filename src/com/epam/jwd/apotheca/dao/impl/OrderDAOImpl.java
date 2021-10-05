@@ -24,15 +24,20 @@ import com.epam.jwd.apotheca.pool.ConnectionPool;
 
 public class OrderDAOImpl implements OrderDAO {
 
+	private static OrderDAOImpl instance = new OrderDAOImpl();
 	private ConnectionPool cp = ConnectionPool.retrieve();
 	private static final Logger logger = LoggerFactory.getLogger(OrderDAOImpl.class);
 
-	public OrderDAOImpl() {
+	private OrderDAOImpl() {
 		try {
 			cp.init();
 		} catch (CouldNotInitializeConnectionPoolException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static OrderDAOImpl getInstance() {
+		return instance;
 	}
 
 	@Override
@@ -50,8 +55,10 @@ public class OrderDAOImpl implements OrderDAO {
 						+ "','" + order.getDate() + "')") > 0;
 			}
 
-			connection.commit();
-
+			if (result) {
+				connection.commit();
+				logger.info("saved an order");
+			}
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to save an order");
 			e.printStackTrace();
@@ -65,7 +72,6 @@ public class OrderDAOImpl implements OrderDAO {
 			orderInDB = findOrder(id);
 		}
 
-		logger.info("saved an order");
 		return orderInDB;
 
 	}

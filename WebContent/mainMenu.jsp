@@ -100,10 +100,10 @@ java.util.Map,java.util.HashMap"%>
 			<li class="menu-item"><a href="/apotheca/prescribedRecipes.run"><%=rb0.getString("menu.recipes")%></a></li>
 		</c:if> 
 		<c:if test="${not empty sessionScope.user }">
-			<li class="menu-item"><a href="/apotheca/secure/orders.jsp"><%=rb0.getString("menu.orders")%></a></li>
+			<li class="menu-item"><a href="/apotheca/orders.run"><%=rb0.getString("menu.orders")%></a></li>
 		</c:if> 
 		<c:if test="${canAddDrugs}">
-			<li class="menu-item"><a href="/apotheca/secure/createDrug.jsp"><%=rb0.getString("menu.create")%></a></li>
+			<li class="menu-item"><a href="/apotheca/createDrug.run"><%=rb0.getString("menu.create")%></a></li>
 		</c:if> 
 		<li class="menu-item">
 			<c:choose>

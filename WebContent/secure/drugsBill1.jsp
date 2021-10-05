@@ -16,7 +16,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 <body>
 
 	 <c:if test="${ empty sessionScope.user }">
-    	<c:redirect url="/drugs.jsp"/>
+    	<c:redirect url="/drugs.run"/>
      </c:if>
 
 	<table border="1" style="width: 50%">
@@ -32,38 +32,15 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 
 		<tbody align="center">
 		
-			<%
-
-						DrugManagerService drugService = DrugManagerService.getInstance();
-						Integer total = 0;
-						if (request.getParameter("drugIds") != null){
-							String[] drugIdsStr = request.getParameter("drugIds").split(",");
-							List<Drug> drugs = drugService.getDrugs(drugIdsStr); 
-							Map<Drug, Integer> amountsById = new HashMap<Drug, Integer>();
-				
-							request.setAttribute("drugsList", drugs);
-							
-							String[] amountsStr = request.getParameter("amounts").split(",");
-							for ( int i = 0; i < drugIdsStr.length; i ++ ) {
-								amountsById.put(drugs.get(i), Integer.valueOf(amountsStr[i]));
-							}
-							request.setAttribute("amountsById", amountsById);
-													
-							for ( Drug d : drugs ) {
-								total += d.getPrice() * amountsById.get(d); 
-							}
-						}
-			%>
-			
 			<c:choose>
-				<c:when test="${not empty drugsList}">
-					<c:forEach items="${drugsList}" var="d">
+				<c:when test="${not empty action.order}">
+					<c:forEach items="${action.order.drugs}" var="d">
 						<tr
-							bgcolor=<c:out value="${not d.prescription ? 'LightGreen' : 'LightPink'}"/>>
-							<td><c:out value="${d.name}" /></td>
-							<td><c:out value="${d.dose }" /></td>
-							<td><c:out value="${amountsById[d]}" /></td>
-							<td><c:out value="${d.price }" /></td>
+							bgcolor=<c:out value="${not d.key.prescription ? 'LightGreen' : 'LightBlue'}"/>>
+							<td><c:out value="${d.key.name}" /></td>
+							<td><c:out value="${d.key.dose }" /></td>
+							<td><c:out value="${d.value}" /></td>
+							<td><c:out value="${d.key.price }" /></td>
 						</tr>
 					</c:forEach>
 				</c:when>
@@ -73,11 +50,29 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 					</tr>
 				</c:otherwise>
 			</c:choose>
+<%-- 			<c:choose> --%>
+<%-- 				<c:when test="${not empty action.drugs}"> --%>
+<%-- 					<c:forEach items="${action.drugs}" var="d"> --%>
+<!-- 						<tr -->
+<%-- 							bgcolor=<c:out value="${not d.prescription ? 'LightGreen' : 'LightBlue'}"/>> --%>
+<%-- 							<td><c:out value="${d.name}" /></td> --%>
+<%-- 							<td><c:out value="${d.dose }" /></td> --%>
+<%-- 							<td><c:out value="${action.amountsById[d]}" /></td> --%>
+<%-- 							<td><c:out value="${d.price }" /></td> --%>
+<!-- 						</tr> -->
+<%-- 					</c:forEach> --%>
+<%-- 				</c:when> --%>
+<%-- 				<c:otherwise> --%>
+<!-- 					<tr> -->
+<%-- 						<td colspan="6"><%=rb.getString("drugs.absence")%></td> --%>
+<!-- 					</tr> -->
+<%-- 				</c:otherwise> --%>
+<%-- 			</c:choose> --%>
 
 		</tbody>
 	</table>
 	
-	<%=rb.getString("drugs.total")%>: <%= total %>
+	<%=rb.getString("drugs.total")%>: ${action.total }
 
 </body>
 </html>

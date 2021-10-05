@@ -23,7 +23,7 @@ public class AccessValidator implements Validator {
 		boolean result = true; 
 		
 		if ( "createRecipe".equals(action) ) {
-			UserManagerService userService = new UserManagerService();
+			UserManagerService userService = UserManagerService.getInstance();
 			if ( ! userService.canPrescribe(user) ) {
 				messages.add("You are not allowed to view this page");
 				result = false;

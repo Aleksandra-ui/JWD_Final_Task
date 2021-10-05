@@ -18,8 +18,8 @@ ResourceBundle rb = ResourceBundle.getBundle("CreateRecipe", locale);
      </c:if>
 	
 	<%
-		RecipeManagerService service = new RecipeManagerService();
-		UserManagerService uService = new UserManagerService();
+		RecipeManagerService service = RecipeManagerService.getInstance();
+		UserManagerService uService = UserManagerService.getInstance();
 		DrugManagerService dService = DrugManagerService.getInstance();
 		
 		Recipe recipe = new Recipe();

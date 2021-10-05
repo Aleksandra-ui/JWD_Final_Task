@@ -1,15 +1,18 @@
-package com.epam.jwd.apotheca.controller;
+package com.epam.jwd.apotheca.controller.action;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.epam.jwd.apotheca.controller.DrugManagerService;
+import com.epam.jwd.apotheca.controller.UserManagerService;
 import com.epam.jwd.apotheca.model.Drug;
 import com.epam.jwd.apotheca.model.User;
 
 
 public class RecipeCommand implements RunCommand {
 
+	private static RecipeCommand instance = new RecipeCommand();
 	private User user;
 	private String actionTime;
 	private Map<String, String[]> params;
@@ -20,8 +23,12 @@ public class RecipeCommand implements RunCommand {
 	private int totalCount;
 	private List<User> clients;
 	
-	public RecipeCommand() {
+	private RecipeCommand() {
 		drugs = new ArrayList<Drug>();
+	}
+	
+	public static RecipeCommand getInstance() {
+		return instance;
 	}
 	
 	public String getView() {
@@ -31,16 +38,13 @@ public class RecipeCommand implements RunCommand {
 	@Override
 	public String run() {
 
-		DrugManagerService drugService = DrugManagerService.getInstance();
-		UserManagerService userService = new UserManagerService();
-		
-		totalCount = drugService.getPrescriptedCount();
+		totalCount = DrugManagerService.getInstance().getPrescriptedCount();
 		pageSize = params.get("pageSize") == null ? 5 : Integer.valueOf(params.get("pageSize")[0]);
 		currentPage = params.get("currentPage") == null ? 1
 				: Integer.valueOf(params.get("currentPage")[0]);
-		drugs = drugService.getPrescriptedDrugs(pageSize * (currentPage - 1), pageSize);
-		allPrescripted = drugService.getPrescriptedDrugs();
-		clients = userService.getClients();
+		drugs = DrugManagerService.getInstance().getPrescriptedDrugs(pageSize * (currentPage - 1), pageSize);
+		allPrescripted = DrugManagerService.getInstance().getPrescriptedDrugs();
+		clients = UserManagerService.getInstance().getClients();
 		
 		return actionTime;
 		

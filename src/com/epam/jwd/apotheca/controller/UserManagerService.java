@@ -5,13 +5,23 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 
 import com.epam.jwd.apotheca.dao.api.UserDAO;
+import com.epam.jwd.apotheca.dao.impl.RecipeDAOImpl;
 import com.epam.jwd.apotheca.dao.impl.UserDAOImpl;
 import com.epam.jwd.apotheca.model.User;
 
 public class UserManagerService {
 
-	private UserDAO userDAO = new UserDAOImpl();
+	private static UserManagerService instance = new UserManagerService();
+	private UserDAO userDAO = UserDAOImpl.getInstance();
 
+	private UserManagerService() {
+		
+	}
+	
+	public static UserManagerService getInstance() {
+		return instance;
+	}
+	
 	public boolean createUser(User user, HttpSession session) {
 
 		boolean result = false;

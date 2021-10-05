@@ -1,4 +1,4 @@
-package com.epam.jwd.apotheca.controller;
+package com.epam.jwd.apotheca.controller.action;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -10,6 +10,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.epam.jwd.apotheca.controller.UserManagerService;
 import com.epam.jwd.apotheca.dao.api.UserDAO;
 import com.epam.jwd.apotheca.model.Drug;
 import com.epam.jwd.apotheca.model.Recipe;
@@ -18,13 +19,18 @@ import com.epam.jwd.apotheca.model.User;
 
 public class Logon implements RunCommand {
 
+	private static Logon instance = new Logon();
 	private static final Logger logger = LoggerFactory.getLogger(Logon.class);
 	private String actionTime;
 	private Map<String, String[]> params;
 	private User user;
 	private List<User> users;
 	
-	public Logon() {
+	private Logon() {
+	}
+	
+	public static Logon getInstance() {
+		return instance;
 	}
 
 	public String getActionTime() {
@@ -38,7 +44,7 @@ public class Logon implements RunCommand {
 	@Override      
 	public String run() {
 		
-		UserManagerService userService = new UserManagerService();
+		UserManagerService userService = UserManagerService.getInstance();
 		String userName = params.get("name") != null ? params.get("name")[0] : null;
 		String userPass = params.get("pass") != null ? params.get("pass")[0] : null;
 		String userLogoff = params.get("logoff") != null ? params.get("logoff")[0] : null;

@@ -33,19 +33,13 @@ public class DrugDAOTest {
 	@Test
 	public void testSave() {
 
-		Drug drug = new Drug();
-		drug.setDose(2.5);
-		drug.setName("Aevit");
-		drug.setPrescription(false);
-		drug.setPrice(230);
-		drug.setQuantity(20);
+		Drug drug = createDrug();
+		Drug drugInDB = drugDAO.save(drug);
+		drug.setId(drugInDB.getId());
 		
-		Drug drug2 = drugDAO.save(drug);
-		drug.setId(drug2.getId());
+		drugDAO.delete(drug.getId());
 		
-		drugDAO.delete(drug2.getId());
-		
-		Assert.assertEquals(drug, drug2);
+		Assert.assertEquals(drug, drugInDB);
 		
 	}
 
@@ -58,17 +52,11 @@ public class DrugDAOTest {
 	@Test
 	public void testDelete() {
 		
-		Drug drug = new Drug();
-		drug.setDose(3.0);
-		drug.setName("Sedavit");
-		drug.setPrescription(false);
-		drug.setPrice(140);
-		drug.setQuantity(30);
-		Drug drug2 = drugDAO.save(drug);
+		Drug drugInDB = drugDAO.save(createDrug());
 		
-		drugDAO.delete(drug2.getId());
+		drugDAO.delete(drugInDB.getId());
 		
-		Assert.assertNull(drugDAO.findById(drug2.getId()));
+		Assert.assertNull(drugDAO.findById(drugInDB.getId()));
 		
 	}
 
@@ -86,39 +74,30 @@ public class DrugDAOTest {
 	@Test
 	public void testFindDrug() {
 		
-		Drug drug = new Drug();
-		drug.setDose(3.0);
-		drug.setName("Sedavit");
-		drug.setPrescription(false);
-		drug.setPrice(140);
-		drug.setQuantity(30);
+		Drug drug = createDrug();
 		drugDAO.save(drug);
 		
-		Drug drug2 = drugDAO.findDrug("Sedavit", 3.0);
-		drug.setId(drug2.getId());
+		Drug drugInDB = drugDAO.findDrug("Sedavit", 3.0);
+		drug.setId(drugInDB.getId());
 		
-		drugDAO.delete(drug2.getId());
+		drugDAO.delete(drug.getId());
 		
-		Assert.assertEquals(drug, drug2);
+		Assert.assertEquals(drug, drugInDB);
 		
 	}
 	
 	@Test
 	public void testFindPrescripted() {
 		
-		Drug drug = new Drug();
-		drug.setDose(1.0);
-		drug.setName("u");
-		drug.setPrescription(true);
-		drug.setPrice(140);
-		drug.setQuantity(30);
-		Drug drug2 = drugDAO.save(drug);
+		Drug drug = drugDAO.save(createDrug());
+		System.out.println("drug from DB: " + drug);
 		
 		List<Drug> prescriptedDrugs = ((DrugDAOImpl)drugDAO).findPrescripted();
+		
+		System.out.println( drugDAO.delete(drug.getId()));;
+		
 		Assert.assertNotNull(prescriptedDrugs);
 		assert ! prescriptedDrugs.isEmpty();
-		
-		drugDAO.delete(drug2.getId());
 		
 	}
 	
@@ -147,20 +126,13 @@ public class DrugDAOTest {
 	@Test
 	public void testFindByName() {
 		
-		Drug drug = new Drug();
-		drug.setDose(3.0);
-		drug.setName("Sedavit");
-		drug.setPrescription(false);
-		drug.setPrice(140);
-		drug.setQuantity(30);
-		Drug drug1InDb = drugDAO.save(drug);
+		Drug drug = drugDAO.save(createDrug());
 		
 		List<Drug> drugs = ((DrugDAOImpl)drugDAO).findByName("Sedavit");
-		System.out.println(drugs);
-		System.out.println(drug1InDb);
-		assert (drugs.contains(drug1InDb) );
 		
-		drugDAO.delete(drug1InDb.getId());
+		drugDAO.delete(drug.getId());
+		
+		assert (drugs.contains(drug) );
 
 	}
 	
@@ -169,19 +141,40 @@ public class DrugDAOTest {
 		
 		int first = drugDAO.getTotalCount();
 		
-		Drug drug = new Drug();
-		drug.setDose(3.0);
-		drug.setName("Sedavit");
-		drug.setPrescription(false);
-		drug.setPrice(140);
-		drug.setQuantity(30);
-		drug = drugDAO.save(drug);
+		Drug drug = drugDAO.save(createDrug());
 		
 		int second = drugDAO.getTotalCount();
 		
 		drugDAO.delete(drug.getId());
 		
 		assert first == second - 1;
+		
+	}
+	
+	@Test
+	public void testGetPrescriptedCount() {
+		
+		int first = drugDAO.getTotalCount();
+		
+		Drug drug = drugDAO.save(createDrug());
+		
+		int second = drugDAO.getTotalCount();
+		
+		drugDAO.delete(drug.getId());
+		
+		assert first == second - 1;
+		
+	}
+	
+	public Drug createDrug() {
+		
+		Drug drug = new Drug();
+		drug.setDose(3.0);
+		drug.setName("Sedavit");
+		drug.setPrescription(true);
+		drug.setPrice(140);
+		drug.setQuantity(30);
+		return drug;
 		
 	}
 

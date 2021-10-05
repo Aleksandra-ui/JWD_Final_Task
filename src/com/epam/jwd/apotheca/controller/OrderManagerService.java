@@ -6,13 +6,23 @@ import java.util.List;
 import java.util.Map;
 
 import com.epam.jwd.apotheca.dao.api.OrderDAO;
+import com.epam.jwd.apotheca.dao.impl.DrugDAOImpl;
 import com.epam.jwd.apotheca.dao.impl.OrderDAOImpl;
 import com.epam.jwd.apotheca.model.Drug;
 import com.epam.jwd.apotheca.model.Order;
 
 public class OrderManagerService {
 
-	private OrderDAO orderDAO = new OrderDAOImpl();
+	private static OrderManagerService instance = new OrderManagerService();
+	private OrderDAO orderDAO = OrderDAOImpl.getInstance();
+	
+	private OrderManagerService() {
+		
+	}
+	
+	public static OrderManagerService getInstance() {
+		return instance;
+	}
 
 	public Integer getTotalAmount(Integer orderId) {
 

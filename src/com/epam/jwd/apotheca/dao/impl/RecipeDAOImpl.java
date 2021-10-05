@@ -21,15 +21,20 @@ import com.epam.jwd.apotheca.pool.ConnectionPool;
 
 public class RecipeDAOImpl implements RecipeDAO {
 
+	private static RecipeDAOImpl instance = new RecipeDAOImpl();
 	private ConnectionPool cp = ConnectionPool.retrieve();
 	private static final Logger logger = LoggerFactory.getLogger(RecipeDAOImpl.class);
 
-	public RecipeDAOImpl() {
+	private RecipeDAOImpl() {
 		try {
 			cp.init();
 		} catch (CouldNotInitializeConnectionPoolException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static RecipeDAOImpl getInstance() {
+		return instance;
 	}
 
 	@Override
@@ -282,14 +287,17 @@ public class RecipeDAOImpl implements RecipeDAO {
 		}
 
 		Recipe recipe = findRecipe(id);
-		List<Integer> drugIds = recipe.getDrugIds();
-		if (drugIds.contains(drugId)) {
-			logger.info("failed to delete a recipe");
-			return false;
-		} else {
-			logger.info("deleted a recipe");
-			return true;
+		
+		if ( recipe != null ) {
+			List<Integer> drugIds = recipe.getDrugIds();
+			if (drugIds.contains(drugId)) {
+				logger.info("failed to delete a recipe");
+				return false;
+			}
 		}
+		
+		logger.info("deleted a recipe");
+		return true;
 
 	}
 	

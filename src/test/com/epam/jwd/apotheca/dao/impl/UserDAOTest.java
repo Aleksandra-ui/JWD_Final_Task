@@ -18,7 +18,7 @@ public class UserDAOTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		userDAO = new UserDAOImpl();
+		userDAO = UserDAOImpl.getInstance();
 	}
 
 	@AfterClass
@@ -57,37 +57,10 @@ public class UserDAOTest {
 				break;
 			}
 		}
-		assert found;
 		
 		userDAO.delete(user.getId());
-
-	}
-
-	@Test
-	public void testCreateModelUser() {
-
-		User user = new User();
-		user.setName("ccc");
-		user.setPassword("ccc");
-		Role role = new Role();
-		role.setId(2);
-		role.setName("pharmacist");
-		user.setRole(role);
-		user = ((UserDAOImpl) userDAO).save(user);
-		assert user != null;
-		List<User> users = ((UserDAOImpl) userDAO).getUsers();
-		assert users.size() > 0;
-
-		boolean found = false;
-		for (User u : users) {
-			if ("ccc".equalsIgnoreCase(u.getName())) {
-				found = true;
-				break;
-			}
-		}
-		assert found;
 		
-		userDAO.delete(user.getId());
+		assert found;
 
 	}
 
@@ -96,16 +69,6 @@ public class UserDAOTest {
 
 		((UserDAOImpl) userDAO).createUser("vt", 1, "h");
 		assert ((UserDAOImpl) userDAO).deleteUser("vt");
-		List<User> users = ((UserDAOImpl) userDAO).getUsers();
-
-		boolean found = false;
-		for (User u : users) {
-			if ("vt".equalsIgnoreCase(u.getName())) {
-				found = true;
-				break;
-			}
-		}
-		assert !found;
 
 	}
 
@@ -117,6 +80,7 @@ public class UserDAOTest {
 
 		((UserDAOImpl) userDAO).deleteUser("v");
 		assert !((UserDAOImpl) userDAO).hasUser("v");
+		
 	}
 
 	@Test
@@ -146,66 +110,37 @@ public class UserDAOTest {
 	@Test
 	public void testSave() {
 
-		User user = new User();
-		user.setName("abc");
-		Role role = new Role();
-		role.setId(2);
-		role.setName("pharmacist");
-		user.setRole(role);
-		user.setPassword("abc");
-
-		user = userDAO.save(user);
+		User user = createStandardUser();
+		
+		userDAO.delete(user.getId());
 
 		assert user != null ? true : false;
-
-		userDAO.delete(user.getId());
 
 	}
 
 	@Test
 	public void testUpdate() {
 
-		User user = new User();
-		user.setName("k2");
-		user.setPassword("t");
-		Role role = new Role();
-		role.setId(UserDAO.PERM_DOCTOR);
-		role.setName("doctor");
-		user.setRole(role);
+		User user = createStandardUser();
 
-		user = userDAO.save(user);
-
-		role.setId(UserDAO.PERM_CLIENT);
-		role.setName("client");
 		user.setPassword("q");
-		user.setRole(role);
 		user.setName("z");
 
 		User newUser = userDAO.update(user);
-
-		assert "q".equals(newUser.getPassword()) & UserDAO.PERM_CLIENT == newUser.getRole().getId()
-				& "z".equals(newUser.getName());
-
+		
 		userDAO.delete(newUser.getId());
 		userDAO.delete(user.getId());
+
+		assert "q".equals(newUser.getPassword()) && "z".equals(newUser.getName());
 
 	}
 
 	@Test
 	public void testDelete() {
 
-		boolean result = false;
-		User user = new User();
-		user.setName("k");
-		user.setPassword("jjjj");
-		Role role = new Role();
-		role.setId(UserDAO.PERM_CLIENT);
-		role.setName("client");
-		user.setRole(role);
+		User user = createStandardUser();
 
-		User newUser = userDAO.save(user);
-
-		result = userDAO.delete(newUser.getId());
+		boolean result = userDAO.delete(user.getId());
 
 		assert result;
 
@@ -221,20 +156,31 @@ public class UserDAOTest {
 		
 		int first = userDAO.getTotalCount();
 		
-		User user = new User();
-		user.setName("k");
-		user.setPassword("jjjj");
-		Role role = new Role();
-		role.setId(UserDAO.PERM_CLIENT);
-		role.setName("client");
-		user.setRole(role);
-		user = userDAO.save(user);
+		User user = createStandardUser();
 		
 		int second = userDAO.getTotalCount();
 		
 		userDAO.delete(user.getId());
 		
 		assert first == second - 1;
+		
+	}
+	
+	static User createStandardUser() {
+		
+		User user = new User();
+		Role role = new Role();
+		role.setId(UserDAO.ROLE_CLIENT);
+		role.setName("client");
+		role.setPermission(UserDAO.PERM_CLIENT);
+
+		user.setName("Maksim Fiodorov");
+		user.setPassword("789");
+		user.setRole(role);
+		
+		user = userDAO.save(user);
+		System.out.println("test user in DB: " + user);
+		return user;
 		
 	}
 

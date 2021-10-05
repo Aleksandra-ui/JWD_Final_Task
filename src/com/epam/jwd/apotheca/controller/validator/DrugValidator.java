@@ -27,9 +27,8 @@ public class DrugValidator implements Validator {
 		
 		boolean result = true; 
 		
-		DrugManagerService drugService = DrugManagerService.getInstance();
 		for ( Drug drug : drugs ) {
-			if ( drugService.getDrug(drug.getId()) == null ) {
+			if ( DrugManagerService.getInstance().getDrug(drug.getId()) == null ) {
 				logger.info("a drug with id " + drug.getId() + " does not exist.");
 				if (result) {
 					result = false;

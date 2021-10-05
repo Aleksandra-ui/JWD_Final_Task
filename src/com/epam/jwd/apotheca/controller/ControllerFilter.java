@@ -16,6 +16,18 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.epam.jwd.apotheca.controller.action.BuyDrugs;
+import com.epam.jwd.apotheca.controller.action.Bye;
+import com.epam.jwd.apotheca.controller.action.CreateDrug;
+import com.epam.jwd.apotheca.controller.action.CreateRecipe;
+import com.epam.jwd.apotheca.controller.action.Drugs;
+import com.epam.jwd.apotheca.controller.action.DrugsBill;
+import com.epam.jwd.apotheca.controller.action.Hello;
+import com.epam.jwd.apotheca.controller.action.Logon;
+import com.epam.jwd.apotheca.controller.action.Orders;
+import com.epam.jwd.apotheca.controller.action.PrescribedRecipes;
+import com.epam.jwd.apotheca.controller.action.RecipeCommand;
+import com.epam.jwd.apotheca.controller.action.RunCommand;
 import com.epam.jwd.apotheca.model.User;
 import com.mysql.fabric.Response;
 
@@ -29,11 +41,15 @@ public class ControllerFilter implements Filter {
     	actionMapping = new HashMap<String, RunCommand>();
     	actionMapping.put("hello", new Hello());
     	actionMapping.put("bye", new Bye());
-    	actionMapping.put("drugs", new Drugs());
-    	actionMapping.put("recipe", new RecipeCommand());
-    	actionMapping.put("createRecipe", new CreateRecipe());
-    	actionMapping.put("prescribedRecipes", new PrescribedRecipes());
-    	actionMapping.put("logon", new Logon());
+    	actionMapping.put("drugs", Drugs.getInstance());
+    	actionMapping.put("recipe", RecipeCommand.getInstance());
+    	actionMapping.put("createRecipe", CreateRecipe.getInstance());
+    	actionMapping.put("prescribedRecipes", PrescribedRecipes.getInstance());
+    	actionMapping.put("logon", Logon.getInstance());
+    	actionMapping.put("orders", Orders.getInstance());
+    	actionMapping.put("createDrug", CreateDrug.getInstance());
+    	actionMapping.put("buyDrugs", BuyDrugs.getInstance());
+    	actionMapping.put("drugsBill", DrugsBill.getInstance());
     	
     }
 

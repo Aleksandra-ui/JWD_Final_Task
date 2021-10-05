@@ -18,16 +18,21 @@ import com.epam.jwd.apotheca.model.User;
 import com.epam.jwd.apotheca.pool.ConnectionPool;
 
 public class UserDAOImpl implements UserDAO {
-
+	
+	private static UserDAOImpl instance = new UserDAOImpl();
 	private ConnectionPool cp = ConnectionPool.retrieve();
 	private static final Logger logger = LoggerFactory.getLogger(UserDAOImpl.class);
 	
-	public UserDAOImpl() {
+	private UserDAOImpl() {
 		try {
 			cp.init();
 		} catch (CouldNotInitializeConnectionPoolException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static UserDAOImpl getInstance() {
+		return instance;
 	}
 
 	@Override
@@ -178,6 +183,7 @@ public class UserDAOImpl implements UserDAO {
 			user = getUser(name);
 		}
 		logger.info("created a user");
+		
 		return user;
 
 	}

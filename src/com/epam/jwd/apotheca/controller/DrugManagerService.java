@@ -10,7 +10,7 @@ import com.epam.jwd.apotheca.model.Drug;
 
 public class DrugManagerService {
 	
-	private static DrugManagerService instance;
+	private static DrugManagerService instance = new DrugManagerService();
 	private DrugDAO drugDAO;
 	
 	private DrugManagerService() {
@@ -18,9 +18,6 @@ public class DrugManagerService {
 	}
 	
 	public static DrugManagerService getInstance() {
-		if (instance == null) {
-			instance = new DrugManagerService();
-		}
 		return instance;
 	}
 

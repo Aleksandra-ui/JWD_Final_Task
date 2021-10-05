@@ -1,4 +1,4 @@
-package com.epam.jwd.apotheca.controller;
+package com.epam.jwd.apotheca.controller.action;
 
 import java.util.GregorianCalendar;
 import java.util.Map;
@@ -8,32 +8,33 @@ import org.slf4j.LoggerFactory;
 
 import com.epam.jwd.apotheca.model.User;
 
-public class Bye implements RunCommand {
-	
-	private static final Logger logger = LoggerFactory.getLogger(Bye.class);
+public class Hello implements RunCommand {
+
+	private static final Logger logger = LoggerFactory.getLogger(Hello.class);
 	private String actionTime; 
 	private Map<String, String[]> params;
 	private User user;
-
-	public Bye() {
+	
+	public Hello() {
+		
 	}
 	
 	public String getActionTime() {
 		return actionTime;
 	}
-	
+
 	public String getView() {
-		return "bye.jsp";
+		return "hello.jsp";
 	}
 
 	@Override
 	public String run() {
 		
-		logger.info("hello from Bye!");
+		logger.info("hello from Hello!");
 		actionTime = GregorianCalendar.getInstance().getTime().toString(); 
 		return actionTime;
 	}
-
+	
 	@Override
 	public void setParams(Map<String, String[]> params) {
 		this.params = params;
@@ -43,18 +44,17 @@ public class Bye implements RunCommand {
 	public void setUser(User user) {
 		this.user = user;
 	}
-
-	@Override
-	public boolean isSecure() {
-		
-		return false;
-	}
-
+	
 	@Override
 	public User getUser() {
 		
 		return user;
 	}
 
+	@Override
+	public boolean isSecure() {
+		
+		return false;
+	}
 
 }

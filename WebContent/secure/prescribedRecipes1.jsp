@@ -21,7 +21,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Recipes", locale);
 	<label for="doctor"><%=rb.getString("recipes.prompt") %></label>
 	<input id="doctor" name="doctor"></input>
 	</form>
-	<c:if test="${not empty param.doctorName }">
+	<c:if test="${not empty param.doctor }">
 		<table border = "1" style="width:50%" >
 			<caption><%=rb.getString("recipes.list")%></caption>
 			<thead align ="center">
@@ -37,23 +37,19 @@ ResourceBundle rb = ResourceBundle.getBundle("Recipes", locale);
 				<c:choose>
 					<c:when test="${not empty action.recipes}">
 						
-						<c:forEach items="${action.recipes }" var="r"></c:forEach>
-							<c:forEach items="${action.drugsMap.r } var="drug">
-							<tr bgcolor="LightGreen">
-								<td><c:out value="${r.id}"></c:out></td>
-								<%
-								User client = userService.getUser(r.getUserId());
-								Drug drug = drugService.getDrug(drugId);
-								%>
-								<td><%=client.getName() %></td>
-								<td><%=drug.getName() %></td>
-								<td><%=drug.getDose() %></td>
-								<td><%=r.getExpieryDate() %></td>
-							</tr>
-						<%
-							}
-						}
-						%>
+						<c:forEach items="${action.recipes }" var="r">
+							<c:set var="id">${r.id }</c:set>
+							<c:forEach items="${action.drugsMap[id] }" var="d">
+								<tr bgcolor="LightGreen">
+									<td>${r.id}</td>
+									<td>${action.userMap[id].name }</td>
+									<td>${d.name }</td>
+									<td>${d.dose }</td>
+									<td>${r.expieryDate }</td>
+								</tr>
+							</c:forEach>
+						</c:forEach>
+						
 					</c:when>
 					<c:otherwise>
 						<tr><td colspan="6">no records found</td></tr>

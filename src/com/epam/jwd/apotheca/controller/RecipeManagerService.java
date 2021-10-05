@@ -9,10 +9,15 @@ import com.epam.jwd.apotheca.model.User;
 
 public class RecipeManagerService {
 
+	private static RecipeManagerService instance = new RecipeManagerService();
 	private RecipeDAO recipeDAO;
 
-	public RecipeManagerService() {
-		recipeDAO = new RecipeDAOImpl();
+	private RecipeManagerService() {
+		recipeDAO = RecipeDAOImpl.getInstance();
+	}
+	
+	public static RecipeManagerService getInstance() {
+		return instance;
 	}
 
 	public boolean addRecipe(Recipe recipe) {

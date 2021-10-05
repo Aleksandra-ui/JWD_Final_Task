@@ -5,6 +5,14 @@
   <listener>
     <listener-class>com.epam.jwd.apotheca.controller.MyContextListener</listener-class>
   </listener>
+  <servlet>
+  	<servlet-name>jspAccess</servlet-name>
+  	<servlet-class>com.epam.jwd.apotheca.controller.JSPAccessServlet</servlet-class>
+  </servlet>
+<!--   <servlet-mapping> -->
+<!--   	<servlet-name>jspAccess</servlet-name> -->
+<!--   	<url-pattern>*.jsp</url-pattern> -->
+<!--   </servlet-mapping> -->
   <filter>
     <filter-name>auth</filter-name>
     <filter-class>com.epam.jwd.apotheca.controller.AuthorizationFilter</filter-class>

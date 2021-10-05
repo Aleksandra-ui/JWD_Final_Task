@@ -1,4 +1,4 @@
-package com.epam.jwd.apotheca.controller;
+package com.epam.jwd.apotheca.controller.action;
 
 import java.sql.Date;
 import java.text.ParseException;
@@ -12,10 +12,14 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.epam.jwd.apotheca.controller.DrugManagerService;
+import com.epam.jwd.apotheca.controller.RecipeManagerService;
+import com.epam.jwd.apotheca.controller.UserManagerService;
 import com.epam.jwd.apotheca.controller.validator.AccessValidator;
 import com.epam.jwd.apotheca.controller.validator.DateValidator;
 import com.epam.jwd.apotheca.controller.validator.DoctorValidator;
 import com.epam.jwd.apotheca.controller.validator.DrugValidator;
+import com.epam.jwd.apotheca.controller.validator.UserValidator;
 import com.epam.jwd.apotheca.controller.validator.Validator;
 import com.epam.jwd.apotheca.dao.impl.DrugDAOImpl;
 import com.epam.jwd.apotheca.model.Drug;
@@ -24,7 +28,8 @@ import com.epam.jwd.apotheca.model.Recipe;
 import com.epam.jwd.apotheca.model.User;
 
 public class CreateRecipe implements RunCommand {
-	
+
+	private static CreateRecipe instance = new CreateRecipe();
 	private List<Drug> drugs;
 	private User user = new User();
 	private String actionTime;
@@ -35,7 +40,7 @@ public class CreateRecipe implements RunCommand {
 	private List<Validator> validators;
 	private String doctorName;
 
-	public CreateRecipe() {
+	private CreateRecipe() {
 		drugs = new ArrayList<Drug>();
 		params = new HashMap<String, String[]>();
 		errorMessages = new ArrayList<String>();
@@ -44,6 +49,11 @@ public class CreateRecipe implements RunCommand {
 		validators.add(new DoctorValidator(user));
 		validators.add(new DateValidator(params));
 		validators.add(new DrugValidator(drugs));
+		validators.add(new UserValidator(params));
+	}
+	
+	public static CreateRecipe getInstance() {
+		return instance;
 	}
 
 	private void clearFields() {
@@ -62,10 +72,8 @@ public class CreateRecipe implements RunCommand {
 		}
 		
 		if (errorMessages.isEmpty()) {
-			RecipeManagerService service = new RecipeManagerService();
-			UserManagerService uService = new UserManagerService();
-			DrugManagerService dService = DrugManagerService.getInstance();
-			
+			RecipeManagerService service = RecipeManagerService.getInstance();
+			UserManagerService uService = UserManagerService.getInstance();
 			Recipe recipe = new Recipe();
 			
 			List<Integer> drugIds = new ArrayList<Integer>();
@@ -98,7 +106,7 @@ public class CreateRecipe implements RunCommand {
 			service.addRecipe(recipe);
 			
 			for ( Integer id : drugIds ) {
-				Drug drug = dService.getDrug(id); 
+				Drug drug = DrugManagerService.getInstance().getDrug(id); 
 				logger.info(drug.toString());
 				drugs.add(drug);
 			}

@@ -12,25 +12,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.epam.jwd.apotheca.controller.AuthorizationFilter;
+import com.epam.jwd.apotheca.controller.UserManagerService;
 import com.epam.jwd.apotheca.dao.api.DrugDAO;
 import com.epam.jwd.apotheca.model.Drug;
 import com.epam.jwd.apotheca.pool.ConnectionPool;
 
 public class DrugDAOImpl implements DrugDAO {
 
-	private static DrugDAOImpl instance;
+	private static DrugDAOImpl instance = new DrugDAOImpl();
 	private ConnectionPool cp;
 	private static final Logger logger = LoggerFactory.getLogger(DrugDAOImpl.class);
 	
 	private DrugDAOImpl() {
-		super();
 		cp = ConnectionPool.retrieve();
 	}
 	
 	public static DrugDAOImpl getInstance() {
-		if ( instance == null ) {
-			instance = new DrugDAOImpl();
-		}
 		return instance;
 	}
 
