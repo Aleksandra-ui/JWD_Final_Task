@@ -11,8 +11,10 @@ import com.epam.jwd.apotheca.controller.DrugManagerService;
 import com.epam.jwd.apotheca.controller.validator.AccessValidator;
 import com.epam.jwd.apotheca.controller.validator.DateValidator;
 import com.epam.jwd.apotheca.controller.validator.DoctorValidator;
+import com.epam.jwd.apotheca.controller.validator.DoseValidator;
 import com.epam.jwd.apotheca.controller.validator.DrugNameValidator;
 import com.epam.jwd.apotheca.controller.validator.DrugValidator;
+import com.epam.jwd.apotheca.controller.validator.PriceValidator;
 import com.epam.jwd.apotheca.controller.validator.QuantityValidator;
 import com.epam.jwd.apotheca.controller.validator.UserValidator;
 import com.epam.jwd.apotheca.controller.validator.Validator;
@@ -35,6 +37,8 @@ public class CreateDrug implements RunCommand {
 		validators = new ArrayList<Validator>();
 		validators.add(new DrugNameValidator(params));
 		validators.add(new QuantityValidator(params));
+		validators.add(new DoseValidator(params));
+		validators.add(new PriceValidator(params));
 	}
 	
 	public static CreateDrug getInstance() {
@@ -42,6 +46,7 @@ public class CreateDrug implements RunCommand {
 	}
 	
 	private void clearFields() {
+		setSuccess(false);
 		errorMessages.clear();
 	}
 
@@ -52,6 +57,7 @@ public class CreateDrug implements RunCommand {
 		
 		if ( ! params.isEmpty() ) {
 			for (Validator validator : validators) {
+				validator.setValue(params);
 				if ( ! validator.validate() ) {
 					errorMessages.addAll( validator.getMessages() );
 				}
@@ -84,7 +90,7 @@ public class CreateDrug implements RunCommand {
 
 	@Override
 	public String getView() {
-		return "secure/createDrug.jsp";
+		return "secure/createDrug1.jsp";
 	}
 
 	@Override

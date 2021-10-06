@@ -21,7 +21,7 @@ public class AccessValidator implements Validator {
 	public boolean validate() {
 		
 		boolean result = true; 
-		
+		messages.clear();
 		if ( "createRecipe".equals(action) ) {
 			UserManagerService userService = UserManagerService.getInstance();
 			if ( ! userService.canPrescribe(user) ) {
@@ -38,4 +38,10 @@ public class AccessValidator implements Validator {
 		return messages;
 	}
 
+	@Override
+	public void setValue(Object value) {
+		this.user = (User)value;
+	}
+
+	
 }

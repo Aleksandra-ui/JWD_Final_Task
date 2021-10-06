@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.epam.jwd.apotheca.controller.action.AddToCart;
 import com.epam.jwd.apotheca.controller.action.BuyDrugs;
 import com.epam.jwd.apotheca.controller.action.Bye;
 import com.epam.jwd.apotheca.controller.action.CreateDrug;
@@ -27,9 +28,10 @@ import com.epam.jwd.apotheca.controller.action.Logon;
 import com.epam.jwd.apotheca.controller.action.Orders;
 import com.epam.jwd.apotheca.controller.action.PrescribedRecipes;
 import com.epam.jwd.apotheca.controller.action.RecipeCommand;
+import com.epam.jwd.apotheca.controller.action.RemoveFromCart;
 import com.epam.jwd.apotheca.controller.action.RunCommand;
 import com.epam.jwd.apotheca.model.User;
-import com.mysql.fabric.Response;
+import com.epam.jwd.apotheca.controller.action.ShoppingCartAware;
 
 public class ControllerFilter implements Filter {
 	
@@ -50,6 +52,8 @@ public class ControllerFilter implements Filter {
     	actionMapping.put("createDrug", CreateDrug.getInstance());
     	actionMapping.put("buyDrugs", BuyDrugs.getInstance());
     	actionMapping.put("drugsBill", DrugsBill.getInstance());
+    	actionMapping.put("addToCart", new AddToCart());
+    	actionMapping.put("removeFromCart", new RemoveFromCart());
     	
     }
 
@@ -63,6 +67,15 @@ public class ControllerFilter implements Filter {
 		
 		if ( actionMapping.keySet().contains(finalPath) ) {
 			RunCommand command = actionMapping.get(finalPath);
+			
+			if ( command instanceof ShoppingCartAware ) {
+				ShoppingCart cart = (ShoppingCart)((HttpServletRequest)request).getSession().getAttribute("cart");
+				if ( cart == null ) {
+					cart = new ShoppingCart();
+					((HttpServletRequest)request).getSession().setAttribute("cart", cart);
+				}
+				((ShoppingCartAware)command).setCart(cart);
+			}
 			
 			User user = (User)((HttpServletRequest)request).getSession().getAttribute("user");
 			if ( command.isSecure() && user == null ) {

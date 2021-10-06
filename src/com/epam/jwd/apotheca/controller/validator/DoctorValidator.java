@@ -2,6 +2,7 @@ package com.epam.jwd.apotheca.controller.validator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.epam.jwd.apotheca.controller.UserManagerService;
 import com.epam.jwd.apotheca.model.User;
@@ -17,7 +18,7 @@ public class DoctorValidator implements Validator {
 	}
 	
 	public boolean validate() {
-		
+		messages.clear();
 		boolean result = true; 
 		
 		if ( user == null || user.getRole().getId() != 1 ) {
@@ -31,6 +32,11 @@ public class DoctorValidator implements Validator {
 
 	public List<String> getMessages() {
 		return messages;
+	}
+	
+	@Override
+	public void setValue(Object value) {
+		user = (User)value;
 	}
 
 }

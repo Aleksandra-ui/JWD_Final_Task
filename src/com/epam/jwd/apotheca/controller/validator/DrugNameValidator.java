@@ -27,6 +27,7 @@ public class DrugNameValidator implements Validator {
 
 	@Override
 	public boolean validate() {
+		messages.clear();
 
 		boolean result = false;
 		
@@ -35,6 +36,11 @@ public class DrugNameValidator implements Validator {
 			if ( Pattern.matches("^\\s*[\\dA-Za-z,;'\"\\s]+", drugName) ) {
 				result = true;
 			}
+		}
+		
+		if (!result) {
+			logger.error("'" + drugName + "' is not a valid drug name.");
+			messages.add("'" + drugName + "' is not a valid drug name.");
 		}
 		
 		return result;
@@ -48,6 +54,11 @@ public class DrugNameValidator implements Validator {
 		Validator drValidator = new DrugNameValidator(map);
 		System.out.println(drValidator.validate());
 		
+	}
+
+	@Override
+	public void setValue(Object value) {
+		this.params = (Map<String, String[]>)value;
 	}
 
 }

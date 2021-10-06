@@ -2,6 +2,7 @@ package com.epam.jwd.apotheca.controller.action;
 
 import java.util.Map;
 
+import com.epam.jwd.apotheca.controller.ShoppingCart;
 import com.epam.jwd.apotheca.model.User;
 
 public interface RunCommand {

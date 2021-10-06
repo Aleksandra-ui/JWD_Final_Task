@@ -13,16 +13,27 @@ ResourceBundle rb = ResourceBundle.getBundle("CreateDrug", locale);
 </head>
 <body>
 
-	<c:choose>
-		<c:when test="${action.success}">
-			<div><%=rb.getString("create.success")%></div>
-		</c:when>
-		<c:otherWise>
-			<div><%=rb.getString("create.fail")%></div>
-		</c:otherWise>
-	</c:choose>
+	<c:if test="${not empty param }">
+		<div>
+			<c:choose>
+				<c:when test="${action.success}">
+					<font color="blue"><%=rb.getString("create.success")%></font>
+				</c:when>
+				<c:otherwise>
+					<font color="red"><%=rb.getString("create.fail")%></font>
+				</c:otherwise>
+			</c:choose>
+		</div>
+	</c:if>
 	
-		<form action="/apotheca/createDrug.run" method="post">
+	<div id = "errorMessages">
+   		<c:forEach items="${action.errorMessages}" var="message">
+   			<font color="red"><c:out value="${ message}"/></font>
+   			<br/>
+   		</c:forEach>
+    </div>
+	
+	<form action="/apotheca/createDrug.run" method="post">
 		<label for = "drugName"><%=rb.getString("create.name")%></label> :
 		<input type = "text" name = "drugName"/>
 		<br/>
@@ -39,8 +50,10 @@ ResourceBundle rb = ResourceBundle.getBundle("CreateDrug", locale);
 		<input type = "checkbox" name = "prescription" value="on"/>
 		<br/>
 		<input type = "submit" name = "check" value = "<%=rb.getString("create.add")%>"/>
-		</form>
-		<a href = "/apotheca/drugs.run"><%=rb.getString("create.list")%></a>
+	 </form>
+	 <a href = "/apotheca/drugs.run"><%=rb.getString("create.list")%></a>
+		
+		
 	
 </body>
 </html>

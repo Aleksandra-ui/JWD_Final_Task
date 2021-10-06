@@ -8,4 +8,6 @@ public interface Validator {
 	
 	boolean validate();
 	
+	void setValue(Object value);
+
 }

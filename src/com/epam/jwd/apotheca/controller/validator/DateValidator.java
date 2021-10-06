@@ -93,5 +93,10 @@ public class DateValidator implements Validator {
 	public List<String> getMessages() {
 		return messages;
 	}
+
+	@Override
+	public void setValue(Object value) {
+		this.params = (Map<String, String[]>)value;
+	}
 	
 }

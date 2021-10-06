@@ -1,6 +1,6 @@
 package com.epam.jwd.apotheca.model;
 
-public class Drug implements Entity {
+public class Drug implements Entity, Comparable {
 
 	private Integer id;
 	private String name;
@@ -71,10 +71,9 @@ public class Drug implements Entity {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (obj == null || getClass() != obj.getClass()) {
 			return false;
-		if (getClass() != obj.getClass())
-			return false;
+		}
 		Drug other = (Drug) obj;
 		if (dose == null) {
 			if (other.dose != null)
@@ -117,6 +116,33 @@ public class Drug implements Entity {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	@Override
+	public int compareTo(Object o) {
+		if ( o == null ) {
+			return 1;
+		}
+		if ( o.equals(this) ) {
+			return 0;
+		}
+		if (getClass() != o.getClass() ) {
+			throw new IllegalArgumentException("Object is not a drug!");
+		}
+		if ( id == null ) {
+			if ( ((Drug)o).id == null) {
+				return 0;
+			} else {
+				return -1;
+			}
+		} 
+		if ( ((Drug)o).id == null) {
+			return 1;
+		}
+		
+		
+		return id.compareTo(((Drug)o).id) ;
+		
 	}
 
 }

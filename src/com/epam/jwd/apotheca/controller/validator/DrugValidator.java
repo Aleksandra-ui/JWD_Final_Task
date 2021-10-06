@@ -24,6 +24,7 @@ public class DrugValidator implements Validator {
 	}
 	
 	public boolean validate() {
+		messages.clear();
 		
 		boolean result = true; 
 		
@@ -46,5 +47,12 @@ public class DrugValidator implements Validator {
 	public List<String> getMessages() {
 		return messages;
 	}
+
+	@Override
+	public void setValue(Object value) {
+		drugs = (List<Drug>)value;
+	}
+	
+	
 
 }

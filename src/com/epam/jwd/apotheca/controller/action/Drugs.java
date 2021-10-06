@@ -12,11 +12,12 @@ import org.slf4j.LoggerFactory;
 
 import com.epam.jwd.apotheca.controller.DrugManagerService;
 import com.epam.jwd.apotheca.controller.RecipeManagerService;
+import com.epam.jwd.apotheca.controller.ShoppingCart;
 import com.epam.jwd.apotheca.model.Drug;
 import com.epam.jwd.apotheca.model.Recipe;
 import com.epam.jwd.apotheca.model.User;
 
-public class Drugs implements RunCommand {
+public class Drugs implements RunCommand, ShoppingCartAware {
 
 	private static Drugs instance = new Drugs();
 	private static final Logger logger = LoggerFactory.getLogger(Drugs.class);
@@ -28,6 +29,7 @@ public class Drugs implements RunCommand {
 	private int currentPage;
 	private User user;
 	private Map<Integer, Date> drugsFromRecipe;
+	private ShoppingCart cart;
 
 	private Drugs() {
 		drugs = new ArrayList<Drug>();
@@ -112,6 +114,16 @@ public class Drugs implements RunCommand {
 	public boolean isSecure() {
 		
 		return false;
+	}
+
+	@Override
+	public ShoppingCart getCart() {
+		return cart;
+	}
+
+	@Override
+	public void setCart(ShoppingCart cart) {
+		this.cart = cart;
 	}
 
 }

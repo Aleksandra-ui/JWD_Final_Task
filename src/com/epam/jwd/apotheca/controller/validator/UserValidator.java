@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 
 import com.epam.jwd.apotheca.controller.ControllerFilter;
 import com.epam.jwd.apotheca.controller.UserManagerService;
+import com.epam.jwd.apotheca.model.Drug;
 import com.epam.jwd.apotheca.model.User;
 import com.mysql.jdbc.Messages;
 
@@ -50,6 +51,11 @@ public class UserValidator implements Validator {
 	
 	public List<String> getMessages() {
 		return messages;
+	}
+	
+	@Override
+	public void setValue(Object value) {
+		params = (Map<String, String[]>)value;
 	}
 	
 }
