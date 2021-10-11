@@ -33,6 +33,16 @@ public abstract class CartAction implements RunCommand, ShoppingCartAware {
 		return null;
 		
 	}
+	
+	@Override
+	public boolean isSecure() {
+		return true;
+	}
+
+	@Override
+	public String getView() {
+		return "cart.jsp";
+	}
 
 	public Integer getPageSize() {
 		// TODO Auto-generated method stub

@@ -29,12 +29,6 @@ public class AddToCart extends CartAction {
 	}
 
 	@Override
-	public String getView() {
-		// TODO Auto-generated method stub
-		return "cart.jsp";
-	}
-
-	@Override
 	public void setUser(User user) {
 		// TODO Auto-generated method stub
 
@@ -46,10 +40,5 @@ public class AddToCart extends CartAction {
 		return null;
 	}
 
-	@Override
-	public boolean isSecure() {
-		// TODO Auto-generated method stub
-		return true;
-	}
 
 }

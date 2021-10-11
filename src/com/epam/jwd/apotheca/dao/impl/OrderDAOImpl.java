@@ -242,58 +242,46 @@ public class OrderDAOImpl implements OrderDAO {
 	@Override
 	public List<Order> findOrdersByUser(Integer userId) {
 
-		Set<Integer> ids = new HashSet<Integer>();
 		List<Order> orders = new ArrayList<Order>();
 		DrugDAO drugDAO = DrugDAOImpl.getInstance();
-		String query1 = "select id from mydb.orders where user_id = ? order by id";
-		String query2 = "select drug_id, amount, order_date from mydb.orders where id = ?";
+		String query = "select id, drug_id, amount, order_date from mydb.orders where user_id = " + userId
+				+ " order by order_date desc, id desc, drug_id asc";
 
-		try (Connection connection = cp.takeConnection();
-				PreparedStatement st = connection
-						.prepareStatement(query1);) {
-			st.setInt(1, userId);
-			ResultSet rs = st.executeQuery();
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
+			ResultSet rs = st.executeQuery(query);
+			Map<Drug, Integer> drugs = null;
+			Order order = null;
+			int orderId = -1;
 			while (rs.next()) {
-				ids.add(rs.getInt(1));
-			}
-		} catch (SQLException e) {
-			logger.error("catched SQL exception while attempting to find orders by users");
-			e.printStackTrace();
-		}
-
-		try (Connection connection = cp.takeConnection();
-				PreparedStatement st = connection
-						.prepareStatement(query2);) {
-
-			for (Integer id : ids) {
-				st.setInt(1, id);
-				ResultSet rs = st.executeQuery();
-				Order order = new Order();
-				Map<Drug, Integer> drugs = new HashMap<>();
-				order.setId(id);
-				order.setUserId(userId);
-				if (rs.next()) {
+				if (orderId != rs.getInt("id")) {
+					if (order != null) {
+						order.setDrugs(drugs);
+						orders.add(order);
+					}
+					drugs = new HashMap<Drug, Integer>();
+					order = new Order();
+					orderId = rs.getInt("id");
+					order.setId(orderId);
+					order.setUserId(userId);
 					order.setDate(rs.getDate("order_date"));
-					drugs.put(drugDAO.findById(rs.getInt("drug_id")), rs.getInt("amount"));
 				}
-				while (rs.next()) {
-					drugs.put(drugDAO.findById(rs.getInt("drug_id")), rs.getInt("amount"));
-				}
+
+				drugs.put(drugDAO.findById(rs.getInt("drug_id")), rs.getInt("amount"));
+			}
+			if (order != null) {
 				order.setDrugs(drugs);
 				orders.add(order);
-
 			}
-
+			logger.info("found orders by user");
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find orders by user");
 			e.printStackTrace();
 		}
 
-		logger.info("found orders by user");
 		return orders;
 
 	}
-	
+
 	@Override
 	public Integer getTotalCount() {
 		

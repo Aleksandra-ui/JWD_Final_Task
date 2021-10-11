@@ -6,7 +6,7 @@ import java.util.List;
 import com.epam.jwd.apotheca.controller.UserManagerService;
 import com.epam.jwd.apotheca.model.User;
 
-public class AccessValidator implements Validator {
+public class AccessValidator implements Validator, UserAware {
 
 	private String action;
 	private User user;
@@ -43,5 +43,4 @@ public class AccessValidator implements Validator {
 		this.user = (User)value;
 	}
 
-	
 }

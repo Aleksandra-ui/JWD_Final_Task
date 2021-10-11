@@ -22,61 +22,18 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 
 <script type="text/javascript">
 	
-	function showId (drugId) {
-	
-	found = false;
-	idx = drugIds.indexOf(drugId.value);
-		select = document.getElementById("ListBox1");
-	button = document.getElementById("Submit1");
-		div = document.getElementById("div");
-		
-	if (drugId.checked) {
-		if (idx == -1) {
-			drugIds.push(drugId.value);
-			
-			document.getElementById("amount" + drugId.value).removeAttribute("disabled");
-			if (localStorage.getItem("amount" + drugId.value) != null) {
-				document.getElementById("amount" + drugId.value).value = localStorage.getItem("amount" + drugId.value);	
-			} else {
-				document.getElementById("amount" + drugId.value).value = 1;
-			}
-			
-			var opt = document.createElement("option");
-			var drugDescr = document.getElementById("checkbox" + drugId.value);
-			opt.text = drugDescr.value + " | " + document.getElementById("amount" + drugId.value).value; 
-			opt.id = "selectedDrug" + drugId.value;
-			select.options.add(opt);
-			button.style.display = 'inline-block';
-			div.style.display = 'inline-block';	
-			
-			
-		}
-	} else {
-		if (idx != -1) {
-			drugIds.splice(idx, 1);//deleting 1 element
-			opt = document.getElementById("selectedDrug" + drugId.value);
-			select.removeChild(opt);
-			if ( select.options.length == 0){
-				button.style.display = 'none';
-				div.style.display = 'none';
-			}	
-		}
-	}
-	printTotal();
-	} 
-	
 	function addRemoveFromCart(checkbox, drugId) {
 	
-	amount = document.getElementById("amount" + drugId);
-	
-	if (checkbox.checked) {
-		amount.removeAttribute("disabled");
-		if ( amount.value == 0 ) {
-			amount.value = 1;	
+		amount = document.getElementById("amount" + drugId);
+		
+		if (checkbox.checked) {
+			amount.removeAttribute("disabled");
+			if ( amount.value == 0 ) {
+				amount.value = 1;	
+			}
+		} else {
+			amount.setAttribute("disabled", true);
 		}
-	} else {
-		amount.setAttribute("disabled", true);
-	}
 	
 	}
 	
@@ -85,23 +42,6 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 		return select.options[select.selectedIndex].value && (window.location = select.options[select.selectedIndex].value); 
 	
 	}
-	
-	function displayParams() {
-		params = window.location.href;
-		params = "" + params.substring(params.indexOf('?') + 1);
-		pp = params.split('&');
-		retVal = [];
-		for (i = 0; i < pp.length; i++) {
-		    keyVal = pp[i].split("=");
-		    retVal.push(keyVal[0] + " : " + keyVal[1]);
-		}
-	}
-	
-	function changeSelectVisibility() {
-		var div = document.getElementById("div");
-		div.style.display = (drugIds.length == 0) ? 'none' : 'inline-block'; 
-	}
-	
 	
 	function validateAmount(input) {
 		
@@ -119,29 +59,68 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 		
 	}
 	
-	function updateShoppingCart( drugId, amountControlId ) {
+	function updateShoppingCart( drugId, add, amountControlId ) {
 		
-		var amount = document.getElementById(amountControlId).value;
+		if ( add ) {
+			var amount = document.getElementById(amountControlId).value;	
+		}
+		
 		var xmlhttp = new XMLHttpRequest();
 		//функция которая вызывается когда завершилась загрузка
 		xmlhttp.onreadystatechange = function() {
 			//this это объект xmlhttp
-		  if (this.readyState == 4 && this.status == 200) {
-		    displayShoppingCart(this);
-		  }
+			if (this.readyState == 4 && this.status == 200) {
+				var element = document.getElementById("drug" + drugId);
+				if ( element ) {
+					element.checked = add;  
+				}
+				element = document.getElementById("amount" + drugId);
+				if ( element ) {
+					element.disabled = ! add;  
+				}
+				
+				console.log(this.getAllResponseHeaders());
+				displayShoppingCart(this);
+		  	}
 		};
-		xmlhttp.open("GET", "addToCart.run?drugId=" + drugId + "&amount=" + amount, true);
+		if ( add ) {
+			xmlhttp.open("GET", "addToCart.run?drugId=" + drugId + "&amount=" + amount, true);	
+		} else {
+			xmlhttp.open("GET", "removeFromCart.run?drugId=" + drugId, true);
+		}
 		xmlhttp.send();
 			
 	}
 	
 	function displayShoppingCart(xml) {
-		document.getElementById("shoppingCart").innerHTML = xml.responseText;
+		
+		if ( xml.responseText.indexOf("Please login") != -1 ) {
+			window.location = "/apotheca/logon.run";
+		} else {
+			document.getElementById("shoppingCart").innerHTML = xml.responseText;
+		}
+		
+	}
+	
+	function displayCart() {
+		
+		var xmlhttp = new XMLHttpRequest();
+		//функция которая вызывается когда завершилась загрузка
+		xmlhttp.onreadystatechange = function() {
+			//this это объект xmlhttp
+			if (this.readyState == 4 && this.status == 200) {
+				displayShoppingCart(this);
+		  	}
+		};
+		
+		xmlhttp.open("GET", "displayCart.run", true);	
+		xmlhttp.send();
+		
 	}
 
 </script>
 
-<body>
+<body onload="displayCart();">
 	<%
 		Drugs bean = (Drugs)request.getAttribute("action");
 	
@@ -182,12 +161,8 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 			</div>
 			<span style="float: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 			<div style="float: none">
-				<%
-				Integer pagesCount = totalCount / pageSize + ((totalCount % pageSize) == 0 ? 0 : 1);
-				request.setAttribute("pagesCount", pagesCount);
-				%>
-
-				<c:forEach var="displayPage" begin="1" end="${pagesCount}">
+				
+				<c:forEach var="displayPage" begin="1" end="${action.pagesCount}">
 					<c:choose>
 						<c:when
 							test="${displayPage == (empty param.currentPage ? 1 : param.currentPage)}">${displayPage} &nbsp;</c:when>
@@ -219,7 +194,16 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 				<c:choose>
 					<c:when test="${not empty action.drugs}">
 						<c:forEach items="${action.drugs}" var="d">
-
+						
+							<c:set var="present" value="false"/>
+							<c:set var="amount" value="0"/>
+							<c:forEach  var="p" items="${action.cart.products}">
+								<c:if test="${p.key.id == d.id}">
+									<c:set var="present" value="true"/>
+									<c:set var="amount" value="${p.value }"/>
+								</c:if>
+							</c:forEach>
+							
 							<tr
 								bgcolor=<c:out value="${not d.prescription ? 'LightGreen' : 'LightBlue'}"/>>
 								<td><c:out value="${d.id}" /></td>
@@ -232,8 +216,12 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 									<c:if test="${not d.prescription}"><%=rb.getString("drugs.no")%></c:if>
 								</td>
 								<td>
-									<input type="number" value=0 disabled
-									id="amount${d.id}" onchange="if (validateAmount(amount${d.id})){}" onkeyup="updateShoppingCart(${d.id}, amount${d.id})"/>
+									<input type="number" 
+									<c:choose>
+										<c:when test="${present }">value=${amount }</c:when>
+										<c:otherwise>value=0 disabled</c:otherwise>
+									</c:choose>
+									id="amount${d.id}" onchange="if (validateAmount(this)){onkeyup();}" onkeyup="updateShoppingCart(${d.id}, document.getElementById('drug${d.id}').checked, 'amount${d.id}')"/>
 								</td>
 								<!-- expiery date -->
 								<td>
@@ -242,20 +230,13 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 									</c:if>
 								</td>
 								<td>
-									<c:set var="present" value="false"/>
-									<c:set var="ids" value="${fn:split(param.drugIds,',')}"/>
-									<c:set var="idStr" >${d.id}</c:set>
-									<c:forEach var="id" items="${ids}">
-										<c:if test="${id == idStr}">
-											<c:set var="present" value="true"/>
-										</c:if>
-									</c:forEach>
-							
+									
 									<c:choose>
-<%-- 										<c:when test="${(not d.prescription) or (not empty drugsFromRecipe[d.id])}"> --%>
 										<c:when test="${(not d.prescription)}">
 											<input type="checkbox" id="drug${d.id}" value="${d.id}" name="drug"
-												onchange="updateShoppingCart(${d.id}, 'amount${d.id}')"
+												onchange="addRemoveFromCart(this, ${d.id });
+														  updateShoppingCart(${d.id}, this.checked, 'amount${d.id}'); 
+												          /*document.getElementById('amount${d.id}').disabled = ! this.checked;*/"
 												<c:out value="${present ? 'checked' : ''}"/> />
 										</c:when>
 										<c:otherwise><%=rb.getString("drugs.requirement") %></c:otherwise> 

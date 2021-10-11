@@ -7,7 +7,7 @@ import java.util.Map;
 import com.epam.jwd.apotheca.controller.UserManagerService;
 import com.epam.jwd.apotheca.model.User;
 
-public class DoctorValidator implements Validator {
+public class DoctorValidator implements Validator, UserAware {
 
 	private User user;
 	private List<String> messages;

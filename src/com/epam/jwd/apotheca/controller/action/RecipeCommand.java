@@ -5,12 +5,13 @@ import java.util.List;
 import java.util.Map;
 
 import com.epam.jwd.apotheca.controller.DrugManagerService;
+import com.epam.jwd.apotheca.controller.RecipeCart;
 import com.epam.jwd.apotheca.controller.UserManagerService;
 import com.epam.jwd.apotheca.model.Drug;
 import com.epam.jwd.apotheca.model.User;
 
 
-public class RecipeCommand implements RunCommand {
+public class RecipeCommand implements RunCommand, RecipeCartAware {
 
 	private static RecipeCommand instance = new RecipeCommand();
 	private User user;
@@ -19,9 +20,9 @@ public class RecipeCommand implements RunCommand {
 	private int pageSize;
 	private int currentPage;
 	private List<Drug> drugs;
-	private List<Drug> allPrescripted;
 	private int totalCount;
 	private List<User> clients;
+	private RecipeCart cart;
 	
 	private RecipeCommand() {
 		drugs = new ArrayList<Drug>();
@@ -43,7 +44,6 @@ public class RecipeCommand implements RunCommand {
 		currentPage = params.get("currentPage") == null ? 1
 				: Integer.valueOf(params.get("currentPage")[0]);
 		drugs = DrugManagerService.getInstance().getPrescriptedDrugs(pageSize * (currentPage - 1), pageSize);
-		allPrescripted = DrugManagerService.getInstance().getPrescriptedDrugs();
 		clients = UserManagerService.getInstance().getClients();
 		
 		return actionTime;
@@ -90,14 +90,20 @@ public class RecipeCommand implements RunCommand {
 		return clients;
 	}
 
-	public List<Drug> getAllPrescripted() {
-		return allPrescripted;
-	}
-
 	@Override
 	public boolean isSecure() {
 		
 		return true;
+	}
+
+	@Override
+	public RecipeCart getCart() {
+		return cart;
+	}
+
+	@Override
+	public void setCart(RecipeCart cart) {
+		this.cart = cart;
 	}
 
 }

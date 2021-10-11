@@ -18,12 +18,11 @@ public class Orders implements RunCommand {
 	private String actionTime;
 	private Map<String, String[]> params;
 	private User user;
-	List<Order> orders;
+	private List<Order> orders;
+	private int pageSize;
+	private int currentPage;
 	
 	private Orders() {
-		
-		orders = new ArrayList<Order>();
-		
 	}
 	
 	public static Orders getInstance() {
@@ -33,7 +32,10 @@ public class Orders implements RunCommand {
 	@Override
 	public String run() {
 		
-		orders.addAll(OrderManagerService.getInstance().findOrdersByUser(user.getId()));
+		orders = OrderManagerService.getInstance().findOrdersByUser(user.getId());
+		pageSize = params.get("pageSize") == null ? 5 : Integer.valueOf(params.get("pageSize")[0]);
+		currentPage = params.get("currentPage") == null ? 1
+				: Integer.valueOf(params.get("currentPage")[0]);
 		
 		return actionTime;
 		
@@ -70,6 +72,14 @@ public class Orders implements RunCommand {
 
 	public List<Order> getOrders() {
 		return orders;
+	}
+	
+	public int getPageSize() {
+		return pageSize;
+	}
+
+	public int getCurrentPage() {
+		return currentPage;
 	}
 
 }

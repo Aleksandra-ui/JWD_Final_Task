@@ -17,18 +17,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.epam.jwd.apotheca.controller.action.AddToCart;
+import com.epam.jwd.apotheca.controller.action.AddToRecipeCart;
 import com.epam.jwd.apotheca.controller.action.BuyDrugs;
 import com.epam.jwd.apotheca.controller.action.Bye;
 import com.epam.jwd.apotheca.controller.action.CreateDrug;
 import com.epam.jwd.apotheca.controller.action.CreateRecipe;
+import com.epam.jwd.apotheca.controller.action.DisplayCart;
+import com.epam.jwd.apotheca.controller.action.DisplayRecipeCart;
 import com.epam.jwd.apotheca.controller.action.Drugs;
 import com.epam.jwd.apotheca.controller.action.DrugsBill;
 import com.epam.jwd.apotheca.controller.action.Hello;
 import com.epam.jwd.apotheca.controller.action.Logon;
 import com.epam.jwd.apotheca.controller.action.Orders;
 import com.epam.jwd.apotheca.controller.action.PrescribedRecipes;
+import com.epam.jwd.apotheca.controller.action.RecipeCartAware;
 import com.epam.jwd.apotheca.controller.action.RecipeCommand;
 import com.epam.jwd.apotheca.controller.action.RemoveFromCart;
+import com.epam.jwd.apotheca.controller.action.RemoveFromRecipeCart;
 import com.epam.jwd.apotheca.controller.action.RunCommand;
 import com.epam.jwd.apotheca.model.User;
 import com.epam.jwd.apotheca.controller.action.ShoppingCartAware;
@@ -54,6 +59,10 @@ public class ControllerFilter implements Filter {
     	actionMapping.put("drugsBill", DrugsBill.getInstance());
     	actionMapping.put("addToCart", new AddToCart());
     	actionMapping.put("removeFromCart", new RemoveFromCart());
+    	actionMapping.put("displayCart", new DisplayCart());
+    	actionMapping.put("addToRecipeCart", new AddToRecipeCart());    
+    	actionMapping.put("removeFromRecipeCart", new RemoveFromRecipeCart());
+    	actionMapping.put("displayRecipeCart", new DisplayRecipeCart());
     	
     }
 
@@ -75,6 +84,13 @@ public class ControllerFilter implements Filter {
 					((HttpServletRequest)request).getSession().setAttribute("cart", cart);
 				}
 				((ShoppingCartAware)command).setCart(cart);
+			} else if ( command instanceof RecipeCartAware ) {
+				RecipeCart cart = (RecipeCart)((HttpServletRequest)request).getSession().getAttribute("recipeCart");
+				if ( cart == null ) {
+					cart = new RecipeCart();
+					((HttpServletRequest)request).getSession().setAttribute("recipeCart", cart);
+				}
+				((RecipeCartAware)command).setCart(cart);
 			}
 			
 			User user = (User)((HttpServletRequest)request).getSession().getAttribute("user");

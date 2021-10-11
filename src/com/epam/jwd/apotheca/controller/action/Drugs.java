@@ -30,6 +30,7 @@ public class Drugs implements RunCommand, ShoppingCartAware {
 	private User user;
 	private Map<Integer, Date> drugsFromRecipe;
 	private ShoppingCart cart;
+	private Integer pagesCount;
 
 	private Drugs() {
 		drugs = new ArrayList<Drug>();
@@ -77,6 +78,7 @@ public class Drugs implements RunCommand, ShoppingCartAware {
 		pageSize = params.get("pageSize") == null ? 5 : Integer.valueOf(params.get("pageSize")[0]);
 		currentPage = params.get("currentPage") == null ? 1
 				: Integer.valueOf(params.get("currentPage")[0]);
+		pagesCount = totalCount / pageSize + ((totalCount % pageSize) == 0 ? 0 : 1);
 		drugs = service.getDrugs(pageSize * (currentPage - 1), pageSize);
 		actionTime = GregorianCalendar.getInstance().getTime().toString();
 		
@@ -126,4 +128,8 @@ public class Drugs implements RunCommand, ShoppingCartAware {
 		this.cart = cart;
 	}
 
+	public Integer getPagesCount() {
+		return pagesCount;
+	}
+	
 }

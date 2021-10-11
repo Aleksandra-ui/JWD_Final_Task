@@ -15,10 +15,6 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 </head>
 <body>
 
-	 <c:if test="${ empty sessionScope.user }">
-    	<c:redirect url="/drugs.run"/>
-     </c:if>
-
 	<table border="1" style="width: 50%">
 		<caption><%=rb.getString("drugs.caption")%></caption>
 		<thead align="center">
@@ -50,24 +46,6 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 					</tr>
 				</c:otherwise>
 			</c:choose>
-<%-- 			<c:choose> --%>
-<%-- 				<c:when test="${not empty action.drugs}"> --%>
-<%-- 					<c:forEach items="${action.drugs}" var="d"> --%>
-<!-- 						<tr -->
-<%-- 							bgcolor=<c:out value="${not d.prescription ? 'LightGreen' : 'LightBlue'}"/>> --%>
-<%-- 							<td><c:out value="${d.name}" /></td> --%>
-<%-- 							<td><c:out value="${d.dose }" /></td> --%>
-<%-- 							<td><c:out value="${action.amountsById[d]}" /></td> --%>
-<%-- 							<td><c:out value="${d.price }" /></td> --%>
-<!-- 						</tr> -->
-<%-- 					</c:forEach> --%>
-<%-- 				</c:when> --%>
-<%-- 				<c:otherwise> --%>
-<!-- 					<tr> -->
-<%-- 						<td colspan="6"><%=rb.getString("drugs.absence")%></td> --%>
-<!-- 					</tr> -->
-<%-- 				</c:otherwise> --%>
-<%-- 			</c:choose> --%>
 
 		</tbody>
 	</table>

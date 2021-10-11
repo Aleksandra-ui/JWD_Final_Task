@@ -12,10 +12,6 @@ ResourceBundle rb = ResourceBundle.getBundle("CreateRecipe", locale);
 <title><%=rb.getString("create.title")%></title>
 </head>
 <body>
-	
-	 <c:if test="${ empty param.recipeDrugIds }">
-    	<c:redirect url="/recipe.run"/>
-     </c:if>
      
     <div id = "errorMessages">
    		<c:forEach items="${action.errorMessages}" var="message">
@@ -26,7 +22,7 @@ ResourceBundle rb = ResourceBundle.getBundle("CreateRecipe", locale);
 	
 	<c:if test="${empty action.errorMessages}">
 		<font color="blue">
-			<%=rb.getString("create.message1")%> ${param.clientName} <%=rb.getString("create.message2")%> ${ action.doctorName } <%=rb.getString("create.message3")%> ${param.day} ${param.month} ${param.year}
+			<%=rb.getString("create.message1")%> ${action.client.name} <%=rb.getString("create.message2")%> ${ action.user.name } <%=rb.getString("create.message3")%> ${action.expieryDate}
 		</font>
 	
 		<table border="1" style="width: 50%">

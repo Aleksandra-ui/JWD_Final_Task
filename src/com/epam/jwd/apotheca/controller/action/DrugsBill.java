@@ -1,35 +1,29 @@
 package com.epam.jwd.apotheca.controller.action;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.epam.jwd.apotheca.controller.DrugManagerService;
 import com.epam.jwd.apotheca.controller.OrderManagerService;
+import com.epam.jwd.apotheca.controller.ShoppingCart;
 import com.epam.jwd.apotheca.model.Drug;
 import com.epam.jwd.apotheca.model.Order;
 import com.epam.jwd.apotheca.model.User;
 
-public class DrugsBill implements RunCommand {
+public class DrugsBill implements RunCommand, ShoppingCartAware {
 
 	private static DrugsBill instance = new DrugsBill();
 	private static final Logger logger = LoggerFactory.getLogger(DrugsBill.class);
 	private String actionTime;
 	private Map<String, String[]> params;
 	private User user;
-	private List<Drug> drugs; 
-	private Map<Drug, Integer> amountsById;
 	private AtomicInteger total;
 	private Order order;
+	private ShoppingCart cart;
 	
 	private DrugsBill() {
-		drugs = new ArrayList<Drug>(); 
-		amountsById = new HashMap<Drug, Integer>();
 		total = new AtomicInteger(0);
 	}
 
@@ -39,25 +33,18 @@ public class DrugsBill implements RunCommand {
 	
 	@Override
 	public String run() {
-				
-		total.set(0);
-		
-		if (params.get("drugIds") != null){
-			String[] drugIdsStr = params.get("drugIds")[0].split(",");
-			drugs.addAll(DrugManagerService.getInstance().getDrugs(drugIdsStr)); 
+		if ( getCart().getProducts().size() > 0 ){
 			
-			String[] amountsStr = params.get("amounts")[0].split(",");
-			for ( int i = 0; i < drugIdsStr.length; i ++ ) {
-				amountsById.put(drugs.get(i), Integer.valueOf(amountsStr[i]));
-			}
-				
-			order = OrderManagerService.getInstance().buy(user.getId(), amountsById);
+			order = OrderManagerService.getInstance().buy(user.getId(), getCart().getProducts());
 			
 			if ( order != null ) {
+				getCart().getProducts().clear();
+				total.set(0);
 				for ( Map.Entry<Drug, Integer> e : order.getDrugs().entrySet() ) {
 					total.addAndGet(e.getKey().getPrice() * e.getValue());
 				}
 			}
+			
 		}
 		
 		return actionTime;
@@ -66,7 +53,7 @@ public class DrugsBill implements RunCommand {
 
 	@Override
 	public String getView() {
-		return "drugsBill1.jsp";
+		return "secure/drugsBill1.jsp";
 	}
 
 	@Override
@@ -92,14 +79,6 @@ public class DrugsBill implements RunCommand {
 	public String getActionTime() {
 		return actionTime;
 	}
-	
-	public List<Drug> getDrugs() {
-		return drugs;
-	}
-
-	public Map<Drug, Integer> getAmountsById() {
-		return amountsById;
-	}
 
 	public AtomicInteger getTotal() {
 		return total;
@@ -107,6 +86,16 @@ public class DrugsBill implements RunCommand {
 
 	public Order getOrder() {
 		return order;
+	}
+
+	@Override
+	public ShoppingCart getCart() {
+		return cart;
+	}
+
+	@Override
+	public void setCart(ShoppingCart cart) {
+		this.cart = cart;
 	}
 	
 }

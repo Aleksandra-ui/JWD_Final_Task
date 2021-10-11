@@ -4,18 +4,24 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ include file = "/mainMenu.jsp" %>
 <%
 ResourceBundle rb = ResourceBundle.getBundle("Orders", locale);
 %>
-<title><%=rb.getString("orders.title")%> "${sessionScope.user.name}"</title>
+<title><%=rb.getString("orders.title")%> "${action.user.name}"</title>
 </head>
 <body>
 
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-
-	<%=rb.getString("orders.page")%> "${sessionScope.user.name}"
-
+	<%=rb.getString("orders.page")%> "${action.user.name}"
+	
+<%-- 	<c:forEach var="displayPage" begin="1" end="6"> --%>
+<%-- 		<c:choose> --%>
+<%-- 			<c:when test="${displayPage == (empty param.currentPage ? 1 : param.currentPage)}">${displayPage} &nbsp;</c:when> --%>
+<%-- 			<c:otherwise><a href="/apotheca/drugs.run?pageSize=${empty param.pageSize ? 5 : param.pageSize}&currentPage=${displayPage}" onclick="changeURL(this)">${displayPage}</a>&nbsp;</c:otherwise> --%>
+<%-- 		</c:choose> --%>
+<%-- 	</c:forEach> --%>
+	
 	<table border = "1" style="width:50%" >
 		<caption><%=rb.getString("orders.list")%></caption>
 		<thead align ="center">
