@@ -1,6 +1,7 @@
 package com.epam.jwd.apotheca.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import com.epam.jwd.apotheca.dao.api.RecipeDAO;
 import com.epam.jwd.apotheca.dao.impl.RecipeDAOImpl;
@@ -34,6 +35,16 @@ public class RecipeManagerService {
 
 		return recipeDAO.findRecipeByDoctor(doctor);
 
+	}
+	
+	public List<Map<String, String>> findByRange(User user, int start, int count) {
+		
+		return ((RecipeDAOImpl)recipeDAO).findRecipeInfoByRange(user, start, count);
+		
+	}
+	
+	public Integer getCountByDoctor(User doctor) {
+		return ((RecipeDAOImpl)recipeDAO).getDrugsCountByDoctor(doctor);
 	}
 
 }

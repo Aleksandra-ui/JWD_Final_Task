@@ -21,6 +21,7 @@ public class Orders implements RunCommand {
 	private List<Order> orders;
 	private int pageSize;
 	private int currentPage;
+	private int pagesCount;
 	
 	private Orders() {
 	}
@@ -31,11 +32,15 @@ public class Orders implements RunCommand {
 
 	@Override
 	public String run() {
-		
+
 		orders = OrderManagerService.getInstance().findOrdersByUser(user.getId());
+		
 		pageSize = params.get("pageSize") == null ? 5 : Integer.valueOf(params.get("pageSize")[0]);
 		currentPage = params.get("currentPage") == null ? 1
 				: Integer.valueOf(params.get("currentPage")[0]);
+		pagesCount = orders.size() / pageSize + ((orders.size() % pageSize) == 0 ? 0 : 1);
+		
+		orders = orders.subList(pageSize * (currentPage - 1), Math.min( (pageSize * (currentPage - 1) + pageSize), orders.size() ));
 		
 		return actionTime;
 		
@@ -80,6 +85,10 @@ public class Orders implements RunCommand {
 
 	public int getCurrentPage() {
 		return currentPage;
+	}
+	
+	public int getPagesCount() {
+		return pagesCount;
 	}
 
 }

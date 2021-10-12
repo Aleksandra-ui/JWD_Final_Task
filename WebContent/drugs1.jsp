@@ -149,13 +149,13 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 				<%=rb.getString("drugs.records4")%>:&nbsp; <select name="pageSize"
 					onChange="changePageSize(this);">
 					<option
-						${(empty param.pageSize or param.pageSize == 5) ? "selected='true'" : "" }
+						${(empty action.pageSize or action.pageSize == 5) ? "selected='true'" : "" }
 						value="/apotheca/drugs.run?pageSize=5">5</option>
 					<option
-						${(not empty param.pageSize and param.pageSize  == 10) ? "selected='true'" : "" }
+						${(not empty action.pageSize and action.pageSize  == 10) ? "selected='true'" : "" }
 						value="/apotheca/drugs.run?pageSize=10">10</option>
 					<option
-						${(not empty param.pageSize and param.pageSize  == 20) ? "selected='true'" : "" }
+						${(not empty action.pageSize and action.pageSize  == 20) ? "selected='true'" : "" }
 						value="/apotheca/drugs.run?pageSize=20">20</option>
 				</select>
 			</div>
@@ -165,10 +165,9 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 				<c:forEach var="displayPage" begin="1" end="${action.pagesCount}">
 					<c:choose>
 						<c:when
-							test="${displayPage == (empty param.currentPage ? 1 : param.currentPage)}">${displayPage} &nbsp;</c:when>
+							test="${displayPage == (empty action.currentPage ? 1 : action.currentPage)}">${displayPage} &nbsp;</c:when>
 						<c:otherwise>
-							<a
-								href="/apotheca/drugs.run?pageSize=${empty param.pageSize ? 5 : param.pageSize}&currentPage=${displayPage}" onclick="changeURL(this)">${displayPage}</a>&nbsp;</c:otherwise>
+							<a href="/apotheca/drugs.run?pageSize=${empty action.pageSize ? 5 : action.pageSize}&currentPage=${displayPage}">${displayPage}</a>&nbsp;</c:otherwise>
 					</c:choose>
 				</c:forEach>
 
@@ -204,13 +203,12 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 								</c:if>
 							</c:forEach>
 							
-							<tr
-								bgcolor=<c:out value="${not d.prescription ? 'LightGreen' : 'LightBlue'}"/>>
-								<td><c:out value="${d.id}" /></td>
-								<td><c:out value="${d.name}" /></td>
-								<td><c:out value="${d.dose }" /></td>
-								<td><c:out value="${d.quantity }" /></td>
-								<td><c:out value="${d.price }" /></td>
+							<tr bgcolor="${not d.prescription ? 'LightGreen' : 'LightBlue'}">
+								<td>${d.id}</td>
+								<td>${d.name}</td>
+								<td>${d.dose }</td>
+								<td>${d.quantity }</td>
+								<td>${d.price }</td>
 								<td>
 									<c:if test="${d.prescription}"><%=rb.getString("drugs.yes")%></c:if>
 									<c:if test="${not d.prescription}"><%=rb.getString("drugs.no")%></c:if>

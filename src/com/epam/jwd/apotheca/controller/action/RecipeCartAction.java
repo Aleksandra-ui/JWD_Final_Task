@@ -51,13 +51,11 @@ public abstract class RecipeCartAction implements RunCommand, RecipeCartAware {
 	}
 
 	public Integer getPageSize() {
-		// TODO Auto-generated method stub
 		return pageSize;
 	}
 
 	
 	public Integer getCurrentPage() {
-		// TODO Auto-generated method stub
 		return currentPage;
 	}
 

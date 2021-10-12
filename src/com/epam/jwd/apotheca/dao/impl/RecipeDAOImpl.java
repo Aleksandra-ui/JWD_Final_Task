@@ -6,8 +6,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -321,6 +323,65 @@ public class RecipeDAOImpl implements RecipeDAO {
 		return count;
 		
 	}
+	
+	public Integer getDrugsCountByDoctor(User user) {
+		
+		int count = 0;
+		String query = "SELECT count(r.id) FROM mydb.recipe r "
+				+ "join mydb.users u on r.doctor_id = u.id "
+				+ "where u.id = " + user.getId();
+		
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
+			
+			ResultSet rs = st.executeQuery(query);
+			rs.next();
+			count = rs.getInt(1);
+			rs.close();
+			logger.info("found all recipe count");
+		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to find all recipe count");
+			e.printStackTrace();
+		}
+		
+		return count;
+		
+	}
 
+	public List<Map<String, String>> findRecipeInfoByRange(User user, int start, int count) {
+
+		String query = "SELECT r.id, u.name, d.name, d.dose, r.expiery_date FROM mydb.recipe r "
+				+ "join mydb.users doc on r.doctor_id = doc.id "
+				+ "join mydb.users u on r.user_id = u.id "
+				+ "join mydb.drugs d on r.drug_id = d.id "
+				+ "where r.doctor_id = ? "
+				+ "order by r.id desc, r.expiery_date desc, d.id asc "
+				+ "limit ?,?;";
+			
+		List<Map<String, String>> recipes = new ArrayList<Map<String, String>>();
+
+		try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement(query);) {
+			st.setInt(1, user.getId());
+			st.setInt(2, start);
+			st.setInt(3, count);
+			ResultSet rs = st.executeQuery();
+			Map<String, String> item;
+			while (rs.next()) {
+				item = new HashMap<String, String>();
+				item.put("id", String.valueOf(rs.getInt("r.id")));
+				item.put("name", rs.getString("u.name"));
+				item.put("drug", rs.getString("d.name"));
+				item.put("dose", String.valueOf(rs.getDouble("d.dose")));
+				item.put("date", String.valueOf(rs.getDate("r.expiery_date")));
+				recipes.add(item);
+			}
+			rs.close();
+			logger.info("found recipes by doctor");
+		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to find recipes by doctor");
+			e.printStackTrace();
+		}
+
+		return recipes;
+	}
 
 }

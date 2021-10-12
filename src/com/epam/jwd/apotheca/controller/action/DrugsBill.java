@@ -1,11 +1,17 @@
 package com.epam.jwd.apotheca.controller.action;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.epam.jwd.apotheca.controller.DrugManagerService;
 import com.epam.jwd.apotheca.controller.OrderManagerService;
 import com.epam.jwd.apotheca.controller.ShoppingCart;
 import com.epam.jwd.apotheca.model.Drug;
@@ -22,9 +28,15 @@ public class DrugsBill implements RunCommand, ShoppingCartAware {
 	private AtomicInteger total;
 	private Order order;
 	private ShoppingCart cart;
+	private int pageSize;
+	private int currentPage;
+	private int pagesCount;
+	private int totalCount;
+	private Map<Drug, Integer> drugs;
 	
 	private DrugsBill() {
 		total = new AtomicInteger(0);
+		drugs = new TreeMap<Drug, Integer>();
 	}
 
 	public static DrugsBill getInstance() {
@@ -34,21 +46,42 @@ public class DrugsBill implements RunCommand, ShoppingCartAware {
 	@Override
 	public String run() {
 		if ( getCart().getProducts().size() > 0 ){
-			
 			order = OrderManagerService.getInstance().buy(user.getId(), getCart().getProducts());
-			
 			if ( order != null ) {
 				getCart().getProducts().clear();
 				total.set(0);
 				for ( Map.Entry<Drug, Integer> e : order.getDrugs().entrySet() ) {
 					total.addAndGet(e.getKey().getPrice() * e.getValue());
 				}
+				totalCount = order.getDrugs().size();
 			}
-			
 		}
-		
+		if ( order != null ) {
+			pageSize = params.get("pageSize") == null ? 5 : Integer.valueOf(params.get("pageSize")[0]);
+			currentPage = params.get("currentPage") == null ? 1
+					: Integer.valueOf(params.get("currentPage")[0]);
+			pagesCount = totalCount / pageSize + ((totalCount % pageSize) == 0 ? 0 : 1);
+//			List<Drug> drugs = DrugManagerService.getInstance().getDrugs(pageSize * (currentPage - 1), pageSize);
+			//drugs.forEach(d -> this.drugs.put(d, order.getDrugs().get(d)));
+			TreeMap<Drug, Integer> map = new TreeMap<Drug, Integer>(order.getDrugs());
+			int start = pageSize * (currentPage - 1);
+			int index = 0;
+			System.out.println("start: " + start + ",index: " + index);
+			drugs.clear();
+			for ( Drug d : map.keySet() ) {
+				System.out.println("index: " + index);
+				if (index >= start ) {
+					this.drugs.put(d, map.get(d));
+					System.out.println(d.getId());
+				} 
+				index++;
+				if(index ==  map.size()||this.drugs.size()==pageSize ) {
+					System.out.println("break at index: " + index);
+					break;
+				}
+			}
+		}
 		return actionTime;
-		
 	}
 
 	@Override
@@ -96,6 +129,26 @@ public class DrugsBill implements RunCommand, ShoppingCartAware {
 	@Override
 	public void setCart(ShoppingCart cart) {
 		this.cart = cart;
+	}
+	
+	public int getPagesCount() {
+		return pagesCount;
+	}
+
+	public int getPageSize() {
+		return pageSize;
+	}
+
+	public int getCurrentPage() {
+		return currentPage;
+	}
+	
+	public int getTotalCount() {
+		return totalCount;
+	}
+
+	public Map<Drug, Integer> getDrugs() {
+		return drugs;
 	}
 	
 }

@@ -23,14 +23,15 @@ public class Drugs implements RunCommand, ShoppingCartAware {
 	private static final Logger logger = LoggerFactory.getLogger(Drugs.class);
 	private String actionTime;
 	private List<Drug> drugs;
-	private int totalCount;
 	private Map<String, String[]> params;
+	private int totalCount;
 	private int pageSize;
 	private int currentPage;
+	private int pagesCount;
 	private User user;
 	private Map<Integer, Date> drugsFromRecipe;
 	private ShoppingCart cart;
-	private Integer pagesCount;
+	
 
 	private Drugs() {
 		drugs = new ArrayList<Drug>();
@@ -41,20 +42,8 @@ public class Drugs implements RunCommand, ShoppingCartAware {
 		return instance;
 	}
 
-	public int getTotalCount() {
-		return totalCount;
-	}
-	
 	public Map<Integer, Date> getDrugsFromRecipe() {
 		return drugsFromRecipe;
-	}
-
-	public int getPageSize() {
-		return pageSize;
-	}
-
-	public int getCurrentPage() {
-		return currentPage;
 	}
 
 	public String getActionTime() {
@@ -128,8 +117,20 @@ public class Drugs implements RunCommand, ShoppingCartAware {
 		this.cart = cart;
 	}
 
-	public Integer getPagesCount() {
+	public int getPagesCount() {
 		return pagesCount;
+	}
+
+	public int getPageSize() {
+		return pageSize;
+	}
+
+	public int getCurrentPage() {
+		return currentPage;
+	}
+
+	public int getTotalCount() {
+		return totalCount;
 	}
 	
 }

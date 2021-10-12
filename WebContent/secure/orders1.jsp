@@ -10,17 +10,27 @@
 ResourceBundle rb = ResourceBundle.getBundle("Orders", locale);
 %>
 <title><%=rb.getString("orders.title")%> "${action.user.name}"</title>
+<style>
+	.even {
+		background-color: LightBlue;
+	}
+	.odd {
+		background-color: LightGreen;
+	}
+</style>
 </head>
 <body>
 
 	<%=rb.getString("orders.page")%> "${action.user.name}"
 	
-<%-- 	<c:forEach var="displayPage" begin="1" end="6"> --%>
-<%-- 		<c:choose> --%>
-<%-- 			<c:when test="${displayPage == (empty param.currentPage ? 1 : param.currentPage)}">${displayPage} &nbsp;</c:when> --%>
-<%-- 			<c:otherwise><a href="/apotheca/drugs.run?pageSize=${empty param.pageSize ? 5 : param.pageSize}&currentPage=${displayPage}" onclick="changeURL(this)">${displayPage}</a>&nbsp;</c:otherwise> --%>
-<%-- 		</c:choose> --%>
-<%-- 	</c:forEach> --%>
+				<c:forEach var="displayPage" begin="1" end="${action.pagesCount}">
+					<c:choose>
+						<c:when
+							test="${displayPage == (empty action.currentPage ? 1 : action.currentPage)}">${displayPage} &nbsp;</c:when>
+						<c:otherwise>
+							<a href="/apotheca/orders.run?pageSize=${empty action.pageSize ? 5 : action.pageSize}&currentPage=${displayPage}">${displayPage}</a>&nbsp;</c:otherwise>
+					</c:choose>
+				</c:forEach>
 	
 	<table border = "1" style="width:50%" >
 		<caption><%=rb.getString("orders.list")%></caption>
@@ -36,15 +46,24 @@ ResourceBundle rb = ResourceBundle.getBundle("Orders", locale);
 		<tbody align ="center">
 			<c:choose>
 				<c:when test="${not empty action.orders}">
+					<c:set var="classStyle" value="even"/>
 					<c:forEach items="${action.orders}" var="o">
 						<c:forEach items="${o.drugs}" var="d">
-							<tr bgcolor="LightGreen">
+							<tr class="${classStyle }">
 								<td><c:out value="${o.id}" /></td>
 								<td><c:out value="${d.key.name} | ${d.key.dose}" /></td>
 								<td><c:out value="${d.value }" /></td>
 								<td><c:out value="${o.date}" /></td>
 							</tr>
 						</c:forEach>
+						<c:choose>
+							<c:when test="${classStyle eq 'even' }">
+								<c:set var="classStyle" value="odd"/>
+							</c:when>
+							<c:otherwise>
+								<c:set var="classStyle" value="even"/>
+							</c:otherwise>
+						</c:choose>
 					</c:forEach>
 				</c:when>
 				<c:otherwise>

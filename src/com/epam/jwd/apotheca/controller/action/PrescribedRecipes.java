@@ -1,15 +1,9 @@
 package com.epam.jwd.apotheca.controller.action;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.epam.jwd.apotheca.controller.DrugManagerService;
 import com.epam.jwd.apotheca.controller.RecipeManagerService;
-import com.epam.jwd.apotheca.controller.UserManagerService;
-import com.epam.jwd.apotheca.model.Drug;
-import com.epam.jwd.apotheca.model.Recipe;
 import com.epam.jwd.apotheca.model.User;
 
 
@@ -19,14 +13,13 @@ public class PrescribedRecipes implements RunCommand {
 	private User user;
 	private String actionTime;
 	private Map<String, String[]> params;
-	private List<Recipe> recipes;//заменить на keySet()
-	private Map<String, List<Drug>> drugsMap;
-	private Map<String, User> userMap;
+	private List<Map<String, String>> recipeInfo;
+	private int totalCount;
+	private int pageSize;
+	private int currentPage;
+	private int pagesCount;
 
 	private PrescribedRecipes() {
-		recipes = new ArrayList<Recipe>();
-		drugsMap = new HashMap<String, List<Drug>>();
-		userMap = new HashMap<String, User>();
 	}
 	
 	public static PrescribedRecipes getInstance() {
@@ -39,20 +32,31 @@ public class PrescribedRecipes implements RunCommand {
 	
 	@Override
 	public String run() {
-		
-		if ( params.get("doctor") != null ) {
-			String doctorName = params.get("doctor")[0];
-			User doctor = UserManagerService.getInstance().getUser(doctorName);
-			recipes.addAll(RecipeManagerService.getInstance().findByDoctor(doctor));
+//		
+//		if ( params.get("doctor") != null ) {
+//			String doctorName = params.get("doctor")[0];
+//			User doctor = UserManagerService.getInstance().getUser(doctorName);
+//			recipes.addAll(RecipeManagerService.getInstance().findByDoctor(doctor));
 			
-			for ( Recipe recipe : recipes ) {
-				userMap.put(String.valueOf(recipe.getId()), UserManagerService.getInstance().getUser(recipe.getUserId()));
-				drugsMap.put(String.valueOf(recipe.getId()), new ArrayList<Drug>());
-				for ( Integer drugId : recipe.getDrugIds() ) {
-					drugsMap.get(String.valueOf(recipe.getId())).add(DrugManagerService.getInstance().getDrug(drugId));
-				}
-			}
-		}
+			totalCount = RecipeManagerService.getInstance().getCountByDoctor(user);
+			pageSize = params.get("pageSize") == null ? 5 : Integer.valueOf(params.get("pageSize")[0]);
+			currentPage = params.get("currentPage") == null ? 1
+					: Integer.valueOf(params.get("currentPage")[0]);
+			pagesCount = totalCount / pageSize + ((totalCount % pageSize) == 0 ? 0 : 1);
+			
+			recipeInfo = RecipeManagerService.getInstance().findByRange(user, pageSize * (currentPage - 1), pageSize);
+			
+//			for ( Recipe recipe : recipes ) {
+//				userMap.put(String.valueOf(recipe.getId()), UserManagerService.getInstance().getUser(recipe.getUserId()));
+//				drugsMap.put(String.valueOf(recipe.getId()), new ArrayList<Drug>());
+//				for ( Integer drugId : recipe.getDrugIds() ) {
+//					drugsMap.get(String.valueOf(recipe.getId())).add(DrugManagerService.getInstance().getDrug(drugId));
+//				}
+//			}
+//			
+//			recipes = recipes.subList(pageSize * (currentPage - 1), pageSize * (currentPage - 1) + pageSize);
+//			
+//		}
 		
 		return actionTime;
 		
@@ -78,22 +82,30 @@ public class PrescribedRecipes implements RunCommand {
 		return user;
 	}
 
-	public List<Recipe> getRecipes() {
-		return recipes;
-	}
-
-	public Map<String, List<Drug>> getDrugsMap() {
-		return drugsMap;
-	}
-	
-	public Map<String, User> getUserMap() {
-		return userMap;
-	}
-
 	@Override
 	public boolean isSecure() {
 		
 		return true;
+	}
+	
+	public int getPagesCount() {
+		return pagesCount;
+	}
+
+	public int getPageSize() {
+		return pageSize;
+	}
+
+	public int getCurrentPage() {
+		return currentPage;
+	}
+
+	public int getTotalCount() {
+		return totalCount;
+	}
+
+	public List<Map<String, String>> getRecipeInfo() {
+		return recipeInfo;
 	}
 	
 }

@@ -31,6 +31,7 @@ public class CreateRecipe implements RunCommand, RecipeCartAware {
 
 	private static CreateRecipe instance = new CreateRecipe();
 	private List<Drug> drugs;
+	private List<Drug> allDrugs;
 	private String actionTime;
 	private Map<String, String[]> params;
 	private static final Logger logger = LoggerFactory.getLogger(CreateRecipe.class);
@@ -41,9 +42,14 @@ public class CreateRecipe implements RunCommand, RecipeCartAware {
 	private User user;
 	private User client;
 	private String expieryDate;
+	private int pageSize;
+	private int currentPage;
+	private int pagesCount;
+	private int totalCount;
 
 	private CreateRecipe() {
 		drugs = new ArrayList<Drug>();
+		allDrugs = new ArrayList<Drug>();
 		params = new HashMap<String, String[]>();
 		errorMessages = new ArrayList<String>();
 		validators = new ArrayList<Validator>();
@@ -67,6 +73,11 @@ public class CreateRecipe implements RunCommand, RecipeCartAware {
 	public String run() {
 		
 		if ( getCart().getDrugs().isEmpty() ) {
+			pageSize = params.get("pageSize") == null ? 5 : Integer.valueOf(params.get("pageSize")[0]);
+			currentPage = params.get("currentPage") == null ? 1
+					: Integer.valueOf(params.get("currentPage")[0]);
+			pagesCount = totalCount / pageSize + ((totalCount % pageSize) == 0 ? 0 : 1);
+			drugs = allDrugs.subList( Math.min(pageSize * (currentPage - 1), totalCount), Math.min( (pageSize * (currentPage - 1) + pageSize), totalCount ));
 			return null;
 		}
 		
@@ -79,6 +90,7 @@ public class CreateRecipe implements RunCommand, RecipeCartAware {
 		}
 		
 		if (errorMessages.isEmpty()) {
+			
 			RecipeManagerService service = RecipeManagerService.getInstance();
 			UserManagerService uService = UserManagerService.getInstance();
 			Recipe recipe = new Recipe();
@@ -107,7 +119,14 @@ public class CreateRecipe implements RunCommand, RecipeCartAware {
 			if ( service.addRecipe(recipe) ) {
 				this.expieryDate = expieryDate;
 				this.client = client;
-				drugs.addAll( DrugManagerService.getInstance().getDrugs(drugIds.toArray(new Integer[0])) );
+				allDrugs.clear();
+				allDrugs.addAll( DrugManagerService.getInstance().getDrugs(drugIds.toArray(new Integer[0])) );
+				totalCount = allDrugs.size();
+				pageSize = params.get("pageSize") == null ? 5 : Integer.valueOf(params.get("pageSize")[0]);
+				currentPage = params.get("currentPage") == null ? 1
+						: Integer.valueOf(params.get("currentPage")[0]);
+				drugs = allDrugs.subList(pageSize * (currentPage - 1), Math.min( (pageSize * (currentPage - 1) + pageSize), totalCount ));
+				pagesCount = totalCount / pageSize + ((totalCount % pageSize) == 0 ? 0 : 1);
 				getCart().clear();
 			} else {
 				errorMessages.add("Unable to create recipe.");
@@ -182,4 +201,19 @@ public class CreateRecipe implements RunCommand, RecipeCartAware {
 		return expieryDate;
 	}
 	
+	public int getPagesCount() {
+		return pagesCount;
+	}
+
+	public int getPageSize() {
+		return pageSize;
+	}
+
+	public int getCurrentPage() {
+		return currentPage;
+	}
+	public int getTotalCount() {
+		return totalCount;
+	}
+
 }

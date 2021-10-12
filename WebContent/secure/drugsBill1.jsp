@@ -15,11 +15,21 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 </head>
 <body>
 
+	<c:forEach var="displayPage" begin="1" end="${action.pagesCount}">
+		<c:choose>
+			<c:when
+				test="${displayPage == (empty action.currentPage ? 1 : action.currentPage)}">${displayPage} &nbsp;</c:when>
+			<c:otherwise>
+				<a href="/apotheca/drugsBill.run?pageSize=${empty action.pageSize ? 5 : action.pageSize}&currentPage=${displayPage}">${displayPage}</a>&nbsp;</c:otherwise>
+		</c:choose>
+	</c:forEach>
+
 	<table border="1" style="width: 50%">
 		<caption><%=rb.getString("drugs.caption")%></caption>
 		<thead align="center">
 			<tr>
 				<th><%=rb.getString("drugs.name")%></th>
+				<th>id</th>
 				<th><%=rb.getString("drugs.dose")%></th>
 				<th><%=rb.getString("drugs.amount")%></th>
 				<th><%=rb.getString("drugs.price")%></th>
@@ -30,10 +40,12 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 		
 			<c:choose>
 				<c:when test="${not empty action.order}">
-					<c:forEach items="${action.order.drugs}" var="d">
+					<c:forEach items="${action.drugs}" var="d">
 						<tr
 							bgcolor=<c:out value="${not d.key.prescription ? 'LightGreen' : 'LightBlue'}"/>>
+							
 							<td><c:out value="${d.key.name}" /></td>
+							<td><c:out value="${d.key.id}" /></td>
 							<td><c:out value="${d.key.dose }" /></td>
 							<td><c:out value="${d.value}" /></td>
 							<td><c:out value="${d.key.price }" /></td>
