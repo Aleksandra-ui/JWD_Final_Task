@@ -135,12 +135,8 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 				<%=rb.getString("drugs.records1")%>
 				<%=currentPage * pageSize - pageSize + 1%>
 				<%=rb.getString("drugs.records2")%>
-				<%=currentPage * pageSize - pageSize + 1
-		+ ((totalCount % pageSize != 0
-				&& totalCount / pageSize * pageSize + 1 == currentPage * pageSize - pageSize + 1)
-						? totalCount % pageSize
-						: pageSize)
-		- 1%>
+				<%=currentPage * pageSize - pageSize + 1 + ((totalCount % pageSize != 0 && totalCount / pageSize * pageSize + 1 == currentPage * pageSize - pageSize + 1)
+						? totalCount % pageSize : pageSize) - 1%>
 				<%=rb.getString("drugs.records3")%>
 				${action.totalCount}
 			</div>

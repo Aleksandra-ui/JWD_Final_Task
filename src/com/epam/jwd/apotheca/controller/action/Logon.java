@@ -25,8 +25,10 @@ public class Logon implements RunCommand {
 	private Map<String, String[]> params;
 	private User user;
 	private List<User> users;
+	private List<String> messages;
 	
 	private Logon() {
+		messages = new ArrayList<String>();
 	}
 	
 	public static Logon getInstance() {
@@ -43,6 +45,8 @@ public class Logon implements RunCommand {
 	
 	@Override      
 	public String run() {
+		
+		messages.clear();
 		
 		UserManagerService userService = UserManagerService.getInstance();
 		String userName = params.get("name") != null ? params.get("name")[0] : null;
@@ -68,13 +72,10 @@ public class Logon implements RunCommand {
 					}
 				}
 			} else {
-				boolean found = false;
-				List<User> users = userService.getUsers();
-				for ( User u : users ) {
-					if ( u.getName().equalsIgnoreCase(userName) && u.getPassword().equalsIgnoreCase(userPass) ) {
-						found = true;
-						user = u;
-						break;
+				if ( userName != null && userService.hasUser(userName) ) {
+					User user = userService.getUser(userName);
+					if ( user.getPassword().equalsIgnoreCase(userPass) ) {
+						this.user = user;
 					}
 				}
 			}
@@ -110,4 +111,8 @@ public class Logon implements RunCommand {
 		return users;
 	}
 
+	public List<String> getMessages() {
+		return messages;
+	}
+	
 }

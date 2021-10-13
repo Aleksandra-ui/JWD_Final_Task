@@ -17,17 +17,17 @@ import com.epam.jwd.apotheca.model.Drug;
 import com.epam.jwd.apotheca.model.Recipe;
 import com.epam.jwd.apotheca.model.User;
 
-public class Drugs implements RunCommand, ShoppingCartAware {
+public class Drugs extends NavigableAction implements ShoppingCartAware {
 
 	private static Drugs instance = new Drugs();
 	private static final Logger logger = LoggerFactory.getLogger(Drugs.class);
 	private String actionTime;
 	private List<Drug> drugs;
-	private Map<String, String[]> params;
-	private int totalCount;
-	private int pageSize;
-	private int currentPage;
-	private int pagesCount;
+//	private Map<String, String[]> params;
+//	private int totalCount;
+//	private int pageSize;
+//	private int currentPage;
+//	private int pagesCount;
 	private User user;
 	private Map<Integer, Date> drugsFromRecipe;
 	private ShoppingCart cart;
@@ -63,12 +63,12 @@ public class Drugs implements RunCommand, ShoppingCartAware {
 
 		logger.info("hello from Drugs!");
 		DrugManagerService service = DrugManagerService.getInstance();
-		totalCount = service.getTotalCount();
-		pageSize = params.get("pageSize") == null ? 5 : Integer.valueOf(params.get("pageSize")[0]);
-		currentPage = params.get("currentPage") == null ? 1
-				: Integer.valueOf(params.get("currentPage")[0]);
-		pagesCount = totalCount / pageSize + ((totalCount % pageSize) == 0 ? 0 : 1);
-		drugs = service.getDrugs(pageSize * (currentPage - 1), pageSize);
+		setTotalCount ( service.getTotalCount() );
+//		pageSize = params.get("pageSize") == null ? 5 : Integer.valueOf(params.get("pageSize")[0]);
+//		currentPage = params.get("currentPage") == null ? 1
+//				: Integer.valueOf(params.get("currentPage")[0]);
+//		pagesCount = totalCount / pageSize + ((totalCount % pageSize) == 0 ? 0 : 1);
+		drugs = service.getDrugs(getPageSize() * (getCurrentPage() - 1), getPageSize());
 		actionTime = GregorianCalendar.getInstance().getTime().toString();
 		
 		RecipeManagerService recipeService = RecipeManagerService.getInstance();
@@ -85,10 +85,10 @@ public class Drugs implements RunCommand, ShoppingCartAware {
 		return actionTime;
 	}
 
-	@Override
-	public void setParams(Map<String, String[]> params) {
-		this.params = params;
-	}
+//	@Override
+//	public void setParams(Map<String, String[]> params) {
+//		this.params = params;
+//	}
 
 	@Override
 	public void setUser(User user) {
@@ -117,20 +117,20 @@ public class Drugs implements RunCommand, ShoppingCartAware {
 		this.cart = cart;
 	}
 
-	public int getPagesCount() {
-		return pagesCount;
-	}
-
-	public int getPageSize() {
-		return pageSize;
-	}
-
-	public int getCurrentPage() {
-		return currentPage;
-	}
-
-	public int getTotalCount() {
-		return totalCount;
-	}
+//	public int getPagesCount() {
+//		return pagesCount;
+//	}
+//
+//	public int getPageSize() {
+//		return pageSize;
+//	}
+//
+//	public int getCurrentPage() {
+//		return currentPage;
+//	}
+//
+//	public int getTotalCount() {
+//		return totalCount;
+//	}
 	
 }

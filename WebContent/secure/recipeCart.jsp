@@ -19,12 +19,6 @@
 </style>
 
 <script type="text/javascript">
-
-	function changePageSize (select) {
-	
-		return select.options[select.selectedIndex].value && (window.location = select.options[select.selectedIndex].value ); 
-	
-	}
 	
 	function fillDaySelect() {
 		
@@ -91,17 +85,17 @@
 					</div>
 					<span style="float: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 					<div style="float: left">
-						<%=rb.getString("drugs.records4")%>:&nbsp; <select name="pageSize"
-							onChange="changePageSize(this);">
+						<%=rb.getString("drugs.records4")%>:&nbsp;<select name="pageSize"
+							onChange="displayCart(1, this.options[this.selectedIndex].value );">
 							<option
 								${(empty param.pageSize or param.pageSize == 5) ? "selected='true'" : "" }
-								value="/apotheca/displayRecipeCart.run?pageSize=5">5</option>
+								value="5">5</option>
 							<option
 								${(not empty param.pageSize and param.pageSize  == 10) ? "selected='true'" : "" }
-								value="/apotheca/displayRecipeCart.run?pageSize=10">10</option>
+								value="10">10</option>
 							<option
 								${(not empty param.pageSize and param.pageSize  == 20) ? "selected='true'" : "" }
-								value="/apotheca/displayRecipeCart.run?pageSize=20">20</option>
+								value="20">20</option>
 						</select>
 					</div>
 					<span style="float: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -116,8 +110,7 @@
 								<c:when
 									test="${displayPage == (empty param.currentPage ? 1 : param.currentPage)}">${displayPage} &nbsp;</c:when>
 								<c:otherwise>
-									<a
-										href="/apotheca/displayRecipeCart.run?pageSize=${empty param.pageSize ? 5 : param.pageSize}&currentPage=${displayPage}" onclick="changeURL(this)">${displayPage}</a>&nbsp;</c:otherwise>
+									<a onclick="displayCart(${displayPage}, ${action.pageSize })"><u>${displayPage}</u></a>&nbsp;</c:otherwise>
 							</c:choose>
 						</c:forEach>
 		

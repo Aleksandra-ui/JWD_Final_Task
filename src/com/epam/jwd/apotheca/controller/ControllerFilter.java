@@ -11,17 +11,16 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.epam.jwd.apotheca.controller.action.AddToCart;
 import com.epam.jwd.apotheca.controller.action.AddToRecipeCart;
-import com.epam.jwd.apotheca.controller.action.BuyDrugs;
 import com.epam.jwd.apotheca.controller.action.Bye;
 import com.epam.jwd.apotheca.controller.action.CreateDrug;
 import com.epam.jwd.apotheca.controller.action.CreateRecipe;
+import com.epam.jwd.apotheca.controller.action.DeleteUser;
 import com.epam.jwd.apotheca.controller.action.DisplayCart;
 import com.epam.jwd.apotheca.controller.action.DisplayRecipeCart;
 import com.epam.jwd.apotheca.controller.action.Drugs;
@@ -35,8 +34,8 @@ import com.epam.jwd.apotheca.controller.action.RecipeCommand;
 import com.epam.jwd.apotheca.controller.action.RemoveFromCart;
 import com.epam.jwd.apotheca.controller.action.RemoveFromRecipeCart;
 import com.epam.jwd.apotheca.controller.action.RunCommand;
-import com.epam.jwd.apotheca.model.User;
 import com.epam.jwd.apotheca.controller.action.ShoppingCartAware;
+import com.epam.jwd.apotheca.model.User;
 
 public class ControllerFilter implements Filter {
 	
@@ -55,7 +54,6 @@ public class ControllerFilter implements Filter {
     	actionMapping.put("logon", Logon.getInstance());
     	actionMapping.put("orders", Orders.getInstance());
     	actionMapping.put("createDrug", CreateDrug.getInstance());
-    	actionMapping.put("buyDrugs", BuyDrugs.getInstance());
     	actionMapping.put("drugsBill", DrugsBill.getInstance());
     	actionMapping.put("addToCart", new AddToCart());
     	actionMapping.put("removeFromCart", new RemoveFromCart());
@@ -63,6 +61,7 @@ public class ControllerFilter implements Filter {
     	actionMapping.put("addToRecipeCart", new AddToRecipeCart());    
     	actionMapping.put("removeFromRecipeCart", new RemoveFromRecipeCart());
     	actionMapping.put("displayRecipeCart", new DisplayRecipeCart());
+    	actionMapping.put("deleteUser", new DeleteUser());
     	
     }
 

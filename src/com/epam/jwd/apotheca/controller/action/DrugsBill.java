@@ -1,5 +1,6 @@
 package com.epam.jwd.apotheca.controller.action;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,10 +34,12 @@ public class DrugsBill implements RunCommand, ShoppingCartAware {
 	private int pagesCount;
 	private int totalCount;
 	private Map<Drug, Integer> drugs;
+	private List<String> errorMessages;
 	
 	private DrugsBill() {
 		total = new AtomicInteger(0);
 		drugs = new TreeMap<Drug, Integer>();
+		errorMessages = new ArrayList<String>();
 	}
 
 	public static DrugsBill getInstance() {
@@ -45,6 +48,7 @@ public class DrugsBill implements RunCommand, ShoppingCartAware {
 	
 	@Override
 	public String run() {
+		errorMessages.clear();
 		if ( getCart().getProducts().size() > 0 ){
 			order = OrderManagerService.getInstance().buy(user.getId(), getCart().getProducts());
 			if ( order != null ) {
@@ -54,8 +58,11 @@ public class DrugsBill implements RunCommand, ShoppingCartAware {
 					total.addAndGet(e.getKey().getPrice() * e.getValue());
 				}
 				totalCount = order.getDrugs().size();
+			} else {
+				//создать валидатор количества доступных лек-в,ззапустить и рез-тат добавить в errorMessages
+				errorMessages.add("Cannot create an order.");
 			}
-		}
+		} 
 		if ( order != null ) {
 			pageSize = params.get("pageSize") == null ? 5 : Integer.valueOf(params.get("pageSize")[0]);
 			currentPage = params.get("currentPage") == null ? 1
@@ -149,6 +156,10 @@ public class DrugsBill implements RunCommand, ShoppingCartAware {
 
 	public Map<Drug, Integer> getDrugs() {
 		return drugs;
+	}
+
+	public List<String> getErrorMessages() {
+		return errorMessages;
 	}
 	
 }

@@ -22,6 +22,7 @@ public class Orders implements RunCommand {
 	private int pageSize;
 	private int currentPage;
 	private int pagesCount;
+	private int totalCount;
 	
 	private Orders() {
 	}
@@ -34,6 +35,7 @@ public class Orders implements RunCommand {
 	public String run() {
 
 		orders = OrderManagerService.getInstance().findOrdersByUser(user.getId());
+		totalCount = orders.size();
 		
 		pageSize = params.get("pageSize") == null ? 5 : Integer.valueOf(params.get("pageSize")[0]);
 		currentPage = params.get("currentPage") == null ? 1
@@ -91,4 +93,8 @@ public class Orders implements RunCommand {
 		return pagesCount;
 	}
 
+	public int getTotalCount() {
+		return totalCount;
+	}
+	
 }

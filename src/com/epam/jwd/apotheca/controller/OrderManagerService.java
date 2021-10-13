@@ -44,7 +44,7 @@ public class OrderManagerService {
 	}
 
 	public Order buy(Integer userId, Map<Drug, Integer> drugs) {
-
+		//здесь обратиться к drugDAO и изменить quantity
 		Order order = null;
 		if (drugs != null && !drugs.isEmpty()) {
 			order = new Order();

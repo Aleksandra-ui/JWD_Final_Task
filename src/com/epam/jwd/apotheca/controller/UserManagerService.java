@@ -95,5 +95,11 @@ public class UserManagerService {
 		return (user != null) && ((roleId & user.getRole().getPermission()) == roleId);
 
 	}
+	
+	public boolean deleteUser(Integer userId) {
+
+		return userDAO.delete(userId);
+
+	}
 
 }

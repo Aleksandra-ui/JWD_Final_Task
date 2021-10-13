@@ -21,98 +21,11 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 </head>
 
 <script type="text/javascript">
-	drugIds = new Array(); 
-</script>
-
-<script type="text/javascript">
-
-function readDrugs() {
-	
-		a = window.location.search; 
-		paramLine = a.substr(1);
-		params = paramLine.split("&");
-		const DRUG_ID = "drugIds=";
-		for ( param of params ) {
-			if (param.startsWith(DRUG_ID)) {
-				drugIds = param.substring(param.indexOf(DRUG_ID) + DRUG_ID.length ).split(","); //array of ids of chosen drugs
-			}
-		}
-	}
-
-function getDrugIds() {
-	
-	drugIdLine = "";
-	if (drugIds.length > 0) {
-		drugIdLine =  "drugIds=";
-		for ( id of drugIds ) {
-			if (id != ""){
-				drugIdLine += id + ",";
-			}
-		}
-		drugIdLine = drugIdLine.substring(0,drugIdLine.length-1);
-	}
-	
-	return drugIdLine;
-	
-}
 
 function changePageSize (select) {
 	
-	drugIdLine = getDrugIds();
+	return select.options[select.selectedIndex].value && (window.location = select.options[select.selectedIndex].value); 
 	
-	return select.options[select.selectedIndex].value && (window.location = select.options[select.selectedIndex].value + ((drugIdLine != "") ? "&" + drugIdLine : "" )); 
-	
-}
-
-function changeURL(anchor) {
-	
-	drugIdLine = getDrugIds();
-	
-	newHref = anchor.href + ((drugIdLine != "") ? "&" + drugIdLine : "" );
-	
-	return anchor.href && (anchor.href = newHref); //if (anchor.href) {anchor.href = newHref;}. window.location transforms into window.location.href
-	
-}
-
-function displayParams() {
-       params = window.location.href;
-       params = "" + params.substring(params.indexOf('?') + 1);
-       pp = params.split('&');
-       retVal = [];
-       for (i = 0; i < pp.length; i++) {
-           keyVal = pp[i].split("=");
-           retVal.push(keyVal[0] + " : " + keyVal[1]);
-       }
-   }
-
-function changeSelectVisibility() {
-	
-	var div = document.getElementById("div");
-		div.style.display = (drugIds.length == 0) ? 'none' : 'inline-block'; 
-	
-}
-
-function removeOptionsSelected()
-{
-  var select = document.getElementById('ListBox1');
-  var i;
-  
-  for (i = select.length - 1; i>=0; i--) {
-    if (select.options[i].selected) {
-    	optId = select.options[i].id.substr("selectedDrug".length);
-    	idx = drugIds.indexOf(optId);
-    	if ( idx != -1 ) {
-    		drugIds.splice(idx, 1);	
-    	}
-    	optId = "drug" + optId;
-    	checkbox = document.getElementById(optId);
-    	if ( checkbox != null ) {
-    		checkbox.checked = false;
-    	}
-    	select.remove(i);
-    }
-  }
-  changeSelectVisibility();
 }
 
 function fillDaySelect() {
@@ -147,22 +60,6 @@ function fillDaySelect() {
 	}
 }
 
-function gatherDrugIds() {
-	var select = document.getElementById("ListBox1");
-    var drugsContainer = select.getElementsByTagName('option');
-    var hiddenValue = "";
-  
-    for (var idx = 0; idx < drugsContainer.length; idx++) {
-    	hiddenValue += drugsContainer[idx].id.substr(12); 
-    	   if (idx < (drugsContainer.length -1))  {
-               hiddenValue += ",";
-           }
-    }
-   
-    document.getElementById("selectedIds").value = hiddenValue; 
-}
-
-
 function updateRecipeCart( drugId, add ) {
 	
 	var xmlhttp = new XMLHttpRequest();
@@ -196,7 +93,7 @@ function displayShoppingCart(xml) {
 	
 }
 
-function displayCart() {
+function displayCart(currentPage, pageSize) {
 	
 	var xmlhttp = new XMLHttpRequest();
 	//функция которая вызывается когда завершилась загрузка
@@ -207,14 +104,17 @@ function displayCart() {
 	  	}
 	};
 	
-	xmlhttp.open("GET", "displayRecipeCart.run", true);	
+	currentPage = currentPage ? currentPage : 1;
+	pageSize = pageSize ? pageSize : 5;
+	
+	xmlhttp.open("GET", "displayRecipeCart.run?currentPage=" + currentPage + "&pageSize=" + pageSize, true);	
 	xmlhttp.send();
 	
 }
 
 </script>
 
-<body onload="displayCart();readDrugs();">
+<body onload="displayCart();">
 
 	<%=rb.getString("drugs.welcome")%>
 	
@@ -245,7 +145,7 @@ function displayCart() {
 				<c:forEach var="displayPage" begin="1" end="${pagesCount}">
 					<c:choose>
 						<c:when test="${displayPage == (empty param.currentPage ? 1 : param.currentPage)}">${displayPage} &nbsp;</c:when>
-						<c:otherwise><a href = "/apotheca/recipe.run?pageSize=${empty param.pageSize ? 5 : param.pageSize}&currentPage=${displayPage}" onclick="changeURL(this);">${displayPage}</a>&nbsp;</c:otherwise>
+						<c:otherwise><a href = "/apotheca/recipe.run?pageSize=${empty param.pageSize ? 5 : param.pageSize}&currentPage=${displayPage}">${displayPage}</a>&nbsp;</c:otherwise>
 					</c:choose>
 				</c:forEach>
 			</div>
