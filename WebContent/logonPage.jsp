@@ -61,7 +61,9 @@
 		user = null;
 	}
 %>
-<title><%=rb.getString("logon.title")%></title>
+<div align="center">
+	<title><%=rb.getString("logon.title")%></title>
+</div>
 </head>
 <body>
 

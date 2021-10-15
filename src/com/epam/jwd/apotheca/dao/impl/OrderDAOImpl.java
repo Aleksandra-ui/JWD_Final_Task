@@ -20,6 +20,7 @@ import com.epam.jwd.apotheca.dao.api.OrderDAO;
 import com.epam.jwd.apotheca.exception.CouldNotInitializeConnectionPoolException;
 import com.epam.jwd.apotheca.model.Drug;
 import com.epam.jwd.apotheca.model.Order;
+import com.epam.jwd.apotheca.model.User;
 import com.epam.jwd.apotheca.pool.ConnectionPool;
 
 public class OrderDAOImpl implements OrderDAO {
@@ -172,6 +173,11 @@ public class OrderDAOImpl implements OrderDAO {
 			st.setInt(1, id);
 
 			result = st.executeUpdate() > 0;
+			if (result) {
+				logger.info("deleted an order");
+			} else {
+				logger.warn("order can't be deleted");
+			}
 			connection.commit();
 
 		} catch (SQLException e) {
@@ -179,7 +185,6 @@ public class OrderDAOImpl implements OrderDAO {
 			e.printStackTrace();
 		}
 
-		logger.info("deleted an order");
 		return result;
 	}
 
@@ -301,6 +306,62 @@ public class OrderDAOImpl implements OrderDAO {
 		logger.info("found all orders count");
 		return count;
 		
+	}
+	
+	public Integer getDrugsCountByUser(Integer userId) {
+		
+		Integer count = 0;
+		String query = "select count(d.id) from mydb.orders o join mydb.drugs d on o.drug_id = d.id where o.user_id = " + userId;
+
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
+
+			ResultSet rs = st.executeQuery(query);
+			rs.next();
+			count = rs.getInt(1);
+			rs.close();
+			logger.info("found all drugs count in user's orders");
+		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to find all drugs count in user's orders");
+			e.printStackTrace();
+		}
+		
+		return count;
+		
+	}
+	
+	public List<Map<String, String>> findDrugInfoByRange(User user, int start, int count) {
+
+		String query = "select o.id, d.name, d.dose, o.amount, o.order_date from mydb.orders o "
+				+ "join mydb.drugs d on o.drug_id = d.id "
+				+ "where o.user_id = ? "
+				+ "order by o.id desc, d.id asc "
+				+ "limit ?,?;";
+			
+		List<Map<String, String>> drugsInfo = new ArrayList<Map<String, String>>();
+
+		try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement(query);) {
+			st.setInt(1, user.getId());
+			st.setInt(2, start);
+			st.setInt(3, count);
+			ResultSet rs = st.executeQuery();
+			Map<String, String> item;
+			while (rs.next()) {
+				item = new HashMap<String, String>();
+				item.put("id", String.valueOf(rs.getInt("o.id")));
+				item.put("name", rs.getString("d.name"));
+				item.put("dose", String.valueOf(rs.getDouble("d.dose")));
+				item.put("amount", String.valueOf(rs.getDouble("o.amount")));
+				item.put("date", String.valueOf(rs.getDate("o.order_date")));
+				drugsInfo.add(item);
+			}
+			rs.close();
+			logger.info("found all drugs info in user's orders");
+		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to find all drugs info in user's orders");
+			e.printStackTrace();
+		}
+
+		return drugsInfo;
 	}
 
 }

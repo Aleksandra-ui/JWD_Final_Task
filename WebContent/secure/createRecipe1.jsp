@@ -23,7 +23,7 @@ ResourceBundle rb = ResourceBundle.getBundle("CreateRecipe", locale);
 </script>
 <body>
      
-    <div id = "errorMessages">
+    <div id = "errorMessages" class="container" align="center">
    		<c:forEach items="${action.errorMessages}" var="message">
    			<font color="red"><c:out value="${ message}"/></font>
    			<br/>
@@ -39,11 +39,13 @@ ResourceBundle rb = ResourceBundle.getBundle("CreateRecipe", locale);
 		%>
 	
 	<c:if test="${empty action.errorMessages}">
-		<font color="blue">
-			<%=rb.getString("create.message1")%> ${action.client.name} <%=rb.getString("create.message2")%> ${ action.user.name } <%=rb.getString("create.message3")%> ${action.expieryDate}
-		</font>
+		<div class="container" align="center">
+			<font color="blue">
+				<%=rb.getString("create.message1")%> ${action.client.name} <%=rb.getString("create.message2")%> ${ action.user.name } <%=rb.getString("create.message3")%> ${action.expieryDate}
+			</font>
+		</div>
 	
-		<div style="overflow: hidden">
+		<div style="overflow: hidden" class="container" align="center">
 			<div style="float:left">
 				<%out.print("records from");%>
 				${ action.currentPage * action.pageSize - action.pageSize + 1}
@@ -91,7 +93,7 @@ ResourceBundle rb = ResourceBundle.getBundle("CreateRecipe", locale);
 			</div>
 		</div>
 	
-		<table border="1" style="width: 50%">
+		<table border="1" style="width: 50%; margin-top: 20px" class="container" align="center">
 			<caption><%=rb.getString("create.caption")%></caption>
 			<thead align="center">
 				<tr>
@@ -115,7 +117,7 @@ ResourceBundle rb = ResourceBundle.getBundle("CreateRecipe", locale);
 						</c:forEach>
 			</tbody>
 		</table>
-		<a href="recipe.run"><%=rb.getString("create.link")%></a>
+		<div  class="container" align="center"><a href="recipe.run"><%=rb.getString("create.link")%></a></div>
 	</c:if>
 	
 </body>

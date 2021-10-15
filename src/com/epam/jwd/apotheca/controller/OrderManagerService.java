@@ -10,6 +10,7 @@ import com.epam.jwd.apotheca.dao.impl.DrugDAOImpl;
 import com.epam.jwd.apotheca.dao.impl.OrderDAOImpl;
 import com.epam.jwd.apotheca.model.Drug;
 import com.epam.jwd.apotheca.model.Order;
+import com.epam.jwd.apotheca.model.User;
 
 public class OrderManagerService {
 
@@ -56,5 +57,22 @@ public class OrderManagerService {
 		return order;
 
 	}
+	
+	public Integer getDrugsCountByUser(Integer userId) {
+		return ((OrderDAOImpl) orderDAO).getDrugsCountByUser(userId);
+	}
 
+	public List<Map<String, String>> findDrugInfoByRange(User user, int start, int count) {
+		return ((OrderDAOImpl) orderDAO).findDrugInfoByRange(user, start, count);
+	}
+	
+	public boolean deleteUserOrders(User user) {
+		boolean result = true;
+		List<Order> orders = ((OrderDAOImpl) orderDAO).findOrdersByUser(user.getId());
+		for ( Order order : orders ) {
+			result &= ((OrderDAOImpl) orderDAO).delete(order.getId());
+		}
+		return result;
+	}
+	
 }

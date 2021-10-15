@@ -3,7 +3,10 @@ java.util.Map,java.util.HashMap"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-
+<!-- Bootstrap CSS (jsDelivr CDN) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-uWxY/CJNBR+1zjPWmfnSnVxwRheevXITnMqoEIeG1LJrdI0GlVs/9cVSyPYXdcSF" crossorigin="anonymous">
+  <!-- Bootstrap Bundle JS (jsDelivr CDN) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-kQtW33rZJAHjgefvhyyzcGF3C5TFyBQBA13V1RKPf4uH+bwyzQxZ6CmMZHmNBEfJ" crossorigin="anonymous"></script>
 <style type="text/css">
 	.menu-item {
 		float: left;
@@ -83,36 +86,37 @@ java.util.Map,java.util.HashMap"%>
 		
 	%>
 	
-	<form method="POST">
-		<select name="locale" id="lang">
+	<form method="POST" class="col-md-2" style="display: flex; margin-top: 20px; margin-left: 32px; margin-bottom: 20px">
+		<select class="form-select" name="locale" id="lang" style="display: inline">
 			<option id="en" value ="en">english</option>
 			<option id="zh" value ="zh">chinese</option>
 		</select>
-		<input type="submit" value="<%=rb0.getString("menu.locale")%>" >
+		<input type="submit" style="display: inline" class ="btn btn-primary" value="<%=rb0.getString("menu.locale")%>" >
 	</form>
 
-	<ul>
-		<li class="menu-item"><a href="/apotheca/drugs.run"><%=rb0.getString("menu.drugs")%></a></li>
-		<c:if test="${ canPrescribe }">
-			<li class="menu-item"><a href="/apotheca/recipe.run"><%=rb0.getString("menu.prescribe")%></a></li>
-		</c:if> 
-		<c:if test="${ canPrescribe }">
-			<li class="menu-item"><a href="/apotheca/prescribedRecipes.run"><%=rb0.getString("menu.recipes")%></a></li>
-		</c:if> 
-		<c:if test="${not empty sessionScope.user }">
-			<li class="menu-item"><a href="/apotheca/orders.run"><%=rb0.getString("menu.orders")%></a></li>
-		</c:if> 
-		<c:if test="${canAddDrugs}">
-			<li class="menu-item"><a href="/apotheca/createDrug.run"><%=rb0.getString("menu.create")%></a></li>
-		</c:if> 
-		<li class="menu-item">
-			<c:choose>
-				<c:when test="${not empty sessionScope.user}"><font color = "blue"><%=rb0.getString("menu.user")%>: ${sessionScope.user.name}</font></c:when>
-				<c:otherwise><%=rb0.getString("menu.logon1")%> <a href="/apotheca/logon.run"><%=rb0.getString("menu.logon2")%></a></c:otherwise>
-			</c:choose>
-		</li>
-		<li class="last-item">
-			<c:if test="${not empty sessionScope.user}"><a href="/apotheca/logon.run?logoff=1"><%=rb0.getString("menu.logoff")%></a></c:if>
-		</li>
-	</ul>
-	<br/>
+	<div class="container" align="center" style="width: 80%">
+		<ul class="list-group-horizontal">
+			<li class="menu-item"><a href="/apotheca/drugs.run"><%=rb0.getString("menu.drugs")%></a></li>
+			<c:if test="${ canPrescribe }">
+				<li class="menu-item"><a href="/apotheca/recipe.run"><%=rb0.getString("menu.prescribe")%></a></li>
+			</c:if> 
+			<c:if test="${ canPrescribe }">
+				<li class="menu-item"><a href="/apotheca/prescribedRecipes.run"><%=rb0.getString("menu.recipes")%></a></li>
+			</c:if> 
+			<c:if test="${not empty sessionScope.user }">
+				<li class="menu-item"><a href="/apotheca/orders.run"><%=rb0.getString("menu.orders")%></a></li>
+			</c:if> 
+			<c:if test="${canAddDrugs}">
+				<li class="menu-item"><a href="/apotheca/createDrug.run"><%=rb0.getString("menu.create")%></a></li>
+			</c:if> 
+			<li class="menu-item">
+				<c:choose>
+					<c:when test="${not empty sessionScope.user}"><font color = "blue"><%=rb0.getString("menu.user")%>: ${sessionScope.user.name}</font></c:when>
+					<c:otherwise><%=rb0.getString("menu.logon1")%> <a href="/apotheca/logon.run"><%=rb0.getString("menu.logon2")%></a></c:otherwise>
+				</c:choose>
+			</li>
+			<li class="last-item">
+				<c:if test="${not empty sessionScope.user}"><a href="/apotheca/logon.run?logoff=1"><%=rb0.getString("menu.logoff")%></a></c:if>
+			</li>
+		</ul>
+	</div>

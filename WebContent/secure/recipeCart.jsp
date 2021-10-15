@@ -67,9 +67,9 @@
 
 	<c:if test="${(not empty action.cart) and (not empty action.drugs) }">
 		
-		<div style="margin-top: 20px; margin-bottom: 20px">
+		<div style="margin-top: 20px; margin-bottom: 20px" class="container" align="center">
 			<span style="align-content: center; align-self: center;">Current recipe</span>
-				<div style="overflow: hidden">
+				<div style="overflow: hidden;" >
 					<div style="float: left">
 						<%=rb.getString("drugs.records1")%>
 						<%=currentPage * pageSize - pageSize + 1%>
@@ -116,7 +116,7 @@
 		
 					</div>
 				</div>
-			<table border="1" style="width: 50%">
+			<table border="1" style="width: 50%; margin-top: 20px">
 				<thead align="center">
 					<tr>
 						<th>#</th>
@@ -154,9 +154,9 @@
 			
 			<div id = "errorStatus"></div>
 		</div>
-			<form action="createRecipe.run" method="POST">
+			<form action="createRecipe.run" method="POST" class="container" align="center">
 				<div id = "div" <c:if test="${empty action.cart.drugs}">style="display:none"</c:if>>
-					<input type="submit" value="<%=rb.getString("drugs.recipe")%>"/>
+					<input class="btn btn-primary" type="submit" value="<%=rb.getString("drugs.recipe")%>"/>
 					<select name="clientName">
 					<c:forEach items="${action.clients}" var="client">
 						<option>

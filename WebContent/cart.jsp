@@ -103,7 +103,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 		
 					</div>
 				</div>
-			<table border="1" style="width: 50%">
+			<table border="1" style="width: 50%; margin-top:20px">
 				<thead align="center">
 					<tr>
 						<th>#</th>
@@ -148,7 +148,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 		</div>
 			<form action="drugsBill.run" method="POST">
 				<div id = "div" <c:if test="${empty action.cart.products}">style="display:none"</c:if>>
-					<div id="totalAmount1"><font color="Blue">Total : </font><c:out value="${totalA }"/> <input type="submit" value="<%=rb.getString("drugs.buy")%>"/></div>
+					<div id="totalAmount1"><font color="Blue">Total : </font><c:out value="${totalA }"/> <input type="submit" class="btn btn-primary" value="<%=rb.getString("drugs.buy")%>"/></div>
 				</div>
 			</form>
 		

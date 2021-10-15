@@ -33,7 +33,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Orders", locale);
 </head>
 <body>
 
-	<%=rb.getString("orders.page")%> "${action.user.name}"
+	<p class="container" align="center"><%=rb.getString("orders.page")%> "${action.user.name}"</p>
 	
 	<%
 		Orders bean = (Orders)request.getAttribute("action");
@@ -43,8 +43,8 @@ ResourceBundle rb = ResourceBundle.getBundle("Orders", locale);
 		int currentPage = bean.getCurrentPage();
 	%>
 	
-	<div>
-		<div style="overflow: hidden">
+	<div style="width:50%" class="container">
+		<div style="overflow: hidden" class="container" align="center">
 			<div style="float: left">
 				records from&nbsp;
 				<%=currentPage * pageSize - pageSize + 1%>
@@ -54,70 +54,98 @@ ResourceBundle rb = ResourceBundle.getBundle("Orders", locale);
 				of&nbsp;
 				${action.totalCount}
 			</div>
-			<span style="float: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-			<div style="float: left">
-				records per page:&nbsp; <select name="pageSize"
-					onChange="changePageSize(this);">
-					<option
-						${(empty action.pageSize or action.pageSize == 5) ? "selected='true'" : "" }
-						value="/apotheca/orders.run?pageSize=5">5</option>
-					<option
-						${(not empty action.pageSize and action.pageSize  == 10) ? "selected='true'" : "" }
-						value="/apotheca/orders.run?pageSize=10">10</option>
-					<option
-						${(not empty action.pageSize and action.pageSize  == 20) ? "selected='true'" : "" }
-						value="/apotheca/orders.run?pageSize=20">20</option>
-				</select>
-			</div>
-			<span style="float: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-			<div style="float: none">
-				
-				<c:forEach var="displayPage" begin="1" end="${action.pagesCount}">
-					<c:choose>
-						<c:when
-							test="${displayPage == (empty action.currentPage ? 1 : action.currentPage)}">${displayPage} &nbsp;</c:when>
-						<c:otherwise>
-							<a href="/apotheca/orders.run?pageSize=${empty action.pageSize ? 5 : action.pageSize}&currentPage=${displayPage}">${displayPage}</a>&nbsp;</c:otherwise>
-					</c:choose>
-				</c:forEach>
-
+			<span style="float: none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+			<div style="float: right">
+				<div style="float: left">
+					records per page:&nbsp; <select name="pageSize"
+						onChange="changePageSize(this);">
+						<option
+							${(empty action.pageSize or action.pageSize == 5) ? "selected='true'" : "" }
+							value="/apotheca/orders.run?pageSize=5">5</option>
+						<option
+							${(not empty action.pageSize and action.pageSize  == 10) ? "selected='true'" : "" }
+							value="/apotheca/orders.run?pageSize=10">10</option>
+						<option
+							${(not empty action.pageSize and action.pageSize  == 20) ? "selected='true'" : "" }
+							value="/apotheca/orders.run?pageSize=20">20</option>
+					</select>
+				</div>
+				<span style="float: none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+				<div style="float: right">
+					<c:forEach var="displayPage" begin="1" end="${action.pagesCount}">
+						<c:choose>
+							<c:when
+								test="${displayPage == (empty action.currentPage ? 1 : action.currentPage)}">${displayPage} &nbsp;</c:when>
+							<c:otherwise>
+								<a href="/apotheca/orders.run?pageSize=${empty action.pageSize ? 5 : action.pageSize}&currentPage=${displayPage}">${displayPage}</a>&nbsp;</c:otherwise>
+						</c:choose>
+					</c:forEach>
+				</div>
 			</div>
 		</div>
+	</div>
 	
-	<table border = "1" style="width:50%" >
+	<table border = "1" style="width:50%; margin-top: 20px" class="container" align="center">
 		<caption><%=rb.getString("orders.list")%></caption>
 		<thead align ="center">
 			<tr>
 				<th>#</th>
 				<th><%=rb.getString("orders.drug")%></th>
+				<th>dose</th>
 				<th><%=rb.getString("orders.amount")%></th>
 				<th><%=rb.getString("orders.date")%></th>
 			</tr>
 		</thead>
 		
+		
+		
 		<tbody align ="center">
+		<%-- 				<c:when test="${not empty action.orders}"> --%>
+<%-- 					<c:set var="classStyle" value="even"/> --%>
+<%-- 					<c:forEach items="${action.orders}" var="o"> --%>
+<%-- 						<c:forEach items="${o.drugs}" var="d"> --%>
+<%-- 							<tr class="${classStyle }"> --%>
+<%-- 								<td><c:out value="${o.id}" /></td> --%>
+<%-- 								<td><c:out value="${d.key.name} | ${d.key.dose}" /></td> --%>
+<%-- 								<td><c:out value="${d.value }" /></td> --%>
+<%-- 								<td><c:out value="${o.date}" /></td> --%>
+<!-- 							</tr> -->
+<%-- 						</c:forEach> --%>
+<%-- 						<c:choose> --%>
+<%-- 							<c:when test="${classStyle eq 'even' }"> --%>
+<%-- 								<c:set var="classStyle" value="odd"/> --%>
+<%-- 							</c:when> --%>
+<%-- 							<c:otherwise> --%>
+<%-- 								<c:set var="classStyle" value="even"/> --%>
+<%-- 							</c:otherwise> --%>
+<%-- 						</c:choose> --%>
+<%-- 					</c:forEach> --%>
+<%-- 				</c:when> --%>
 			<c:choose>
-				<c:when test="${not empty action.orders}">
-					<c:set var="classStyle" value="even"/>
-					<c:forEach items="${action.orders}" var="o">
-						<c:forEach items="${o.drugs}" var="d">
-							<tr class="${classStyle }">
-								<td><c:out value="${o.id}" /></td>
-								<td><c:out value="${d.key.name} | ${d.key.dose}" /></td>
-								<td><c:out value="${d.value }" /></td>
-								<td><c:out value="${o.date}" /></td>
-							</tr>
+					<c:when test="${not empty action.drugsInfo}">
+						<c:set var="classStyle" value="even"/>
+						<c:set var="currId" value="0"/>
+						<c:forEach items="${action.drugsInfo }" var="d">
+							<c:if test="${ not (currId  eq d.id) }">
+								<c:set var="currId" value="${d.id }"/>
+								<c:choose>
+									<c:when test="${classStyle eq 'even' }">
+										<c:set var="classStyle" value="odd"/>
+									</c:when>
+									<c:otherwise>
+										<c:set var="classStyle" value="even"/>
+									</c:otherwise>
+								</c:choose>
+							</c:if>
+								<tr class="${classStyle }">
+									<td>${d.id}</td>
+									<td>${d.name }</td>
+									<td>${d.dose }</td>
+									<td>${d.amount }</td>
+									<td>${d.date }</td>
+								</tr>
 						</c:forEach>
-						<c:choose>
-							<c:when test="${classStyle eq 'even' }">
-								<c:set var="classStyle" value="odd"/>
-							</c:when>
-							<c:otherwise>
-								<c:set var="classStyle" value="even"/>
-							</c:otherwise>
-						</c:choose>
-					</c:forEach>
-				</c:when>
+					</c:when>
 				<c:otherwise>
 					<tr><td colspan="6"><%=rb.getString("orders.absence")%></td></tr>
 				</c:otherwise>

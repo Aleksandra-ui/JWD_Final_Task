@@ -129,21 +129,22 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 		int currentPage = bean.getCurrentPage();
 	%>
 
-	<div>
-		<div style="overflow: hidden">
-			<div style="float: left">
-				<%=rb.getString("drugs.records1")%>
-				<%=currentPage * pageSize - pageSize + 1%>
-				<%=rb.getString("drugs.records2")%>
-				<%=currentPage * pageSize - pageSize + 1 + ((totalCount % pageSize != 0 && totalCount / pageSize * pageSize + 1 == currentPage * pageSize - pageSize + 1)
-						? totalCount % pageSize : pageSize) - 1%>
-				<%=rb.getString("drugs.records3")%>
-				${action.totalCount}
+	<div class="container" align="center" >
+		<div style="overflow: hidden; display: flex">
+			<div>
+				<p>
+					<%=rb.getString("drugs.records1")%>
+					<%=currentPage * pageSize - pageSize + 1%>
+					<%=rb.getString("drugs.records2")%>
+					<%=currentPage * pageSize - pageSize + 1 + ((totalCount % pageSize != 0 && totalCount / pageSize * pageSize + 1 == currentPage * pageSize - pageSize + 1)
+							? totalCount % pageSize : pageSize) - 1%>
+					<%=rb.getString("drugs.records3")%>
+					${action.totalCount}&nbsp;&nbsp;
+				</p>
 			</div>
-			<span style="float: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-			<div style="float: left">
-				<%=rb.getString("drugs.records4")%>:&nbsp; <select name="pageSize"
-					onChange="changePageSize(this);">
+			<div style="display: flex">
+				<p><%=rb.getString("drugs.records4")%>:&nbsp;</p> <select name="pageSize"
+					onChange="changePageSize(this);" >
 					<option
 						${(empty action.pageSize or action.pageSize == 5) ? "selected='true'" : "" }
 						value="/apotheca/drugs.run?pageSize=5">5</option>
@@ -169,7 +170,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 
 			</div>
 		</div>
-		<table border="1" style="width: 50%">
+		<table class="table" border="1" style="width: 50%; margin-top: 20px;">
 			<caption><%=rb.getString("drugs.list")%></caption>
 			<thead align="center">
 				<tr>

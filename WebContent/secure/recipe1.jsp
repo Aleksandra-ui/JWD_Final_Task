@@ -116,15 +116,13 @@ function displayCart(currentPage, pageSize) {
 
 <body onload="displayCart();">
 
-	<%=rb.getString("drugs.welcome")%>
-	
 	<%
 		RecipeCommand bean = (RecipeCommand)request.getAttribute("action");
 				int pageSize = bean.getPageSize();
 				int currentPage = bean.getCurrentPage();
 	%>
 	
-	<div>
+	<div class="container" align="center">
 		<div style="overflow: hidden">
 			<div style="float: left"><%=rb.getString("drugs.records1")%> <%= currentPage*pageSize - pageSize + 1 %> <%=rb.getString("drugs.records2")%> <%= currentPage*pageSize - pageSize + 1 + ( (bean.getTotalCount() % pageSize != 0 && bean.getTotalCount() / pageSize * pageSize + 1 == currentPage*pageSize - pageSize + 1)? bean.getTotalCount() % pageSize : pageSize ) - 1 %> <%=rb.getString("drugs.records3")%> <%= bean.getTotalCount()%></div>
 			<span style="float: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -150,7 +148,7 @@ function displayCart(currentPage, pageSize) {
 				</c:forEach>
 			</div>
 		</div>
-		<table border = "1" style="width:50%" >
+		<table border = "1" style="width:50%; margin-top:20px" >
 			<caption><%=rb.getString("drugs.list")%></caption>
 			<thead align ="center">
 				<tr>

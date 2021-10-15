@@ -96,28 +96,32 @@ public class RecipeDAOImpl implements RecipeDAO {
 	public Recipe update(Recipe recipe) {
 		
 		boolean result = true;
-		String query = "update mydb.recipe set expiery_date = ? where id = ? and drug_id = ? and user_id = ?";
-		
+		String query = "update mydb.recipe set expiery_date = '" + 
+						recipe.getExpieryDate() + "', doctor_id = "
+						+ recipe.getDoctorId() + " where id = " + recipe.getId() 
+						+ " and user_id = " + recipe.getUserId();
+		logger.info(query);
+
 		try (Connection connection = cp.takeConnection();
-				PreparedStatement st = connection.prepareStatement(query)) {
+				Statement st = connection.createStatement()) {
 			connection.setAutoCommit(false);
-			st.setInt(2, recipe.getId());
-			st.setInt(4, recipe.getUserId());
-			st.setDate(1, recipe.getExpieryDate());
-			
 			for (Integer drugId : recipe.getDrugIds()) {
-				st.setInt(3, drugId);
-				if ( st.executeUpdate() <= 0 ) {
+				if ( st.executeUpdate(query + " and drug_id = " + drugId) <= 0 ) {
 					result = false;
 				}
+			}	
+			if ( result ) {
 				connection.commit();
-			}			
+				logger.info("updated a recipe with id " + recipe.getId());
+			} else {
+				connection.rollback();
+				logger.warn("unable to update a recipe with id " + recipe.getId());
+			}
+			
 		} catch (SQLException e) {
-			logger.error("catched SQL exception while attempting to update a recipe");
+			logger.error("catched SQL exception while attempting to update a recipe with id " + recipe.getId());
 			e.printStackTrace();
 		}
-		
-		logger.info("updated a recipe");
 		return result ? recipe : null;
 		
 	}
@@ -133,6 +137,11 @@ public class RecipeDAOImpl implements RecipeDAO {
 			connection.setAutoCommit(false);
 			st.setInt(1, id);
 			result = st.executeUpdate() > 0;
+			if (result) {
+				logger.info("deleted a recipe");
+			} else {
+				logger.warn("recipe can't be deleted");
+			}
 			connection.commit();
 
 		} catch (SQLException e) {
@@ -140,13 +149,12 @@ public class RecipeDAOImpl implements RecipeDAO {
 			e.printStackTrace();
 		}
 
-		logger.info("deleted a recipe");
 		return result;
 	
 	}
 
 	@Override
-	public List<Recipe> findRecipe(User user) {
+	public List<Recipe> findRecipes(User user) {
 
 		String query = "select distinct r.id from mydb.recipe r"
 				+ " join mydb.users u on u.id = r.user_id where u.id = ? or u.name = ? order by r.id";
@@ -197,12 +205,11 @@ public class RecipeDAOImpl implements RecipeDAO {
 
 	@Override
 	public Recipe findRecipe(Integer id) {
-		String query = "select r.id,r.user_id,r.doctor_id,r.drug_id,r.expiery_date from mydb.recipe r where r.id = ? order by r.id";
+		String query = "select r.id,r.user_id,r.doctor_id,r.drug_id,r.expiery_date from mydb.recipe r where r.id = " + id + " order by r.id";
 		Recipe recipe = null;
 
-		try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement(query);) {
-			st.setInt(1, id);
-			ResultSet rs = st.executeQuery();
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
+			ResultSet rs = st.executeQuery(query);
 			List<Integer> drugIds = null;
 			while (rs.next()) {
 				if (recipe == null) {
@@ -220,12 +227,12 @@ public class RecipeDAOImpl implements RecipeDAO {
 				recipe.setDrugIds(drugIds);
 			}
 			rs.close();
+			logger.info("found a recipe");
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find a recipe");
 			e.printStackTrace();
 		}
 
-		logger.info("found a recipe");
 		return recipe;
 	}
 

@@ -44,7 +44,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Recipes", locale);
 		%>
 
 	<div>
-		<div style="overflow: hidden">
+		<div style="overflow: hidden"  class="container" align="center">
 			<div style="float: left">
 				records from&nbsp;
 				<%=currentPage * pageSize - pageSize + 1%>
@@ -88,7 +88,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Recipes", locale);
 			</div>
 		</div>
 	
-		<table border = "1" style="width:50%" >
+		<table border = "1" style="width:60%; margin-top: 20px"  class="container" align="center" >
 			<caption><%=rb.getString("recipes.list")%></caption>
 			<thead align ="center">
 				<tr>

@@ -54,12 +54,12 @@ public class UserDAOImpl implements UserDAO {
 			result = st.executeUpdate() > 0;
 			connection.commit();
 
+			logger.info("deleted a user");
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to delete a user");
 			e.printStackTrace();
 		}
 
-		logger.info("deleted a user");
 		return result;
 
 	}
@@ -171,8 +171,13 @@ public class UserDAOImpl implements UserDAO {
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 			connection.setAutoCommit(false);
 			result = st.executeUpdate(query) > 0;
-			connection.commit();
-
+			if ( result ) {
+				logger.info("created a user");
+				connection.commit();
+			} else {
+				logger.info("unable to create a user");
+				connection.rollback();
+			}
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to create a user");
 			e.printStackTrace();
@@ -182,7 +187,6 @@ public class UserDAOImpl implements UserDAO {
 		if (result) {
 			user = getUser(name);
 		}
-		logger.info("created a user");
 		
 		return user;
 

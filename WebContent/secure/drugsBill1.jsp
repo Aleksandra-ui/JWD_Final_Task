@@ -40,7 +40,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
    	</div>
 
 	<c:if test="${empty action.errorMessages}">
-		<div style="overflow: hidden">
+		<div style="overflow: hidden" class="container" align="center">
 				<div style="float: left">
 					records from&nbsp;
 					<%=currentPage * pageSize - pageSize + 1%>
@@ -83,7 +83,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 				</div>
 			</div>
 	
-		<table border="1" style="width: 50%">
+		<table border="1" style="width: 50%; margin-top: 20px" class="container" align="center">
 			<caption><%=rb.getString("drugs.caption")%></caption>
 			<thead align="center">
 				<tr>
@@ -121,7 +121,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 			</tbody>
 		</table>
 		
-		<%=rb.getString("drugs.total")%>: ${action.total }
+		<p class="container" align="center"><%=rb.getString("drugs.total")%>: ${action.total }</p>
 	</c:if>
 
 </body>

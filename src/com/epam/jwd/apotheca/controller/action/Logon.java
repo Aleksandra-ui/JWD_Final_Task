@@ -67,7 +67,7 @@ public class Logon implements RunCommand {
 					role.setName("client");
 					role.setPermission(UserDAO.PERM_CLIENT);
 					user.setRole(role);
-					if (!userService.createUser(user)){
+					if ( ! userService.createUser(user) ){
 						user=null;
 					}
 				}
