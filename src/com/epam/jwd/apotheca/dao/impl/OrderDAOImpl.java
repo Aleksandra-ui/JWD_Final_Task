@@ -44,24 +44,36 @@ public class OrderDAOImpl implements OrderDAO {
 	@Override
 	public Order save(Order order) {
 
-		boolean result = false;
+		boolean result = true;
 		Integer id = getMaxId() + 1;
 		Map<Drug, Integer> drugs = order.getDrugs();
+		String query = "";
 
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 			connection.setAutoCommit(false);
 			for (Drug drug : drugs.keySet()) {
-				result = st.executeUpdate("insert into mydb.orders (id, drug_id, amount, user_id, order_date)"
+				query = "insert into mydb.orders (id, drug_id, amount, user_id, order_date)"
 						+ "values ('" + id + "','" + drug.getId() + "','" + drugs.get(drug) + "','" + order.getUserId()
-						+ "','" + order.getDate() + "')") > 0;
+						+ "','" + order.getDate() + "')";
+				boolean localResult = st.executeUpdate(query) > 0;
+				if ( localResult ) {
+					logger.trace("following query was executed successfully:\n" + query);
+				} else {
+					logger.trace("following query was executed with errors or warnings:\n" + query);
+				}
+				result &= localResult;
 			}
-
 			if (result) {
 				connection.commit();
 				logger.info("saved an order");
+				
+			} else {
+				connection.rollback();
+				logger.warn("transaction was rolled back");
 			}
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to save an order");
+			logger.error("failure during handling an SQL:\n" + query);
 			e.printStackTrace();
 		} catch (NullPointerException e) {
 			logger.error("catched  exception while attempting to save an order");
@@ -165,23 +177,28 @@ public class OrderDAOImpl implements OrderDAO {
 	@Override
 	public boolean delete(Integer id) {
 		boolean result = false;
-		String query = "delete from mydb.orders where id = ?";
+		String query = "delete from mydb.orders where id = " + id;
 
 		try (Connection connection = cp.takeConnection();
-				PreparedStatement st = connection.prepareStatement(query)) {
+				Statement st = connection.createStatement()) {
 			connection.setAutoCommit(false);
-			st.setInt(1, id);
-
-			result = st.executeUpdate() > 0;
+			
+			result = st.executeUpdate(query) > 0;
+		
 			if (result) {
+				logger.trace("following query was executed successfully:\n" + query);
+				connection.commit();
 				logger.info("deleted an order");
 			} else {
+				logger.trace("following query was executed with errors or warnings:\n" + query);
+				connection.rollback();
 				logger.warn("order can't be deleted");
+				logger.warn("transaction was rolled back");
 			}
-			connection.commit();
 
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to delete an order");
+			logger.error("failure during handling an SQL:\n" + query);
 			e.printStackTrace();
 		}
 

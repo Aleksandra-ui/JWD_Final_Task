@@ -106,6 +106,7 @@ public class UserDAOImpl implements UserDAO {
 
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 			ResultSet rs = st.executeQuery(query);
+			logger.trace("following query was executed successfully:\n" + query);
 			while (rs.next()) {
 				User user = new User();
 				Role role = new Role();
@@ -122,6 +123,7 @@ public class UserDAOImpl implements UserDAO {
 			logger.info("found users");
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find users");
+			logger.error("failure during handling an SQL:\n" + query);
 			e.printStackTrace();
 		}
 
@@ -268,24 +270,66 @@ public class UserDAOImpl implements UserDAO {
 	
 	@Override
 	public Integer getTotalCount() {
+		return getTotalCount(false);
+	}
+	
+	public Integer getTotalCount(boolean useSuperDoc) {
 		
 		int count = 0;
-		String query = "select count(id) from mydb.users";
+		String query = "select count(u.id) from mydb.users u " +
+				(useSuperDoc ? "where u.name != 'super_doc'" : "");
 
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 
 			ResultSet rs = st.executeQuery(query);
+			logger.trace("following query was executed successfully:\n" + query);
 			rs.next();
 			count = rs.getInt(1);
 			rs.close();
+			logger.info("found all users count");
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find all users count");
+			logger.error("failure during handling an SQL:\n" + query);
 			e.printStackTrace();
 		}
-		logger.info("found all users count");
+		
 		return count;
 		
 	}
 
+	public List<User> findByRange(Integer start, Integer count, boolean useSuperDoc) {
+
+		List<User> users = new ArrayList<User>();
+		String sql = "select u.id,u.name,u.password,r.id,r.name,r.permission from mydb.users u "
+				+ "join mydb.roles r on r.id = u.role_id "
+				+ (useSuperDoc ? "where u.name <> 'super_doc' " : "")
+				+ "order by u.id asc limit " + start + "," + count;
+
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
+			ResultSet rs = st.executeQuery(sql);
+			logger.trace("following query was executed successfully:\n" + sql);
+			while (rs.next()) {
+				Role role = new Role();
+				role.setId(rs.getInt("r.id"));
+				role.setPermission(rs.getInt("r.permission"));
+				role.setName(rs.getString("r.name"));
+				User user = new User();
+				user.setName(rs.getString("u.name"));
+				user.setRole(role);
+				user.setPassword(rs.getString("u.password"));
+				user.setId(rs.getInt("u.id"));
+				users.add(user);
+			}
+			rs.close();
+			logger.info("found a range of users");
+		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to find a range of users");
+			logger.error("failed SQL:\n" + sql);
+			e.printStackTrace();
+		}
+		
+		return users;
+
+	}
 
 }

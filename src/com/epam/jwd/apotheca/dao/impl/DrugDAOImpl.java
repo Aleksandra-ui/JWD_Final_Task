@@ -11,11 +11,11 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.epam.jwd.apotheca.controller.AuthorizationFilter;
-import com.epam.jwd.apotheca.controller.UserManagerService;
 import com.epam.jwd.apotheca.dao.api.DrugDAO;
 import com.epam.jwd.apotheca.model.Drug;
 import com.epam.jwd.apotheca.pool.ConnectionPool;
+
+import ch.qos.logback.classic.Level;
 
 public class DrugDAOImpl implements DrugDAO {
 
@@ -25,6 +25,8 @@ public class DrugDAOImpl implements DrugDAO {
 	
 	private DrugDAOImpl() {
 		cp = ConnectionPool.retrieve();
+		ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger)LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+		root.setLevel(Level.TRACE);
 	}
 	
 	public static DrugDAOImpl getInstance() {
@@ -118,7 +120,7 @@ public class DrugDAOImpl implements DrugDAO {
 		return drug;
 	}
 
-	public List<Drug> findByRange(Integer start, Integer end) {
+	public List<Drug> findByRange(Integer start, Integer count) {
 
 		List<Drug> drugs = new ArrayList<Drug>();
 
@@ -127,7 +129,7 @@ public class DrugDAOImpl implements DrugDAO {
 		try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement(sql);) {
 
 			st.setInt(1, start);
-			st.setInt(2, end);
+			st.setInt(2, count);
 			ResultSet rs = st.executeQuery();
 			while (rs.next()) {
 
@@ -179,13 +181,22 @@ public class DrugDAOImpl implements DrugDAO {
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 			connection.setAutoCommit(false);
 			result = st.executeUpdate(query) > 0;
-			connection.commit();
+			if ( result ) {
+				connection.commit();
+				logger.info("updated a drug");
+				logger.trace("following query was executed successfully:\n" + query);
+			} else {
+				connection.rollback();
+				logger.trace("following query was executed with errors or warnings:\n" + query);
+				logger.warn("transaction was rolled back");
+			}
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to update a drug");
+			logger.error("failed SQL:\n" + query);
 			e.printStackTrace();
 		}
 
-		logger.info("updated a drug");
+		
 		return result ? entity : null;
 	}
 
@@ -312,6 +323,7 @@ public class DrugDAOImpl implements DrugDAO {
 
 	@Override
 	public Integer getPrescriptedCount() {
+		
 		int count = 0;
 		String query = "select count(id) from mydb.drugs where prescription = 1";
 
@@ -328,6 +340,30 @@ public class DrugDAOImpl implements DrugDAO {
 		}
 		
 		return count;
+		
+	}
+	
+	public boolean changeQuantity(Drug drug, Integer amount) {
+		
+		Drug updatedDrug = new Drug();
+		boolean result = true;
+		int quantity = drug.getQuantity();
+		int newQuantity = quantity - amount;
+		
+		if ( newQuantity < 0 ) {
+			result = false;
+		} else {
+			updatedDrug.setQuantity(newQuantity);
+			updatedDrug.setId(drug.getId());
+			updatedDrug.setPrescription(drug.isPrescription());
+			updatedDrug.setPrice(drug.getPrice());
+			if ( update(updatedDrug) == null ) {
+				result = false;
+			}
+		} 
+		
+		return result;
+		
 	}
 
 }

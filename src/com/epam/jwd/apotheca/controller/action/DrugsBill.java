@@ -1,18 +1,14 @@
 package com.epam.jwd.apotheca.controller.action;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.epam.jwd.apotheca.controller.DrugManagerService;
 import com.epam.jwd.apotheca.controller.OrderManagerService;
 import com.epam.jwd.apotheca.controller.ShoppingCart;
 import com.epam.jwd.apotheca.model.Drug;
@@ -61,6 +57,7 @@ public class DrugsBill implements RunCommand, ShoppingCartAware {
 			} else {
 				//создать валидатор количества доступных лек-в,ззапустить и рез-тат добавить в errorMessages
 				errorMessages.add("Cannot create an order.");
+				logger.error("Cannot create an order.");
 			}
 		} 
 		if ( order != null ) {

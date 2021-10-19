@@ -2,9 +2,11 @@ package com.epam.jwd.apotheca.controller;
 
 import java.sql.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.epam.jwd.apotheca.dao.api.DrugDAO;
 import com.epam.jwd.apotheca.dao.api.OrderDAO;
 import com.epam.jwd.apotheca.dao.impl.DrugDAOImpl;
 import com.epam.jwd.apotheca.dao.impl.OrderDAOImpl;
@@ -16,6 +18,7 @@ public class OrderManagerService {
 
 	private static OrderManagerService instance = new OrderManagerService();
 	private OrderDAO orderDAO = OrderDAOImpl.getInstance();
+	private DrugDAO drugDAO = DrugDAOImpl.getInstance();
 	
 	private OrderManagerService() {
 		
@@ -44,18 +47,44 @@ public class OrderManagerService {
 
 	}
 
-	public Order buy(Integer userId, Map<Drug, Integer> drugs) {
-		//здесь обратиться к drugDAO и изменить quantity
+	public synchronized Order buy(Integer userId, Map<Drug, Integer> drugs) {
+		
+		boolean result = true;
+		Map<Drug, Drug> updatedDrugs = new HashMap<Drug, Drug>();
 		Order order = null;
 		if (drugs != null && !drugs.isEmpty()) {
-			order = new Order();
-			order.setDate(new Date(GregorianCalendar.getInstance().getTimeInMillis()));
-			order.setUserId(userId);
-			order.setDrugs(drugs);
-			order = orderDAO.save(order);
+			for ( Drug d : drugs.keySet() ) {
+				Drug key = drugDAO.findById(d.getId());
+				updatedDrugs.put(d, key);
+				result = ((DrugDAOImpl)drugDAO).changeQuantity(key, drugs.get(d));
+				if ( ! result  ) {
+					revertChanges(updatedDrugs);
+					break;
+				}
+			}
+			
+			if ( result ) {
+				
+				order = new Order();
+				order.setDate(new Date(GregorianCalendar.getInstance().getTimeInMillis()));
+				order.setUserId(userId);
+				order.setDrugs(drugs);
+				order = orderDAO.save(order);
+				if ( order == null ) {
+					revertChanges(updatedDrugs);
+				}
+			}
+	
 		}
+		
 		return order;
 
+	}
+
+	private void revertChanges(Map<Drug, Drug> updatedDrugs) {
+		for ( Drug ud : updatedDrugs.keySet() ) {
+			drugDAO.update(updatedDrugs.get(ud));
+		}
 	}
 	
 	public Integer getDrugsCountByUser(Integer userId) {

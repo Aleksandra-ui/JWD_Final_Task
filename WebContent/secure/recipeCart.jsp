@@ -67,9 +67,9 @@
 
 	<c:if test="${(not empty action.cart) and (not empty action.drugs) }">
 		
-		<div style="margin-top: 20px; margin-bottom: 20px" class="container" align="center">
-			<span style="align-content: center; align-self: center;">Current recipe</span>
-				<div style="overflow: hidden;" >
+		<div style="width:50%" class="container">
+			<div style="overflow: hidden" class="container" align="center">
+				<span style="align-content: center; align-self: center;">Current recipe</span>
 					<div style="float: left">
 						<%=rb.getString("drugs.records1")%>
 						<%=currentPage * pageSize - pageSize + 1%>
@@ -83,40 +83,43 @@
 						<%=rb.getString("drugs.records3")%>
 						${action.totalCount}
 					</div>
-					<span style="float: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-					<div style="float: left">
-						<%=rb.getString("drugs.records4")%>:&nbsp;<select name="pageSize"
-							onChange="displayCart(1, this.options[this.selectedIndex].value );">
-							<option
+					<span style="float: none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+					<div style="float: right">
+						<div style="float: left">
+							<%=rb.getString("drugs.records4")%>:&nbsp;<select name="pageSize"
+							onChange="displayCart( 1, this.options[this.selectedIndex].value );">
+								<option
 								${(empty param.pageSize or param.pageSize == 5) ? "selected='true'" : "" }
 								value="5">5</option>
-							<option
+								<option
 								${(not empty param.pageSize and param.pageSize  == 10) ? "selected='true'" : "" }
 								value="10">10</option>
-							<option
+								<option
 								${(not empty param.pageSize and param.pageSize  == 20) ? "selected='true'" : "" }
 								value="20">20</option>
-						</select>
-					</div>
-					<span style="float: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-					<div style="float: none">
-						<%
-						Integer pagesCount = totalCount / pageSize + ((totalCount % pageSize) == 0 ? 0 : 1);
-						request.setAttribute("pagesCount", pagesCount);
-						%>
-		
-						<c:forEach var="displayPage" begin="1" end="${pagesCount}">
-							<c:choose>
-								<c:when
-									test="${displayPage == (empty param.currentPage ? 1 : param.currentPage)}">${displayPage} &nbsp;</c:when>
-								<c:otherwise>
-									<a onclick="displayCart(${displayPage}, ${action.pageSize })"><u>${displayPage}</u></a>&nbsp;</c:otherwise>
-							</c:choose>
-						</c:forEach>
-		
+							</select>
+						</div>
+						<span style="float: none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+						<div style="float: right">
+							<%
+							Integer pagesCount = totalCount / pageSize + ((totalCount % pageSize) == 0 ? 0 : 1);
+							request.setAttribute("pagesCount", pagesCount);
+							%>
+							<c:forEach var="displayPage" begin="1" end="${pagesCount}">
+								<c:choose>
+									<c:when
+										test="${displayPage == (empty param.currentPage ? 1 : param.currentPage)}">${displayPage} &nbsp;</c:when>
+									<c:otherwise>
+										<a onclick="displayCart(${displayPage}, ${action.pageSize })"><u>${displayPage}</u></a>&nbsp;
+									</c:otherwise>
+								</c:choose>
+							</c:forEach>
+						</div>
 					</div>
 				</div>
-			<table border="1" style="width: 50%; margin-top: 20px">
+			</div>
+			
+			<table border = "1" style="width:50%; margin-top: 20px" class="container" align="center">
 				<thead align="center">
 					<tr>
 						<th>#</th>
@@ -152,9 +155,9 @@
 				</tbody>
 			</table>
 			
-			<div id = "errorStatus"></div>
-		</div>
-			<form action="createRecipe.run" method="POST" class="container" align="center">
+			<div id = "errorStatus" class="container" align="center"></div>
+		
+			<form action="createRecipe.run" method="POST" class="container" align="center" style="margin-top: 20px">
 				<div id = "div" <c:if test="${empty action.cart.drugs}">style="display:none"</c:if>>
 					<input class="btn btn-primary" type="submit" value="<%=rb.getString("drugs.recipe")%>"/>
 					<select name="clientName">

@@ -29,8 +29,8 @@ public class DrugManagerService {
 		return drugDAO.findAll();
 	}
 
-	public List<Drug> getDrugs(int start, int end) {
-		return drugDAO.findByRange(start, end);
+	public List<Drug> getDrugs(int start, int count) {
+		return drugDAO.findByRange(start, count);
 	}
 
 	public List<Drug> getPrescriptedDrugs() {

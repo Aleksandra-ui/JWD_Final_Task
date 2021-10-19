@@ -56,7 +56,7 @@ public class UserManagerService {
 		boolean contains = false;
 		List<User> users = userDAO.findAll();
 		for (User user : users) {
-			if (name.equals(user.getName())) {
+			if (user.getName().equals(name)) {
 				contains = true;
 				break;
 			}
@@ -122,6 +122,18 @@ public class UserManagerService {
 		}
 		return result;
 
+	}
+	
+	public List<User> findUsersByRange(int start, int count) {
+		
+		List<User> users = ((UserDAOImpl)userDAO).findByRange(start, count, true);
+		
+		return users;
+
+	}
+
+	public int getTotalCount() {
+		return ((UserDAOImpl)userDAO).getTotalCount(true);
 	}
 
 }

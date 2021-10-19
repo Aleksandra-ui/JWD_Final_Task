@@ -61,8 +61,6 @@ public class Drugs implements RunCommand, ShoppingCartAware {
 	@Override      
 	public String run() {
 
-		logger.info("hello from Drugs!");
-		
 		totalCount = DrugManagerService.getInstance().getTotalCount();
 		pageSize = params.get("pageSize") == null ? 5 : Integer.valueOf(params.get("pageSize")[0]);
 		currentPage = params.get("currentPage") == null ? 1

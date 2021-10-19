@@ -7,7 +7,6 @@ import java.util.Map;
 import com.epam.jwd.apotheca.controller.OrderManagerService;
 import com.epam.jwd.apotheca.controller.RecipeManagerService;
 import com.epam.jwd.apotheca.controller.UserManagerService;
-import com.epam.jwd.apotheca.dao.api.UserDAO;
 import com.epam.jwd.apotheca.model.User;
 
 public class DeleteUser implements RunCommand {
@@ -18,6 +17,10 @@ public class DeleteUser implements RunCommand {
 	private User userToDelete;
 	private List<User> users;
 	private List<String> messages;
+	private int totalCount;
+	private int pageSize;
+	private int currentPage;
+	private int pagesCount;
 
 	public DeleteUser() {
 		messages = new ArrayList<String>();
@@ -28,6 +31,7 @@ public class DeleteUser implements RunCommand {
 
 		messages.clear();
 		deleted = false;
+		
 
 		if ("admin".equalsIgnoreCase(user.getRole().getName())) {
 
@@ -75,7 +79,12 @@ public class DeleteUser implements RunCommand {
 
 		}
 
-		users = UserManagerService.getInstance().getUsers();
+		totalCount = UserManagerService.getInstance().getTotalCount();
+		pageSize = params.get("pageSize") == null ? 5 : Integer.valueOf(params.get("pageSize")[0]);
+		currentPage = params.get("currentPage") == null ? 1
+				: Integer.valueOf(params.get("currentPage")[0]);
+		pagesCount = totalCount / pageSize + ((totalCount % pageSize) == 0 ? 0 : 1);
+		users = UserManagerService.getInstance().findUsersByRange(pageSize * (currentPage - 1), pageSize);
 
 		return null;
 	}
@@ -120,6 +129,22 @@ public class DeleteUser implements RunCommand {
 
 	public List<String> getMessages() {
 		return messages;
+	}
+	
+	public int getPagesCount() {
+		return pagesCount;
+	}
+
+	public int getPageSize() {
+		return pageSize;
+	}
+
+	public int getCurrentPage() {
+		return currentPage;
+	}
+
+	public int getTotalCount() {
+		return totalCount;
 	}
 
 }

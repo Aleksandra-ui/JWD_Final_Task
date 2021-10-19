@@ -37,6 +37,8 @@ import com.epam.jwd.apotheca.controller.action.RunCommand;
 import com.epam.jwd.apotheca.controller.action.ShoppingCartAware;
 import com.epam.jwd.apotheca.model.User;
 
+import ch.qos.logback.classic.Level;
+
 public class ControllerFilter implements Filter {
 	
 	private static final Logger logger = LoggerFactory.getLogger(ControllerFilter.class);
@@ -62,6 +64,9 @@ public class ControllerFilter implements Filter {
     	actionMapping.put("removeFromRecipeCart", new RemoveFromRecipeCart());
     	actionMapping.put("displayRecipeCart", new DisplayRecipeCart());
     	actionMapping.put("deleteUser", new DeleteUser());
+    	
+    	ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger)LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+		root.setLevel(Level.TRACE);
     	
     }
 

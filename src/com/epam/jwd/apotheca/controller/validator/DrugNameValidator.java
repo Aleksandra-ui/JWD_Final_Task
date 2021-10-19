@@ -33,7 +33,7 @@ public class DrugNameValidator implements Validator {
 		
 		String drugName = params.get("drugName") == null ? null : params.get("drugName")[0];
 		if ( drugName != null ) {
-			if ( Pattern.matches("^\\s*[\\dA-Za-z,;'\"\\s]+", drugName) ) {
+			if ( Pattern.matches("^\\s*[\\dA-Za-zА-Яа-я,;'\"\\s]+", drugName) ) {
 				result = true;
 			}
 		}

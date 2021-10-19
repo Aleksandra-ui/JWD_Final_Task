@@ -43,85 +43,62 @@ ResourceBundle rb = ResourceBundle.getBundle("Orders", locale);
 		int currentPage = bean.getCurrentPage();
 	%>
 	
-	<div style="width:50%" class="container">
-		<div style="overflow: hidden" class="container" align="center">
-			<div style="float: left">
-				records from&nbsp;
-				<%=currentPage * pageSize - pageSize + 1%>
-				to
-				<%=currentPage * pageSize - pageSize + 1 + ((totalCount % pageSize != 0 && totalCount / pageSize * pageSize + 1 == currentPage * pageSize - pageSize + 1)
-						? totalCount % pageSize : pageSize) - 1%>
-				of&nbsp;
-				${action.totalCount}
-			</div>
-			<span style="float: none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-			<div style="float: right">
+		<div style="width:50%" class="container">
+			<div style="overflow: hidden" class="container" align="center">
 				<div style="float: left">
-					records per page:&nbsp; <select name="pageSize"
-						onChange="changePageSize(this);">
-						<option
-							${(empty action.pageSize or action.pageSize == 5) ? "selected='true'" : "" }
-							value="/apotheca/orders.run?pageSize=5">5</option>
-						<option
-							${(not empty action.pageSize and action.pageSize  == 10) ? "selected='true'" : "" }
-							value="/apotheca/orders.run?pageSize=10">10</option>
-						<option
-							${(not empty action.pageSize and action.pageSize  == 20) ? "selected='true'" : "" }
-							value="/apotheca/orders.run?pageSize=20">20</option>
-					</select>
+					records from&nbsp;
+					<%=currentPage * pageSize - pageSize + 1%>
+					to
+					<%=currentPage * pageSize - pageSize + 1 + ((totalCount % pageSize != 0 && totalCount / pageSize * pageSize + 1 == currentPage * pageSize - pageSize + 1)
+							? totalCount % pageSize : pageSize) - 1%>
+					of&nbsp;
+					${action.totalCount}
 				</div>
 				<span style="float: none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 				<div style="float: right">
-					<c:forEach var="displayPage" begin="1" end="${action.pagesCount}">
-						<c:choose>
-							<c:when
+					<div style="float: left">
+						records per page:&nbsp; <select name="pageSize"
+						onChange="changePageSize(this);">
+							<option
+							${(empty action.pageSize or action.pageSize == 5) ? "selected='true'" : "" }
+							value="/apotheca/orders.run?pageSize=5">5</option>
+							<option
+							${(not empty action.pageSize and action.pageSize  == 10) ? "selected='true'" : "" }
+							value="/apotheca/orders.run?pageSize=10">10</option>
+							<option
+							${(not empty action.pageSize and action.pageSize  == 20) ? "selected='true'" : "" }
+							value="/apotheca/orders.run?pageSize=20">20</option>
+						</select>
+					</div>
+					<span style="float: none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+					<div style="float: right">
+						<c:forEach var="displayPage" begin="1" end="${action.pagesCount}">
+							<c:choose>
+								<c:when
 								test="${displayPage == (empty action.currentPage ? 1 : action.currentPage)}">${displayPage} &nbsp;</c:when>
-							<c:otherwise>
-								<a href="/apotheca/orders.run?pageSize=${empty action.pageSize ? 5 : action.pageSize}&currentPage=${displayPage}">${displayPage}</a>&nbsp;</c:otherwise>
-						</c:choose>
-					</c:forEach>
+								<c:otherwise>
+									<a href="/apotheca/orders.run?pageSize=${empty action.pageSize ? 5 : action.pageSize}&currentPage=${displayPage}">${displayPage}</a>&nbsp;
+								</c:otherwise>
+							</c:choose>
+						</c:forEach>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
 	
-	<table border = "1" style="width:50%; margin-top: 20px" class="container" align="center">
-		<caption><%=rb.getString("orders.list")%></caption>
-		<thead align ="center">
-			<tr>
-				<th>#</th>
-				<th><%=rb.getString("orders.drug")%></th>
-				<th>dose</th>
-				<th><%=rb.getString("orders.amount")%></th>
-				<th><%=rb.getString("orders.date")%></th>
-			</tr>
-		</thead>
-		
-		
-		
-		<tbody align ="center">
-		<%-- 				<c:when test="${not empty action.orders}"> --%>
-<%-- 					<c:set var="classStyle" value="even"/> --%>
-<%-- 					<c:forEach items="${action.orders}" var="o"> --%>
-<%-- 						<c:forEach items="${o.drugs}" var="d"> --%>
-<%-- 							<tr class="${classStyle }"> --%>
-<%-- 								<td><c:out value="${o.id}" /></td> --%>
-<%-- 								<td><c:out value="${d.key.name} | ${d.key.dose}" /></td> --%>
-<%-- 								<td><c:out value="${d.value }" /></td> --%>
-<%-- 								<td><c:out value="${o.date}" /></td> --%>
-<!-- 							</tr> -->
-<%-- 						</c:forEach> --%>
-<%-- 						<c:choose> --%>
-<%-- 							<c:when test="${classStyle eq 'even' }"> --%>
-<%-- 								<c:set var="classStyle" value="odd"/> --%>
-<%-- 							</c:when> --%>
-<%-- 							<c:otherwise> --%>
-<%-- 								<c:set var="classStyle" value="even"/> --%>
-<%-- 							</c:otherwise> --%>
-<%-- 						</c:choose> --%>
-<%-- 					</c:forEach> --%>
-<%-- 				</c:when> --%>
-			<c:choose>
+		<table border = "1" style="width:50%; margin-top: 20px" class="container" align="center">
+			<caption><%=rb.getString("orders.list")%></caption>
+			<thead align ="center">
+				<tr>
+					<th>#</th>
+					<th><%=rb.getString("orders.drug")%></th>
+					<th>dose</th>
+					<th><%=rb.getString("orders.amount")%></th>
+					<th><%=rb.getString("orders.date")%></th>
+				</tr>
+			</thead>
+			<tbody align ="center">
+				<c:choose>
 					<c:when test="${not empty action.drugsInfo}">
 						<c:set var="classStyle" value="even"/>
 						<c:set var="currId" value="0"/>
@@ -146,11 +123,10 @@ ResourceBundle rb = ResourceBundle.getBundle("Orders", locale);
 								</tr>
 						</c:forEach>
 					</c:when>
-				<c:otherwise>
-					<tr><td colspan="6"><%=rb.getString("orders.absence")%></td></tr>
-				</c:otherwise>
+					<c:otherwise>
+						<tr><td colspan="6"><%=rb.getString("orders.absence")%></td></tr>
+					</c:otherwise>
 			</c:choose>
-		
 		</tbody>
 	</table>
 

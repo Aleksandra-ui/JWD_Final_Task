@@ -81,13 +81,14 @@ public class RecipeDAOImpl implements RecipeDAO {
 				recipes.add(recipe);
 
 			}
+			logger.info("found all recipes");
 
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find all recipes");
 			e.printStackTrace();
 		}
 
-		logger.info("found all recipes");
+		
 		return recipes;
 		
 	}
@@ -96,18 +97,23 @@ public class RecipeDAOImpl implements RecipeDAO {
 	public Recipe update(Recipe recipe) {
 		
 		boolean result = true;
-		String query = "update mydb.recipe set expiery_date = '" + 
+		String baseQuery = "update mydb.recipe set expiery_date = '" + 
 						recipe.getExpieryDate() + "', doctor_id = "
 						+ recipe.getDoctorId() + " where id = " + recipe.getId() 
 						+ " and user_id = " + recipe.getUserId();
-		logger.info(query);
+		String query = "";
+		
 
 		try (Connection connection = cp.takeConnection();
 				Statement st = connection.createStatement()) {
 			connection.setAutoCommit(false);
 			for (Integer drugId : recipe.getDrugIds()) {
-				if ( st.executeUpdate(query + " and drug_id = " + drugId) <= 0 ) {
+				query = baseQuery + " and drug_id = " + drugId;
+				if ( st.executeUpdate(query) <= 0 ) {
 					result = false;
+					logger.trace("following query was executed with errors or warnings:\n" + query);
+				} else {
+					logger.trace("following query was executed successfully:\n" + query);
 				}
 			}	
 			if ( result ) {
@@ -120,6 +126,7 @@ public class RecipeDAOImpl implements RecipeDAO {
 			
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to update a recipe with id " + recipe.getId());
+			logger.error("failure during handling an SQL:\n" + query);
 			e.printStackTrace();
 		}
 		return result ? recipe : null;
@@ -253,22 +260,34 @@ public class RecipeDAOImpl implements RecipeDAO {
 
 	@Override
 	public Recipe save(Recipe recipe) {
-		boolean result = false;
+		boolean result = true;
 		Integer id = getMaxId() + 1;
+		String query = "";
 
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 			connection.setAutoCommit(false);
 			for (Integer drugId : recipe.getDrugIds()) {
-				result = st.executeUpdate("insert into mydb.recipe(id,user_id,drug_id,doctor_id,expiery_date) values ('"
+				query = "insert into mydb.recipe(id,user_id,drug_id,doctor_id,expiery_date) values ('"
 						+ id + "','" + recipe.getUserId() + "','" + drugId + "','" + recipe.getDoctorId() + "','"
-						+ recipe.getExpieryDate() + "')") > 0;
+						+ recipe.getExpieryDate() + "')";
+				boolean localResult = st.executeUpdate(query) > 0;
+				if ( localResult ) {
+					logger.trace("following query was executed successfully:\n" + query);
+				} else {
+					logger.trace("following query was executed with errors or warnings:\n" + query);
+				}
+				result &= localResult;
 			}
-
-			connection.commit();
-			logger.info("saved a recipe");
-
+			if (result) {
+				connection.commit();
+				logger.info("saved a recipe");
+			} else {
+				connection.rollback();
+				logger.warn("transaction was rolled back");
+			}
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to save a recipe");
+			logger.error("failure during handling an SQL:\n" + query);
 			e.printStackTrace();
 		}
 
@@ -277,7 +296,6 @@ public class RecipeDAOImpl implements RecipeDAO {
 			recipeInDB = findRecipe(id);
 		}
 
-		
 		return recipeInDB;
 	}
 
