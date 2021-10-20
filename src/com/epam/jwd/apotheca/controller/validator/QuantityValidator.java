@@ -1,10 +1,8 @@
 package com.epam.jwd.apotheca.controller.validator;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,10 +11,11 @@ public class QuantityValidator implements Validator {
 
 	private List<String> messages;
 	private Map<String, String[]> params;
+	private String quantityParamName;
 	private static final Logger logger = LoggerFactory.getLogger(QuantityValidator.class);
 	
-	public QuantityValidator(Map<String, String[]> params) {
-		this.params = params;
+	public QuantityValidator(String quantityParamName) {
+		this.quantityParamName = quantityParamName;
 		messages = new ArrayList<String>();
 	}
 
@@ -30,7 +29,7 @@ public class QuantityValidator implements Validator {
 		messages.clear();
 		boolean result = false;
 		
-		String quantity = params.get("quantity") == null ? null : params.get("quantity")[0];
+		String quantity = params.get(quantityParamName) == null ? null : params.get(quantityParamName)[0];
 		if ( quantity != null ) {
 			try {
 				Integer value = Integer.parseInt(quantity.trim());
@@ -51,6 +50,7 @@ public class QuantityValidator implements Validator {
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setValue(Object value) {
 		this.params = (Map<String, String[]>)value;

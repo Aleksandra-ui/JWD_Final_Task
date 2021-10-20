@@ -9,19 +9,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.epam.jwd.apotheca.controller.UserManagerService;
-import com.epam.jwd.apotheca.controller.validator.AccessValidator;
+import com.epam.jwd.apotheca.controller.validator.RoleAccessValidator;
+import com.epam.jwd.apotheca.controller.validator.RoleNameValidator;
 import com.epam.jwd.apotheca.controller.validator.UserIdValidator;
 import com.epam.jwd.apotheca.controller.validator.Validator;
+import com.epam.jwd.apotheca.dao.api.UserDAO;
 import com.epam.jwd.apotheca.model.User;
 
 public class ChangeUserRole implements RunCommand {
 
 	private static final Logger logger = LoggerFactory.getLogger(ChangeUserRole.class);
+	private static ChangeUserRole instance = new ChangeUserRole();
 	private Map<String, String[]> params;
 	private User user;
 	private Map<String, Validator> validators;
 	private Integer userId;
-	private Integer roleId;
+	private String role;
 	private List<User> users;
 	private List<String> messages;
 	private int totalCount;
@@ -29,11 +32,16 @@ public class ChangeUserRole implements RunCommand {
 	private int currentPage;
 	private int pagesCount;
 	
-	public ChangeUserRole() {	
+	private ChangeUserRole() {	
 		messages = new ArrayList<String>();
 		validators = new HashMap<String, Validator>();
-		validators.put("access", new AccessValidator("changeUserRole"));
+		validators.put("access", new RoleAccessValidator(UserDAO.ROLE_NAME_ADMIN));
 		validators.put("user", new UserIdValidator("userId"));
+		validators.put("role", new RoleNameValidator("role"));
+	}
+	
+	public static ChangeUserRole getInstance() {
+		return instance;
 	}
 
 	@Override
@@ -44,6 +52,7 @@ public class ChangeUserRole implements RunCommand {
 
 		validators.get("access").setValue(user);
 		validators.get("user").setValue(params);
+		validators.get("role").setValue(params);
 		for (Validator validator : validators.values()) {
 			if ( ! validator.validate() ) {
 				messages.addAll( validator.getMessages() );
@@ -59,12 +68,12 @@ public class ChangeUserRole implements RunCommand {
 		if (messages.isEmpty()) {
 			
 			userId = params.get("userId") == null ? null : Integer.valueOf(params.get("userId")[0]);
-			roleId = params.get("roleId") == null ? null : Integer.valueOf(params.get("roleId")[0]);
+			role = params.get("role") == null ? null : params.get("role")[0];
 			
-			User result = UserManagerService.getInstance().changeRole(userId, roleId);
+			User result = UserManagerService.getInstance().changeRole(userId, role);
 			if ( result != null ) {
-				messages.add("User " + result.getName() + "'s role was changed to " + result.getRole().getName() + "."); 
-				logger.info("user " + result.getName() + "'s role was changed to " + result.getRole().getName()); 
+				messages.add("User " + result.getName() + "'s role was changed to " + role + "."); 
+				logger.info("user " + result.getName() + "'s role was changed to " + role); 
 			} else {
 				messages.add("Cannot change user's role."); 
 				logger.error("error while attempting to change user's role"); 
@@ -130,8 +139,8 @@ public class ChangeUserRole implements RunCommand {
 		return pagesCount;
 	}
 
-	public Integer getRoleId() {
-		return roleId;
+	public String role() {
+		return role;
 	}
 	
 }

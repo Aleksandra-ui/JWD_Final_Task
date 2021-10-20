@@ -340,9 +340,9 @@ public class UserDAOImpl implements UserDAO {
 
 	}
 	
-	public User changeRole(Integer userId, Integer roleId) {
+	public User changeRole(Integer userId, String roleName) {
 		
-		if ( userId == null || roleId == null ) {
+		if ( userId == null || roleName == null ) {
 			logger.warn("cannot change role. user or role isn't specified");
 			return null;
 		}
@@ -352,44 +352,79 @@ public class UserDAOImpl implements UserDAO {
 			logger.error("error while attempting to change role. user with id " + userId + " doesn't exist");
 			return null;
 		}
+		String userName = user.getName();
 		
-		if ( roleId == user.getRole().getId() ) {
+		if ( roleName.equals( user.getRole().getName() ) ) {
 			logger.trace("the role is already assigned to user " + user.getName());
 			return user;
 		}
 		
 		Role role = new Role();
-		role.setId(roleId);
-		String name = user.getName();
 		
-		switch ( roleId ) {
+		switch ( roleName ) {
 		
-			case 1:
-				role.setName("doctor");
+			case "doctor":
 				role.setPermission(PERM_CLIENT + PERM_DOCTOR);
+				role.setId(ROLE_DOCTOR);
 				break;
-			case 2:
-				role.setName("pharmacist");
+			case "pharmacist":
 				role.setPermission(PERM_CLIENT + PERM_PHARMACIST);
+				role.setId(ROLE_PHARMACIST);
 				break;
-			case 3:
-				role.setName("client");
+			case "client":
 				role.setPermission(PERM_CLIENT);
+				role.setId(ROLE_CLIENT);
 				break;
 			default:
+				logger.warn("such role doesn't exist");
 				return null;
 				
 		}
 		
+		role.setName(roleName);
 		user.setRole(role);
 		user = update(user);
 		if ( user != null ) {
 			logger.info("role of user " + user.getName() + " was changed");
 		} else {
-			logger.warn("cannot change the role of user " + name);
+			logger.warn("cannot change the role of user " + userName);
 		}
 		
 		return user;
+		
+	}
+	
+	public Role findRole( String name ) {
+		//TODO получать роли из БД
+		Role role = new Role();
+		
+		switch ( name ) {
+		
+			case "doctor":
+				role.setPermission(PERM_CLIENT + PERM_DOCTOR);
+				role.setId(ROLE_DOCTOR);
+				break;
+			case "pharmacist":
+				role.setPermission(PERM_CLIENT + PERM_PHARMACIST);
+				role.setId(ROLE_PHARMACIST);
+				break;
+			case "client":
+				role.setPermission(PERM_CLIENT);
+				role.setId(ROLE_CLIENT);
+				break;
+			case "admin":
+				role.setPermission(PERM_ADMIN);
+				role.setId(ROLE_ADMIN);
+				break;
+			default:
+				logger.warn("such role doesn't exist");
+				return null;
+			
+		}
+		
+		role.setName(name);
+		
+		return role;
 		
 	}
 

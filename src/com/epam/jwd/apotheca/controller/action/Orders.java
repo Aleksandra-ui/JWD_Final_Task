@@ -16,7 +16,6 @@ public class Orders implements RunCommand {
 	private String actionTime;
 	private Map<String, String[]> params;
 	private User user;
-//	private List<Order> orders;
 	private List<Map<String, String>> drugsInfo;
 	private int pageSize;
 	private int currentPage;
@@ -33,8 +32,6 @@ public class Orders implements RunCommand {
 	@Override
 	public String run() {
 
-		
-//		orders = OrderManagerService.getInstance().findOrdersByUser(user.getId());
 		totalCount = OrderManagerService.getInstance().getDrugsCountByUser(user.getId());
 		
 		pageSize = params.get("pageSize") == null ? 5 : Integer.valueOf(params.get("pageSize")[0]);
@@ -42,7 +39,6 @@ public class Orders implements RunCommand {
 				: Integer.valueOf(params.get("currentPage")[0]);
 		pagesCount = totalCount / pageSize + ((totalCount % pageSize) == 0 ? 0 : 1);
 		
-//		orders = orders.subList(pageSize * (currentPage - 1), Math.min( (pageSize * (currentPage - 1) + pageSize), orders.size() ));
 		int startIndex =  pageSize * (currentPage - 1);
 		int count =  currentPage < pagesCount ? pageSize :totalCount % pageSize ;
 		drugsInfo = OrderManagerService.getInstance().findDrugInfoByRange(user, startIndex, count);

@@ -169,9 +169,9 @@
 						<c:if test="${ not (u.role.name eq 'admin') }">
 							<select id="userAction${u.id }">
 								<option value="deleteUser.run?userId=${u.id }" selected>delete</option>
-								<option value="changeUserRole.run?userId=${u.id }&roleId=2">change role to pharmacist</option>
-								<option value="changeUserRole.run?userId=${u.id }&roleId=1">change role to doctor</option>
-								<option value="changeUserRole.run?userId=${u.id }&roleId=3">change role to client</option>
+								<option value="changeUserRole.run?userId=${u.id }&role=pharmacist">change role to pharmacist</option>
+								<option value="changeUserRole.run?userId=${u.id }&role=doctor">change role to doctor</option>
+								<option value="changeUserRole.run?userId=${u.id }&role=client">change role to client</option>
 							</select>
 						</c:if>
 					</td>

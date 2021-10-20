@@ -4,6 +4,8 @@ import com.epam.jwd.apotheca.model.User;
 
 public class DisplayCart extends CartAction {
 
+	User user;
+	
 	public DisplayCart() {
 	}
 
@@ -19,14 +21,12 @@ public class DisplayCart extends CartAction {
 
 	@Override
 	public void setUser(User user) {
-		// TODO Auto-generated method stub
-
+		this.user = user;
 	}
 
 	@Override
 	public User getUser() {
-		// TODO Auto-generated method stub
-		return null;
+		return user;
 	}
 
 }

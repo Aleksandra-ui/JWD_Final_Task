@@ -1,7 +1,6 @@
 package com.epam.jwd.apotheca.controller.validator;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -13,10 +12,11 @@ public class DrugNameValidator implements Validator {
 
 	private List<String> messages;
 	private Map<String, String[]> params;
+	private String drugNameParam;
 	private static final Logger logger = LoggerFactory.getLogger(DrugNameValidator.class);
 	
-	public DrugNameValidator(Map<String, String[]> params) {
-		this.params = params;
+	public DrugNameValidator(String drugNameParam) {
+		this.drugNameParam = drugNameParam;
 		messages = new ArrayList<String>();
 	}
 
@@ -31,7 +31,7 @@ public class DrugNameValidator implements Validator {
 
 		boolean result = false;
 		
-		String drugName = params.get("drugName") == null ? null : params.get("drugName")[0];
+		String drugName = params.get(drugNameParam) == null ? null : params.get(drugNameParam)[0];
 		if ( drugName != null ) {
 			if ( Pattern.matches("^\\s*[\\dA-Za-zА-Яа-я,;'\"\\s]+", drugName) ) {
 				result = true;
@@ -49,13 +49,14 @@ public class DrugNameValidator implements Validator {
 	
 	public static void main(String[] args) {
 		
-		Map<String, String[]> map = new HashMap<>();
-		map.put("drugName", new String[]{" "});
-		Validator drValidator = new DrugNameValidator(map);
-		System.out.println(drValidator.validate());
+//		Map<String, String[]> map = new HashMap<>();
+//		map.put("drugName", new String[]{" "});
+//		Validator drValidator = new DrugNameValidator(map);
+//		System.out.println(drValidator.validate());
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setValue(Object value) {
 		this.params = (Map<String, String[]>)value;

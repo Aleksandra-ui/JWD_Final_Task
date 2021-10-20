@@ -65,10 +65,10 @@ public class RecipeManagerService {
 		boolean result = true;
 		if ( doctor != null ) {
 			
-			if ( ! UserDAO.NAME_SUPER_DOC.equals(doctor.getName()) ) {
+			if ( ! UserDAO.ROLE_NAME_SUPER_DOC.equals(doctor.getName()) ) {
 				
 				List<Recipe> recipes = recipeDAO.findRecipeByDoctor(doctor);
-				User superDoc = userDAO.getUser(UserDAO.NAME_SUPER_DOC);
+				User superDoc = userDAO.getUser(UserDAO.ROLE_NAME_SUPER_DOC);
 				for ( Recipe recipe : recipes ) {
 					recipe.setDoctorId(superDoc.getId());
 					result &= recipeDAO.update(recipe) != null;

@@ -6,6 +6,7 @@ import javax.servlet.http.HttpSession;
 
 import com.epam.jwd.apotheca.dao.api.UserDAO;
 import com.epam.jwd.apotheca.dao.impl.UserDAOImpl;
+import com.epam.jwd.apotheca.model.Role;
 import com.epam.jwd.apotheca.model.User;
 
 public class UserManagerService {
@@ -36,7 +37,7 @@ public class UserManagerService {
 	public boolean createUser(User user) {
 
 		boolean result = false;
-		if ( UserDAO.NAME_SUPER_DOC.equals( user.getName() ) ) {
+		if ( UserDAO.ROLE_NAME_SUPER_DOC.equals( user.getName() ) ) {
 			return false;
 		}
 		User newUser = userDAO.save(user);
@@ -67,7 +68,7 @@ public class UserManagerService {
 	public List<User> getUsers() {
 		
 		List<User> users = userDAO.findAll();
-		users.removeIf(u -> UserDAO.NAME_SUPER_DOC.equals(u.getName()));
+		users.removeIf(u -> UserDAO.ROLE_NAME_SUPER_DOC.equals(u.getName()));
 		return users;
 
 	}
@@ -78,7 +79,7 @@ public class UserManagerService {
 
 	public User getUser(String name) {
 		
-		if ( UserDAO.NAME_SUPER_DOC.equals( name ) ) {
+		if ( UserDAO.ROLE_NAME_SUPER_DOC.equals( name ) ) {
 			return null;
 		} 
 		return ((UserDAOImpl) userDAO).getUser(name);
@@ -88,7 +89,7 @@ public class UserManagerService {
 	public User getUser(Integer id) {
 		
 		User user = userDAO.findById(id);
-		if ( user != null && UserDAO.NAME_SUPER_DOC.equals( user.getName() ) ) {
+		if ( user != null && UserDAO.ROLE_NAME_SUPER_DOC.equals( user.getName() ) ) {
 			user = null;
 		}
 		return user;
@@ -117,7 +118,7 @@ public class UserManagerService {
 		
 		boolean result = false; 
 		User user = userDAO.findById(userId);
-		if ( user != null && ! UserDAO.NAME_SUPER_DOC.equals(user.getName()) ) {
+		if ( user != null && ! UserDAO.ROLE_NAME_SUPER_DOC.equals(user.getName()) ) {
 			result = userDAO.delete(userId);
 		}
 		return result;
@@ -136,8 +137,12 @@ public class UserManagerService {
 		return ((UserDAOImpl)userDAO).getTotalCount(true);
 	}
 	
-	public User changeRole(Integer userId, Integer roleId) {
-		return ((UserDAOImpl)userDAO).changeRole(userId, roleId);
+	public User changeRole(Integer userId, String roleName) {
+		return ((UserDAOImpl)userDAO).changeRole(userId, roleName);
+	}
+	
+	public Role findRole( String name ) {
+		return ((UserDAOImpl)userDAO).findRole( name );
 	}
 
 }

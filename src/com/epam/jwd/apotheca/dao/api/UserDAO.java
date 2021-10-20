@@ -14,7 +14,11 @@ public interface UserDAO extends DAO<User> {
 	public static final Integer ROLE_CLIENT = 3;
 	public static final Integer ROLE_DOCTOR = 1;
 	public static final Integer ROLE_ADMIN = 4;
-	public static final String NAME_SUPER_DOC = "super_doc";
+	public static final String ROLE_NAME_SUPER_DOC = "super_doc";
+	public static final String ROLE_NAME_PHARMACIST = "pharmacist";
+	public static final String ROLE_NAME_CLIENT = "client";
+	public static final String ROLE_NAME_DOCTOR = "doctor";
+	public static final String ROLE_NAME_ADMIN = "admin";
 	
 	User findById(Integer id);
 	

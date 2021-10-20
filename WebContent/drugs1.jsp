@@ -234,8 +234,8 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 									<c:when test="${(not d.prescription)}">
 										<input type="checkbox" id="drug${d.id}" value="${d.id}" name="drug"
 											onchange="addRemoveFromCart(this, ${d.id });
-													  updateShoppingCart(${d.id}, this.checked, 'amount${d.id}'); 
-											          /*document.getElementById('amount${d.id}').disabled = ! this.checked;*/"
+													  updateShoppingCart(${d.id}, this.checked, 'amount${d.id}');"
+													  <c:if test="${d.quantity eq 0 }">disabled</c:if>
 											<c:out value="${present ? 'checked' : ''}"/> />
 									</c:when>
 									<c:otherwise><%=rb.getString("drugs.requirement") %></c:otherwise> 

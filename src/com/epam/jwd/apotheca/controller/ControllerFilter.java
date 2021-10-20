@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 
 import com.epam.jwd.apotheca.controller.action.AddToCart;
 import com.epam.jwd.apotheca.controller.action.AddToRecipeCart;
-import com.epam.jwd.apotheca.controller.action.Bye;
 import com.epam.jwd.apotheca.controller.action.ChangeUserRole;
 import com.epam.jwd.apotheca.controller.action.CreateDrug;
 import com.epam.jwd.apotheca.controller.action.CreateRecipe;
@@ -26,7 +25,6 @@ import com.epam.jwd.apotheca.controller.action.DisplayCart;
 import com.epam.jwd.apotheca.controller.action.DisplayRecipeCart;
 import com.epam.jwd.apotheca.controller.action.Drugs;
 import com.epam.jwd.apotheca.controller.action.DrugsBill;
-import com.epam.jwd.apotheca.controller.action.Hello;
 import com.epam.jwd.apotheca.controller.action.Logon;
 import com.epam.jwd.apotheca.controller.action.Orders;
 import com.epam.jwd.apotheca.controller.action.PrescribedRecipes;
@@ -48,8 +46,6 @@ public class ControllerFilter implements Filter {
     public ControllerFilter() {
     	
     	actionMapping = new HashMap<String, RunCommand>();
-    	actionMapping.put("hello", new Hello());
-    	actionMapping.put("bye", new Bye());
     	actionMapping.put("drugs", Drugs.getInstance());
     	actionMapping.put("recipe", RecipeCommand.getInstance());
     	actionMapping.put("createRecipe", CreateRecipe.getInstance());
@@ -65,13 +61,14 @@ public class ControllerFilter implements Filter {
     	actionMapping.put("removeFromRecipeCart", new RemoveFromRecipeCart());
     	actionMapping.put("displayRecipeCart", new DisplayRecipeCart());
     	actionMapping.put("deleteUser", new DeleteUser());
-    	actionMapping.put("changeUserRole", new ChangeUserRole());
+    	actionMapping.put("changeUserRole", ChangeUserRole.getInstance());
     	
     	ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger)LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
 		root.setLevel(Level.TRACE);
     	
     }
 
+	@SuppressWarnings("unchecked")
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		
 		String path = ((HttpServletRequest)request).getServletPath();

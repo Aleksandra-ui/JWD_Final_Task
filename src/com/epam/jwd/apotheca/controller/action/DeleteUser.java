@@ -1,16 +1,25 @@
 package com.epam.jwd.apotheca.controller.action;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.epam.jwd.apotheca.controller.OrderManagerService;
 import com.epam.jwd.apotheca.controller.RecipeManagerService;
 import com.epam.jwd.apotheca.controller.UserManagerService;
+import com.epam.jwd.apotheca.controller.validator.RoleAccessValidator;
+import com.epam.jwd.apotheca.controller.validator.UserIdValidator;
+import com.epam.jwd.apotheca.controller.validator.Validator;
+import com.epam.jwd.apotheca.dao.api.UserDAO;
 import com.epam.jwd.apotheca.model.User;
 
 public class DeleteUser implements RunCommand {
 
+	private static final Logger logger = LoggerFactory.getLogger(DeleteUser.class);
 	private Map<String, String[]> params;
 	private User user;
 	private boolean deleted;
@@ -21,9 +30,13 @@ public class DeleteUser implements RunCommand {
 	private int pageSize;
 	private int currentPage;
 	private int pagesCount;
+	private Map<String, Validator> validators; 
 
 	public DeleteUser() {
 		messages = new ArrayList<String>();
+		validators = new HashMap<String, Validator>();
+		validators.put("user", new UserIdValidator("userId"));
+		validators.put("role", new RoleAccessValidator(UserDAO.ROLE_NAME_ADMIN));
 	}
 
 	@Override
@@ -32,51 +45,46 @@ public class DeleteUser implements RunCommand {
 		messages.clear();
 		deleted = false;
 		
-
-		if ("admin".equalsIgnoreCase(user.getRole().getName())) {
-
-			Integer userId = params.get("userId") != null ? Integer.valueOf(params.get("userId")[0]) : null;
-
-			if (userId != null) {
-				userToDelete = UserManagerService.getInstance().getUser(userId);
-				if (userToDelete != null) {
-					if (OrderManagerService.getInstance().deleteUserOrders(userToDelete)) {
-						if (RecipeManagerService.getInstance().deleteUserRecipes(userToDelete)) {
-							boolean success = true;
-							if (UserManagerService.getInstance().canPrescribe(userToDelete)) {
-								success = RecipeManagerService.getInstance().switchToSuperDoc(userToDelete);
-							}
-							if (success) {
-								deleted = UserManagerService.getInstance().deleteUser(userId);
-								if (deleted) {
-									messages.add("User " + userToDelete.getName() + " was successfully deleted.");
-								} else {
-									messages.add("Unable to delete user.");
-									messages.add("Internal error while deleting user " + userToDelete.getName() + ".");
-								}
-							} else {
-								messages.add("Unable to delete user.");
-								messages.add("Internal error while updating recipes of user " + userToDelete.getName()
-										+ ".");
-							}
+		validators.get("user").setValue(params);
+		validators.get("role").setValue(user);
+		for (Validator validator : validators.values()) {
+			if ( ! validator.validate() ) {
+				messages.addAll( validator.getMessages() );
+				validator.getMessages().stream().forEach(m -> logger.error(m));
+			}
+		}
+		
+		if ( messages.isEmpty() ) {
+			Integer userId = Integer.valueOf(params.get("userId")[0]);
+			userToDelete = UserManagerService.getInstance().getUser(userId);
+			if (OrderManagerService.getInstance().deleteUserOrders(userToDelete)) {
+				if (RecipeManagerService.getInstance().deleteUserRecipes(userToDelete)) {
+					boolean success = true;
+					if (UserManagerService.getInstance().canPrescribe(userToDelete)) {
+						success = RecipeManagerService.getInstance().switchToSuperDoc(userToDelete);
+					}
+					if (success) {
+						deleted = UserManagerService.getInstance().deleteUser(userId);
+						if (deleted) {
+							messages.add("User " + userToDelete.getName() + " was successfully deleted.");
 						} else {
 							messages.add("Unable to delete user.");
-							messages.add(
-									"Internal error while deleting recipes of user " + userToDelete.getName() + ".");
+							messages.add("Internal error while deleting user " + userToDelete.getName() + ".");
 						}
 					} else {
 						messages.add("Unable to delete user.");
-						messages.add("Internal error while deleting orders of user " + userToDelete.getName() + ".");
+						messages.add("Internal error while updating recipes of user " + userToDelete.getName()
+								+ ".");
 					}
 				} else {
-					messages.add("User with id " + userId + " doesn't exist.");
+					messages.add("Unable to delete user.");
+					messages.add(
+							"Internal error while deleting recipes of user " + userToDelete.getName() + ".");
 				}
+			} else {
+				messages.add("Unable to delete user.");
+				messages.add("Internal error while deleting orders of user " + userToDelete.getName() + ".");
 			}
-
-		} else {
-
-			messages.add("You have no permission to delete users!");
-
 		}
 
 		totalCount = UserManagerService.getInstance().getTotalCount();

@@ -66,7 +66,9 @@ public class Drugs implements RunCommand, ShoppingCartAware {
 		currentPage = params.get("currentPage") == null ? 1
 				: Integer.valueOf(params.get("currentPage")[0]);
 		pagesCount = totalCount / pageSize + ((totalCount % pageSize) == 0 ? 0 : 1);
-		drugs = DrugManagerService.getInstance().getDrugs(getPageSize() * (getCurrentPage() - 1), getPageSize());
+		int startIndex =  pageSize * (currentPage - 1);
+		int count =  currentPage < pagesCount ? pageSize :totalCount % pageSize ;
+		drugs = DrugManagerService.getInstance().getDrugs(startIndex, count);
 		actionTime = GregorianCalendar.getInstance().getTime().toString();
 		
 		RecipeManagerService recipeService = RecipeManagerService.getInstance();
@@ -79,6 +81,7 @@ public class Drugs implements RunCommand, ShoppingCartAware {
 				}
 			}
 		}
+		logger.trace("displaying " + count + " drugs starting from " + startIndex);
 		
 		return actionTime;
 	}

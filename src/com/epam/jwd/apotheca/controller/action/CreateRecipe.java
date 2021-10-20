@@ -17,11 +17,12 @@ import com.epam.jwd.apotheca.controller.DrugManagerService;
 import com.epam.jwd.apotheca.controller.RecipeCart;
 import com.epam.jwd.apotheca.controller.RecipeManagerService;
 import com.epam.jwd.apotheca.controller.UserManagerService;
-import com.epam.jwd.apotheca.controller.validator.AccessValidator;
 import com.epam.jwd.apotheca.controller.validator.DateValidator;
-import com.epam.jwd.apotheca.controller.validator.DoctorValidator;
+import com.epam.jwd.apotheca.controller.validator.RecipeCartValidator;
+import com.epam.jwd.apotheca.controller.validator.RoleAccessValidator;
 import com.epam.jwd.apotheca.controller.validator.UserValidator;
 import com.epam.jwd.apotheca.controller.validator.Validator;
+import com.epam.jwd.apotheca.dao.api.UserDAO;
 import com.epam.jwd.apotheca.model.Drug;
 import com.epam.jwd.apotheca.model.Recipe;
 import com.epam.jwd.apotheca.model.User;
@@ -55,8 +56,9 @@ public class CreateRecipe implements RunCommand, RecipeCartAware {
 		validators.put("date", new DateValidator("year", "month", "day"));
 //		validators.add(new DrugValidator(drugs));
 		validators.put("client", new UserValidator("clientName"));
-		validators.put("access", new AccessValidator("createRecipe"));
-		validators.put("doctor", new DoctorValidator());
+//		validators.put("access", new ActionAccessValidator("createRecipe"));
+		validators.put("access", new RoleAccessValidator(UserDAO.ROLE_NAME_DOCTOR));
+		validators.put("cart", new RecipeCartValidator());
 	}
 	
 	public static CreateRecipe getInstance() {
@@ -86,10 +88,13 @@ public class CreateRecipe implements RunCommand, RecipeCartAware {
 		validators.get("client").setValue(params);
 		validators.get("doctor").setValue(user);
 		validators.get("access").setValue(user);
+		//TODO дописать валидацию
+		validators.get("cart").setValue(cart);
 		
 		for (Validator validator : validators.values()) {
 			if ( ! validator.validate() ) {
 				errorMessages.addAll( validator.getMessages() );
+				validator.getMessages().stream().forEach(m -> logger.error(m));
 			}
 		}
 		
@@ -135,6 +140,9 @@ public class CreateRecipe implements RunCommand, RecipeCartAware {
 			} else {
 				errorMessages.add("Unable to create recipe.");
 				logger.error("Unable to create recipe.");
+				if ( ! validators.get("cart").validate() ) {
+					errorMessages.addAll(validators.get("cart").getMessages());
+				}
 			}
 		
 		} 

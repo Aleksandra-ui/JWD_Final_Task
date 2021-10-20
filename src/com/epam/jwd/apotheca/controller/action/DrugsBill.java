@@ -1,6 +1,7 @@
 package com.epam.jwd.apotheca.controller.action;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -11,6 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import com.epam.jwd.apotheca.controller.OrderManagerService;
 import com.epam.jwd.apotheca.controller.ShoppingCart;
+import com.epam.jwd.apotheca.controller.validator.ShoppingCartValidator;
+import com.epam.jwd.apotheca.controller.validator.Validator;
 import com.epam.jwd.apotheca.model.Drug;
 import com.epam.jwd.apotheca.model.Order;
 import com.epam.jwd.apotheca.model.User;
@@ -31,11 +34,14 @@ public class DrugsBill implements RunCommand, ShoppingCartAware {
 	private int totalCount;
 	private Map<Drug, Integer> drugs;
 	private List<String> errorMessages;
+	private Map<String, Validator> validators;
 	
 	private DrugsBill() {
 		total = new AtomicInteger(0);
 		drugs = new TreeMap<Drug, Integer>();
 		errorMessages = new ArrayList<String>();
+		validators = new HashMap<String, Validator>();
+		validators.put("cart", new ShoppingCartValidator());
 	}
 
 	public static DrugsBill getInstance() {
@@ -55,9 +61,15 @@ public class DrugsBill implements RunCommand, ShoppingCartAware {
 				}
 				totalCount = order.getDrugs().size();
 			} else {
-				//создать валидатор количества доступных лек-в,ззапустить и рез-тат добавить в errorMessages
 				errorMessages.add("Cannot create an order.");
 				logger.error("Cannot create an order.");
+				//TODO дописать валидатор количества доступных лек-в,запустить и рез-тат добавить в errorMessages
+				validators.get("cart").setValue(getCart());
+				for (Validator validator : validators.values()) {
+					if ( ! validator.validate() ) {
+						errorMessages.addAll( validator.getMessages() );
+					}
+				}
 			}
 		} 
 		if ( order != null ) {

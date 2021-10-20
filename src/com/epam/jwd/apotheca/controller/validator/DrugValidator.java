@@ -6,11 +6,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.epam.jwd.apotheca.controller.ControllerFilter;
 import com.epam.jwd.apotheca.controller.DrugManagerService;
-import com.epam.jwd.apotheca.controller.UserManagerService;
 import com.epam.jwd.apotheca.model.Drug;
-import com.epam.jwd.apotheca.model.User;
 
 public class DrugValidator implements Validator {
 

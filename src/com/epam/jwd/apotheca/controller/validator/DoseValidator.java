@@ -1,7 +1,6 @@
 package com.epam.jwd.apotheca.controller.validator;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -13,10 +12,11 @@ public class DoseValidator implements Validator {
 
 	private List<String> messages;
 	private Map<String, String[]> params;
+	private String doseParamName;
 	private static final Logger logger = LoggerFactory.getLogger(DoseValidator.class);
 	
-	public DoseValidator(Map<String, String[]> params) {
-		this.params = params;
+	public DoseValidator(String doseParamName) {
+		this.doseParamName = doseParamName;
 		messages = new ArrayList<String>();
 	}
 
@@ -31,7 +31,7 @@ public class DoseValidator implements Validator {
 
 		boolean result = false;
 		
-		String dose = params.get("dose") == null ? null : params.get("dose")[0];
+		String dose = params.get(doseParamName) == null ? null : params.get(doseParamName)[0];
 		if ( dose != null ) {
 			if ( Pattern.matches("(\\d+\\.?\\d+|\\d+)$", dose.trim()) ) {
 				try {
@@ -57,6 +57,7 @@ public class DoseValidator implements Validator {
 	}
 
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setValue(Object value) {
 		this.params = (Map<String, String[]>)value;

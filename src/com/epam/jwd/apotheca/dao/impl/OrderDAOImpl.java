@@ -229,6 +229,7 @@ public class OrderDAOImpl implements OrderDAO {
 
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 			ResultSet rs = st.executeQuery(query);
+			logger.trace("following query was executed successfully:\n" + query);
 			Map<Drug, Integer> drugs = null;
 			while (rs.next()) {
 				if (order == null) {
@@ -251,12 +252,13 @@ public class OrderDAOImpl implements OrderDAO {
 				order.setDrugs(drugs);
 			}
 			rs.close();
+
+			logger.info("found an order by id");
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find an order by id");
 			e.printStackTrace();
 		}
 
-		logger.info("found an order by id");
 		return order;
 
 	}
