@@ -20,7 +20,6 @@ import com.epam.jwd.apotheca.controller.UserManagerService;
 import com.epam.jwd.apotheca.controller.validator.AccessValidator;
 import com.epam.jwd.apotheca.controller.validator.DateValidator;
 import com.epam.jwd.apotheca.controller.validator.DoctorValidator;
-import com.epam.jwd.apotheca.controller.validator.UserAware;
 import com.epam.jwd.apotheca.controller.validator.UserValidator;
 import com.epam.jwd.apotheca.controller.validator.Validator;
 import com.epam.jwd.apotheca.model.Drug;
@@ -37,7 +36,7 @@ public class CreateRecipe implements RunCommand, RecipeCartAware {
 	private static final Logger logger = LoggerFactory.getLogger(CreateRecipe.class);
 	private String displayPage = "secure/createRecipe1.jsp";
 	private List<String> errorMessages;
-	private List<Validator> validators;
+	private Map<String, Validator> validators;
 	private RecipeCart cart;
 	private User user;
 	private User client;
@@ -52,12 +51,12 @@ public class CreateRecipe implements RunCommand, RecipeCartAware {
 		allDrugs = new ArrayList<Drug>();
 		params = new HashMap<String, String[]>();
 		errorMessages = new ArrayList<String>();
-		validators = new ArrayList<Validator>();
-		validators.add(new DateValidator(params));
+		validators = new HashMap<String, Validator>();
+		validators.put("date", new DateValidator("year", "month", "day"));
 //		validators.add(new DrugValidator(drugs));
-		validators.add(new UserValidator(params));
-		validators.add(new AccessValidator("createRecipe", user));
-		validators.add(new DoctorValidator(user));
+		validators.put("client", new UserValidator("clientName"));
+		validators.put("access", new AccessValidator("createRecipe"));
+		validators.put("doctor", new DoctorValidator());
 	}
 	
 	public static CreateRecipe getInstance() {
@@ -83,7 +82,12 @@ public class CreateRecipe implements RunCommand, RecipeCartAware {
 		
 		clearFields();
 		
-		for (Validator validator : validators) {
+		validators.get("date").setValue(params);
+		validators.get("client").setValue(params);
+		validators.get("doctor").setValue(user);
+		validators.get("access").setValue(user);
+		
+		for (Validator validator : validators.values()) {
 			if ( ! validator.validate() ) {
 				errorMessages.addAll( validator.getMessages() );
 			}
@@ -152,11 +156,6 @@ public class CreateRecipe implements RunCommand, RecipeCartAware {
 	@Override
 	public void setUser(User user) {
 		this.user = user;
-		for ( Validator validator : validators ) {
-			if ( validator instanceof UserAware ) {
-				validator.setValue(this.user);
-			}
-		}
 	}
 	
 	@Override

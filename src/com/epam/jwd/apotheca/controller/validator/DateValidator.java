@@ -1,32 +1,30 @@
 package com.epam.jwd.apotheca.controller.validator;
 
-import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-
-import com.epam.jwd.apotheca.controller.ControllerFilter;
-import com.epam.jwd.apotheca.controller.UserManagerService;
-import com.epam.jwd.apotheca.model.User;
-
 public class DateValidator implements Validator {
 
 	private Map<String, String[]> params;
 	private List<String> messages;
 	private static final Logger logger = LoggerFactory.getLogger(DateValidator.class);
+	private String yearParamName;
+	private String monthParamName;
+	private String dayParamName;
 	
-	public DateValidator(Map<String, String[]> params) {
-		this.params = params;
+	public DateValidator(String yearParamName, String monthParamName, String dayParamName) {
+		this.yearParamName = yearParamName;
+		this.monthParamName = monthParamName;
+		this.dayParamName = dayParamName;
 		messages = new ArrayList<String>();
 	}
 	
@@ -35,11 +33,11 @@ public class DateValidator implements Validator {
 		boolean result = true;
 		messages.clear();
 		
-		String yearStr = params.get("year")[0];
+		String yearStr = params.get(yearParamName)[0];
 		Integer year = Integer.valueOf(yearStr);
-		String monthStr = params.get("month")[0];
+		String monthStr = params.get(monthParamName)[0];
 		Integer month = Integer.valueOf(monthStr);
-		String dayStr = params.get("day")[0];
+		String dayStr = params.get(dayParamName)[0];
 		Integer day = Integer.valueOf(dayStr);
 	
 		result = validateLogic(year, month, day) && validateDifference(year, month, day);
@@ -94,6 +92,7 @@ public class DateValidator implements Validator {
 		return messages;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setValue(Object value) {
 		this.params = (Map<String, String[]>)value;

@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import com.epam.jwd.apotheca.controller.action.AddToCart;
 import com.epam.jwd.apotheca.controller.action.AddToRecipeCart;
 import com.epam.jwd.apotheca.controller.action.Bye;
+import com.epam.jwd.apotheca.controller.action.ChangeUserRole;
 import com.epam.jwd.apotheca.controller.action.CreateDrug;
 import com.epam.jwd.apotheca.controller.action.CreateRecipe;
 import com.epam.jwd.apotheca.controller.action.DeleteUser;
@@ -64,6 +65,7 @@ public class ControllerFilter implements Filter {
     	actionMapping.put("removeFromRecipeCart", new RemoveFromRecipeCart());
     	actionMapping.put("displayRecipeCart", new DisplayRecipeCart());
     	actionMapping.put("deleteUser", new DeleteUser());
+    	actionMapping.put("changeUserRole", new ChangeUserRole());
     	
     	ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger)LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
 		root.setLevel(Level.TRACE);

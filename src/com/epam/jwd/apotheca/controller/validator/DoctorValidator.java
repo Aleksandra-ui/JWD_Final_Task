@@ -2,9 +2,7 @@ package com.epam.jwd.apotheca.controller.validator;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import com.epam.jwd.apotheca.controller.UserManagerService;
 import com.epam.jwd.apotheca.model.User;
 
 public class DoctorValidator implements Validator, UserAware {
@@ -12,8 +10,7 @@ public class DoctorValidator implements Validator, UserAware {
 	private User user;
 	private List<String> messages;
 	
-	public DoctorValidator(User user) {
-		this.user = user;
+	public DoctorValidator() {
 		messages = new ArrayList<String>();
 	}
 	
@@ -21,7 +18,7 @@ public class DoctorValidator implements Validator, UserAware {
 		messages.clear();
 		boolean result = true; 
 		
-		if ( user == null || user.getRole().getId() != 1 ) {
+		if ( user == null || ! "doctor".equalsIgnoreCase(user.getRole().getName()) ) {
 			messages.add("You have to be a doctor to prescribe recipes.");
 			result = false;
 		}

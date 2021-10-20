@@ -135,5 +135,9 @@ public class UserManagerService {
 	public int getTotalCount() {
 		return ((UserDAOImpl)userDAO).getTotalCount(true);
 	}
+	
+	public User changeRole(Integer userId, Integer roleId) {
+		return ((UserDAOImpl)userDAO).changeRole(userId, roleId);
+	}
 
 }

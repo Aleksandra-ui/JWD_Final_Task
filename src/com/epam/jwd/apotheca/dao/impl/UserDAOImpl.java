@@ -86,10 +86,18 @@ public class UserDAOImpl implements UserDAO {
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 			connection.setAutoCommit(false);
 			result = st.executeUpdate(query) > 0;
-			connection.commit();
-			result = true;
+			logger.trace("following query was executed successfully:\n" + query);
+			if ( result ) {
+				logger.info("updated a user");
+				connection.commit();
+			} else {
+				logger.info("unable to update a user");
+				connection.rollback();
+			}
+//			result = true;
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to update a user");
+			logger.error("failure during handling an SQL:\n" + query);
 			e.printStackTrace();
 		}
 
@@ -330,6 +338,59 @@ public class UserDAOImpl implements UserDAO {
 		
 		return users;
 
+	}
+	
+	public User changeRole(Integer userId, Integer roleId) {
+		
+		if ( userId == null || roleId == null ) {
+			logger.warn("cannot change role. user or role isn't specified");
+			return null;
+		}
+		
+		User user = findById(userId);
+		if ( user == null ) {
+			logger.error("error while attempting to change role. user with id " + userId + " doesn't exist");
+			return null;
+		}
+		
+		if ( roleId == user.getRole().getId() ) {
+			logger.trace("the role is already assigned to user " + user.getName());
+			return user;
+		}
+		
+		Role role = new Role();
+		role.setId(roleId);
+		String name = user.getName();
+		
+		switch ( roleId ) {
+		
+			case 1:
+				role.setName("doctor");
+				role.setPermission(PERM_CLIENT + PERM_DOCTOR);
+				break;
+			case 2:
+				role.setName("pharmacist");
+				role.setPermission(PERM_CLIENT + PERM_PHARMACIST);
+				break;
+			case 3:
+				role.setName("client");
+				role.setPermission(PERM_CLIENT);
+				break;
+			default:
+				return null;
+				
+		}
+		
+		user.setRole(role);
+		user = update(user);
+		if ( user != null ) {
+			logger.info("role of user " + user.getName() + " was changed");
+		} else {
+			logger.warn("cannot change the role of user " + name);
+		}
+		
+		return user;
+		
 	}
 
 }

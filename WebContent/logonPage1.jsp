@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"
 	import = "com.epam.jwd.apotheca.controller.UserManagerService,com.epam.jwd.apotheca.model.User,java.util.List,java.util.Calendar,com.epam.jwd.apotheca.model.Role,com.epam.jwd.apotheca.dao.api.UserDAO,
-	com.epam.jwd.apotheca.controller.action.Logon, com.epam.jwd.apotheca.controller.action.DeleteUser"%>
+	com.epam.jwd.apotheca.controller.action.Logon, com.epam.jwd.apotheca.controller.action.DeleteUser, com.epam.jwd.apotheca.controller.action.ChangeUserRole"%>
 
 <!DOCTYPE html>
 <html>
@@ -73,12 +73,17 @@
 	int pageSize;
 	int currentPage;
 	if ( request.getAttribute("action") instanceof Logon ) {
-			Logon bean = (Logon)request.getAttribute("action");
-			totalCount = bean.getTotalCount();
-			pageSize = bean.getPageSize();
-			currentPage = bean.getCurrentPage();
-	} else {
+		Logon bean = (Logon)request.getAttribute("action");
+		totalCount = bean.getTotalCount();
+		pageSize = bean.getPageSize();
+		currentPage = bean.getCurrentPage();
+	} else if ( request.getAttribute("action") instanceof DeleteUser ) {
 		DeleteUser bean = (DeleteUser)request.getAttribute("action");
+		totalCount = bean.getTotalCount();
+		pageSize = bean.getPageSize();
+		currentPage = bean.getCurrentPage();
+	} else {
+		ChangeUserRole bean = ( ChangeUserRole )request.getAttribute("action");
 		totalCount = bean.getTotalCount();
 		pageSize = bean.getPageSize();
 		currentPage = bean.getCurrentPage();
@@ -164,7 +169,9 @@
 						<c:if test="${ not (u.role.name eq 'admin') }">
 							<select id="userAction${u.id }">
 								<option value="deleteUser.run?userId=${u.id }" selected>delete</option>
-								<option value="logon.run?logoff=1">log off</option>
+								<option value="changeUserRole.run?userId=${u.id }&roleId=2">change role to pharmacist</option>
+								<option value="changeUserRole.run?userId=${u.id }&roleId=1">change role to doctor</option>
+								<option value="changeUserRole.run?userId=${u.id }&roleId=3">change role to client</option>
 							</select>
 						</c:if>
 					</td>
