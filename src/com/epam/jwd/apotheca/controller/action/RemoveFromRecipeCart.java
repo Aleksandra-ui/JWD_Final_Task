@@ -9,6 +9,7 @@ public class RemoveFromRecipeCart extends RecipeCartAction implements RecipeCart
 
 	@Override
 	public String run() {
+		
 		String id = getParams().get("drugId") == null ? null : getParams().get("drugId")[0];
 		
 		if ( id != null ) {
@@ -17,7 +18,9 @@ public class RemoveFromRecipeCart extends RecipeCartAction implements RecipeCart
 		
 		super.run();
 		
+		updateDrugs();
 		return null;
+		
 	}
-
+	
 }

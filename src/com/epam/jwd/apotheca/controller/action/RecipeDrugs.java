@@ -11,9 +11,9 @@ import com.epam.jwd.apotheca.model.Drug;
 import com.epam.jwd.apotheca.model.User;
 
 
-public class RecipeCommand implements RunCommand, RecipeCartAware {
+public class RecipeDrugs implements RunCommand, RecipeCartAware {
 
-	private static RecipeCommand instance = new RecipeCommand();
+	private static RecipeDrugs instance = new RecipeDrugs();
 	private User user;
 	private String actionTime;
 	private Map<String, String[]> params;
@@ -24,11 +24,11 @@ public class RecipeCommand implements RunCommand, RecipeCartAware {
 	private List<User> clients;
 	private RecipeCart cart;
 	
-	private RecipeCommand() {
+	private RecipeDrugs() {
 		drugs = new ArrayList<Drug>();
 	}
 	
-	public static RecipeCommand getInstance() {
+	public static RecipeDrugs getInstance() {
 		return instance;
 	}
 	

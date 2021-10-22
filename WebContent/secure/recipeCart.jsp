@@ -159,7 +159,7 @@
 		
 			<form action="createRecipe.run" method="POST" class="container" align="center" style="margin-top: 20px">
 				<div id = "div" <c:if test="${empty action.cart.drugs}">style="display:none"</c:if>>
-					<input class="btn btn-primary" type="submit" value="<%=rb.getString("drugs.recipe")%>"/>
+					<input class="btn btn-primary" type="submit" <c:if test="${action.cart.invalid }">disabled</c:if> value="<%=rb.getString("drugs.recipe")%>"/>
 					<select name="clientName">
 					<c:forEach items="${action.clients}" var="client">
 						<option>

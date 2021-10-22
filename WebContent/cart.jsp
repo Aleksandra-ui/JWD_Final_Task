@@ -114,14 +114,32 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 				<c:when test="${not empty action.cart}">
 					<c:set var="totalA" value="0"></c:set>
 					<c:forEach items="${action.products}" var="d">
+						${action.invalidDrugs[d.key] }
 						<tr 
-							<c:if test="${not empty action.invalidDrugs[d] }>bgcolor="LightPink"</c:if>
+								<c:if test="${not empty action.invalidDrugs[d.key] and 
+											((not empty action.invalidDrugs[d.key]['absent']) or 
+											 (not empty action.invalidDrugs[d.key]['prescription'])) }">
+									bgcolor="LightPink"
+									<c:if test="${not empty action.invalidDrugs[d.key] and (not empty action.invalidDrugs[d.key]['prescription']) }">
+										title="${action.invalidDrugs[d.key]['prescription'] }"
+									</c:if>
+								</c:if>
 						>
+<%-- 							<td>${d}${action.invalidDrugs[d.key] }</td> --%>
 							<td>${d.key.id}</td>
 							<td>${d.key.name}</td>
 							<td>${d.key.dose }</td>
-							<td>${d.key.price }</td>
-							<td>${d.value }</td>
+							<td 
+								<c:if test="${not empty action.invalidDrugs[d.key] and 
+											 (not empty action.invalidDrugs[d.key]['price']) }">
+									bgcolor="LightPink" title="${action.invalidDrugs[d.key]['price'] }"
+								</c:if>
+							>${d.key.price }</td>
+							<td
+								<c:if test="${not empty action.invalidDrugs[d.key] and (not empty action.invalidDrugs[d.key]['amount']) }">
+									bgcolor="LightPink" title="${action.invalidDrugs[d.key]['amount'] }"
+								</c:if>
+							>${d.value }</td>
 							<td><a onclick="updateShoppingCart(${d.key.id}, false);"><u>remove</u></a></td>
 						</tr>
 						<c:set var="totalA" value="${totalA + d.key.price * d.value }"></c:set>
@@ -140,7 +158,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 
 	<form action="drugsBill.run" method="POST">
 		<div id = "div" <c:if test="${empty action.cart.products}">style="display:none"</c:if> class="container" align="center">
-			<div id="totalAmount1"><font color="Blue">Total : </font><c:out value="${totalA }"/> <input type="submit" class="btn btn-primary" value="<%=rb.getString("drugs.buy")%>"/></div>
+			<div id="totalAmount1"><font color="Blue">Total : </font><c:out value="${totalA }"/> <input type="submit" class="btn btn-primary" <c:if test="${action.cart.invalid }">disabled</c:if> value="<%=rb.getString("drugs.buy")%>"/></div>
 		</div>
 	</form>
 

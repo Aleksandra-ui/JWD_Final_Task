@@ -1,12 +1,12 @@
 package com.epam.jwd.apotheca.controller.action;
 
 import com.epam.jwd.apotheca.controller.DrugManagerService;
-import com.epam.jwd.apotheca.model.Drug;
-import com.epam.jwd.apotheca.model.User;
 
 public class RemoveFromCart extends CartAction {
-
+	
 	public RemoveFromCart() {
+		
+		
 	}
 
 	@Override
@@ -20,20 +20,8 @@ public class RemoveFromCart extends CartAction {
 			getCart().removeDrug(DrugManagerService.getInstance().getDrug(Integer.valueOf(id)));
 		}
 		
-		setProducts( getCart().getProducts(getPageSize() * (getCurrentPage() - 1), getPageSize()) );
+		updateProducts();
 		
-		return null;
-	}
-
-	@Override
-	public void setUser(User user) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public User getUser() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

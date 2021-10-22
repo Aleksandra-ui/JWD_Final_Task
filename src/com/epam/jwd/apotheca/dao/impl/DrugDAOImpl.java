@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -233,25 +234,31 @@ public class DrugDAOImpl implements DrugDAO {
 		for (Integer id : ids) {
 			idsStr += String.valueOf(id) + ",";
 		}
-		idsStr = idsStr.substring(0, idsStr.length() - 1);
-		String query = "select id,name,quantity,price,dose,prescription from mydb.drugs where id "
-				+ (ids.length == 1 ? " = ?" : "in (" + idsStr + ")");
-		try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement(query);) {
-			if (ids.length == 1) {
-				st.setInt(1, ids[0]);
-			}
+		if (idsStr.length() != 0) {
+			idsStr = idsStr.substring(0, idsStr.length() - 1);
+			
+			String query = "select id,name,quantity,price,dose,prescription from mydb.drugs where id "
+					+ (ids.length == 1 ? " = ?" : "in (" + idsStr + ")");
+			try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement(query);) {
+				if (ids.length == 1) {
+					st.setInt(1, ids[0]);
+				}
 
-			ResultSet rs = st.executeQuery();
-			while (rs.next()) {
-				drugs.add(readDrug(rs));
+				ResultSet rs = st.executeQuery();
+				while (rs.next()) {
+					drugs.add(readDrug(rs));
+				}
+				rs.close();
+				logger.info("found drugs by ids");
+			} catch (SQLException e) {
+				logger.error("catched SQL exception while attempting to find drugs by ids");
+				e.printStackTrace();
 			}
-			rs.close();
-			logger.info("found drugs by ids");
-		} catch (SQLException e) {
-			logger.error("catched SQL exception while attempting to find drugs by ids");
-			e.printStackTrace();
+			return drugs;
+		} else {
+			return Collections.EMPTY_LIST;
 		}
-		return drugs;
+		
 	}
 
 	public List<Drug> findByName(String name) {

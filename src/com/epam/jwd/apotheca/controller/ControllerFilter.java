@@ -29,7 +29,7 @@ import com.epam.jwd.apotheca.controller.action.Logon;
 import com.epam.jwd.apotheca.controller.action.Orders;
 import com.epam.jwd.apotheca.controller.action.PrescribedRecipes;
 import com.epam.jwd.apotheca.controller.action.RecipeCartAware;
-import com.epam.jwd.apotheca.controller.action.RecipeCommand;
+import com.epam.jwd.apotheca.controller.action.RecipeDrugs;
 import com.epam.jwd.apotheca.controller.action.RemoveFromCart;
 import com.epam.jwd.apotheca.controller.action.RemoveFromRecipeCart;
 import com.epam.jwd.apotheca.controller.action.RunCommand;
@@ -47,7 +47,7 @@ public class ControllerFilter implements Filter {
     	
     	actionMapping = new HashMap<String, RunCommand>();
     	actionMapping.put("drugs", Drugs.getInstance());
-    	actionMapping.put("recipe", RecipeCommand.getInstance());
+    	actionMapping.put("recipe", RecipeDrugs.getInstance());
     	actionMapping.put("createRecipe", CreateRecipe.getInstance());
     	actionMapping.put("prescribedRecipes", PrescribedRecipes.getInstance());
     	actionMapping.put("logon", Logon.getInstance());

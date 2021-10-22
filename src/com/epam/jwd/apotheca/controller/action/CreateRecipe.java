@@ -90,6 +90,20 @@ public class CreateRecipe implements RunCommand, RecipeCartAware {
 		validators.get("access").setValue(user);
 		validators.get("cart").setValue(cart);
 		
+		String expieryDate = params.get("year")[0] + "/" + params.get("month")[0] + "/" + params.get("day")[0];
+		SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
+	    java.util.Date utilDate = null;
+		try {
+			utilDate = format.parse(expieryDate);
+		} catch (ParseException e) {
+			logger.error(Arrays.toString(e.getStackTrace()));
+		}
+	    Date sqlDate = new Date(utilDate.getTime());
+	    
+		UserManagerService uService = UserManagerService.getInstance();
+	    String clientName = params.get("clientName")[0];
+		User client = uService.getUser(clientName);
+		
 		for (Validator validator : validators.values()) {
 			if ( ! validator.validate() ) {
 				errorMessages.addAll( validator.getMessages() );
@@ -100,28 +114,17 @@ public class CreateRecipe implements RunCommand, RecipeCartAware {
 		if (errorMessages.isEmpty()) {
 			
 			RecipeManagerService service = RecipeManagerService.getInstance();
-			UserManagerService uService = UserManagerService.getInstance();
 			Recipe recipe = new Recipe();
 	
 			Integer doctorId = getUser().getId();
 			recipe.setDoctorId(doctorId);
-			String clientName = params.get("clientName")[0];
-			User client = uService.getUser(clientName);
+			
 			recipe.setUserId(client.getId());
 
 			List<Integer> drugIds = getCart().getDrugs().stream().map(d -> d.getId()).collect(Collectors.toList());
 			
 	 		recipe.setDrugIds(drugIds);
 	 		
-			String expieryDate = params.get("year")[0] + "/" + params.get("month")[0] + "/" + params.get("day")[0];
-			SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
-		    java.util.Date utilDate = null;
-			try {
-				utilDate = format.parse(expieryDate);
-			} catch (ParseException e) {
-				logger.error(Arrays.toString(e.getStackTrace()));
-			}
-		    Date sqlDate = new Date(utilDate.getTime());
 			recipe.setExpieryDate(sqlDate);
 			
 			getCart().setExpieryDate(sqlDate);

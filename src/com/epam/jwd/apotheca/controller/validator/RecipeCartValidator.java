@@ -36,7 +36,7 @@ public class RecipeCartValidator implements Validator {
 		} else {
 			//TODO 2.ecли дата истечения  рецепта вышла за пределы допустимого интервала
 			Date currentDate = new Date(System.currentTimeMillis());
-			if ( currentDate.after(cart.getExpieryDate()) ) {
+			if ( ( cart.getExpieryDate() != null && cart.getUserId() != null ) && currentDate.after(cart.getExpieryDate()) ) {
 				messages.add("Cannot create a recipe. It's out of date." );
 				logger.error("cannot create a recipe. It's out of date" );
 				result = false;

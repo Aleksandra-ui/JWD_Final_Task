@@ -1,11 +1,16 @@
 package com.epam.jwd.apotheca.controller.action;
 
+import java.sql.Date;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.epam.jwd.apotheca.controller.DrugManagerService;
 import com.epam.jwd.apotheca.controller.RecipeCart;
 import com.epam.jwd.apotheca.controller.UserManagerService;
+import com.epam.jwd.apotheca.controller.validator.RecipeCartValidator;
+import com.epam.jwd.apotheca.controller.validator.Validator;
 import com.epam.jwd.apotheca.model.Drug;
 import com.epam.jwd.apotheca.model.User;
 
@@ -18,9 +23,12 @@ public abstract class RecipeCartAction implements RunCommand, RecipeCartAware {
 	private List<Drug> drugs;
 	private List<User> clients;
 	private User user;
+	private Validator validator;
+	private Map<Drug, Drug> invalidDrugs = new HashMap<Drug, Drug>();
 	
 	public RecipeCartAction() {
 		clients = new ArrayList<User>();
+		validator = new RecipeCartValidator();
 	}
 	
 	public Integer getTotalCount() {
@@ -38,8 +46,6 @@ public abstract class RecipeCartAction implements RunCommand, RecipeCartAware {
 		pageSize = params.get("pageSize") == null ? 5 : Integer.valueOf(params.get("pageSize")[0]);
 		currentPage = params.get("currentPage") == null ? 1
 				: Integer.valueOf(params.get("currentPage")[0]);
-		
-		setDrugs( getCart().getDrugs(getPageSize() * (getCurrentPage() - 1), getPageSize()) );
 		
 		return null;
 		
@@ -108,6 +114,47 @@ public abstract class RecipeCartAction implements RunCommand, RecipeCartAware {
 	@Override
 	public boolean isSecure() {
 		return true;
+	}
+
+	public Validator getValidator() {
+		return validator;
+	}
+
+	protected void updateDrugs() {
+		
+		getCart().setInvalid(false);
+		
+		List<Drug> drugsToDisplay = getCart().getDrugs(getPageSize() * (getCurrentPage() - 1), getPageSize());
+		
+		getValidator().setValue(getCart());
+		if ( ! getValidator().validate() ) {
+			getCart().setInvalid(true);
+		}
+		
+		if ( getCart().isInvalid() ) {
+			
+			//TODO 2.ecли дата истечения  рецепта вышла за пределы допустимого интервала
+			//TODO 3.существует ли польз-тель в системе
+			Date currentDate = new Date(System.currentTimeMillis());
+			if ( getCart().getExpieryDate() != null && (currentDate.after(getCart().getExpieryDate()) || UserManagerService.getInstance().getUser(getCart().getUserId()) == null) ) {
+				drugsToDisplay.stream().forEach(d -> invalidDrugs.put(d, d));
+			} else {
+				for ( Drug d : getCart().getDrugs() ) {
+					Drug actualDrug = DrugManagerService.getInstance().getDrug(d.getId());
+					//TODO 1.ecли лек-во было по рецепту,а стало в свободном доступе
+					if ( ! actualDrug.isPrescription() ) {
+						invalidDrugs.put(d, actualDrug);
+					}
+				}
+			}
+		}
+		
+		setDrugs( drugsToDisplay );
+		
+	}
+
+	public Map<Drug, Drug> getInvalidDrugs() {
+		return invalidDrugs;
 	}
 	
 }

@@ -12,6 +12,7 @@ public class RecipeCart {
 	private List<Drug> drugs = new ArrayList<Drug>();
 	private Date expieryDate;
 	private Integer userId;
+	private boolean invalid;
 
 	public void addDrug(Drug drug) {
 
@@ -59,5 +60,14 @@ public class RecipeCart {
 	public void setUserId(Integer userId) {
 		this.userId = userId;
 	}
+	
+	public boolean isInvalid() {
+		return invalid;
+	}
+
+	public void setInvalid(boolean invalid) {
+		this.invalid = invalid;
+	}
+	
 
 }
