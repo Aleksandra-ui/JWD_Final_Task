@@ -52,6 +52,7 @@ public class DrugsBill implements RunCommand, ShoppingCartAware {
 	public String run() {
 		errorMessages.clear();
 		if ( getCart().getProducts().size() > 0 ){
+			getCart().setInvalid(false);
 			order = OrderManagerService.getInstance().buy(user.getId(), getCart().getProducts());
 			if ( order != null ) {
 				getCart().getProducts().clear();
@@ -61,15 +62,17 @@ public class DrugsBill implements RunCommand, ShoppingCartAware {
 				}
 				totalCount = order.getDrugs().size();
 			} else {
-				errorMessages.add("Cannot create an order.");
-				logger.error("Cannot create an order.");
-				//TODO дописать валидатор количества доступных лек-в,запустить и рез-тат добавить в errorMessages
 				validators.get("cart").setValue(getCart());
 				for (Validator validator : validators.values()) {
 					if ( ! validator.validate() ) {
 						errorMessages.addAll( validator.getMessages() );
 					}
 				}
+				if ( ! errorMessages.isEmpty() ) {
+					getCart().setInvalid(true);
+				}
+				errorMessages.add("Cannot create an order.");
+				logger.error("Cannot create an order.");
 			}
 		} 
 		if ( order != null ) {

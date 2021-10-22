@@ -8,6 +8,7 @@ import com.epam.jwd.apotheca.model.Drug;
 public class ShoppingCart {
 
 	private Map<Drug, Integer> products = new TreeMap<Drug, Integer>();
+	private boolean invalid;
 
 	public void addDrug(Drug drug, Integer quantity) {
 
@@ -50,4 +51,12 @@ public class ShoppingCart {
 		
 	}
 
+	public boolean isInvalid() {
+		return invalid;
+	}
+
+	public void setInvalid(boolean invalid) {
+		this.invalid = invalid;
+	}
+	
 }

@@ -7,7 +7,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.epam.jwd.apotheca.dao.api.UserDAO;
-import com.epam.jwd.apotheca.model.Drug;
 import com.epam.jwd.apotheca.model.Role;
 import com.epam.jwd.apotheca.model.User;
 import com.epam.jwd.apotheca.pool.ConnectionPool;
@@ -148,7 +147,7 @@ public class UserDAOTest {
 
 	@Test
 	public void testFindUsersByRole() {
-		System.out.println(userDAO.findUsersByRole(UserDAO.PERM_CLIENT));
+		System.out.println(userDAO.findUsersByRole(UserDAO.ROLE_NAME_CLIENT));
 	}
 	
 	@Test
@@ -169,10 +168,7 @@ public class UserDAOTest {
 	static User createStandardUser() {
 		
 		User user = new User();
-		Role role = new Role();
-		role.setId(UserDAO.ROLE_CLIENT);
-		role.setName("client");
-		role.setPermission(UserDAO.PERM_CLIENT);
+		Role role = ((UserDAOImpl)userDAO).findRole(UserDAO.ROLE_NAME_CLIENT);
 
 		user.setName("Maksim Fiodorov");
 		user.setPassword("789");

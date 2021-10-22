@@ -1,5 +1,6 @@
 package com.epam.jwd.apotheca.controller;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -9,8 +10,8 @@ import com.epam.jwd.apotheca.model.Drug;
 public class RecipeCart {
 
 	private List<Drug> drugs = new ArrayList<Drug>();
-//	private Date expieryDate;
-//	private Integer userId;
+	private Date expieryDate;
+	private Integer userId;
 
 	public void addDrug(Drug drug) {
 
@@ -43,20 +44,20 @@ public class RecipeCart {
 		
 	}
 
-//	public Date getExpieryDate() {
-//		return expieryDate;
-//	}
-//
-//	public void setExpieryDate(Date expieryDate) {
-//		this.expieryDate = expieryDate;
-//	}
-//
-//	public Integer getUserId() {
-//		return userId;
-//	}
-//
-//	public void setUserId(Integer userId) {
-//		this.userId = userId;
-//	}
+	public Date getExpieryDate() {
+		return expieryDate;
+	}
+
+	public void setExpieryDate(Date expieryDate) {
+		this.expieryDate = expieryDate;
+	}
+
+	public Integer getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Integer userId) {
+		this.userId = userId;
+	}
 
 }

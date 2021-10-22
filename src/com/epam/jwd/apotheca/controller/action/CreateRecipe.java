@@ -88,7 +88,6 @@ public class CreateRecipe implements RunCommand, RecipeCartAware {
 		validators.get("client").setValue(params);
 		validators.get("doctor").setValue(user);
 		validators.get("access").setValue(user);
-		//TODO дописать валидацию
 		validators.get("cart").setValue(cart);
 		
 		for (Validator validator : validators.values()) {
@@ -124,6 +123,9 @@ public class CreateRecipe implements RunCommand, RecipeCartAware {
 			}
 		    Date sqlDate = new Date(utilDate.getTime());
 			recipe.setExpieryDate(sqlDate);
+			
+			getCart().setExpieryDate(sqlDate);
+			getCart().setUserId(client.getId());
 			
 			if ( service.addRecipe(recipe) ) {
 				this.expieryDate = expieryDate;

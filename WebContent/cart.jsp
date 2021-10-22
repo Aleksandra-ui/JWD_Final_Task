@@ -114,12 +114,14 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 				<c:when test="${not empty action.cart}">
 					<c:set var="totalA" value="0"></c:set>
 					<c:forEach items="${action.products}" var="d">
-						<tr>
-							<td><c:out value="${d.key.id}" /></td>
-							<td><c:out value="${d.key.name}" /></td>
-							<td><c:out value="${d.key.dose }" /></td>
-							<td><c:out value="${d.key.price }" /></td>
-							<td><c:out value="${d.value }" /></td>
+						<tr 
+							<c:if test="${not empty action.invalidDrugs[d] }>bgcolor="LightPink"</c:if>
+						>
+							<td>${d.key.id}</td>
+							<td>${d.key.name}</td>
+							<td>${d.key.dose }</td>
+							<td>${d.key.price }</td>
+							<td>${d.value }</td>
 							<td><a onclick="updateShoppingCart(${d.key.id}, false);"><u>remove</u></a></td>
 						</tr>
 						<c:set var="totalA" value="${totalA + d.key.price * d.value }"></c:set>

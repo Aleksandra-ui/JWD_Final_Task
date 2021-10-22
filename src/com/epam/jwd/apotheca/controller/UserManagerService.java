@@ -74,7 +74,7 @@ public class UserManagerService {
 	}
 
 	public List<User> getClients() {
-		return userDAO.findUsersByRole(UserDAO.ROLE_CLIENT);
+		return userDAO.findUsersByRole(UserDAO.ROLE_NAME_CLIENT);
 	}
 
 	public User getUser(String name) {

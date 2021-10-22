@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import com.epam.jwd.apotheca.controller.UserManagerService;
 import com.epam.jwd.apotheca.dao.api.UserDAO;
-import com.epam.jwd.apotheca.model.Role;
 import com.epam.jwd.apotheca.model.User;
 
 public class Logon implements RunCommand {
@@ -66,11 +65,7 @@ public class Logon implements RunCommand {
 					user = new User();
 					user.setName(userName);
 					user.setPassword(userPass);
-					Role role = new Role();
-					role.setId(UserDAO.ROLE_CLIENT);
-					role.setName("client");
-					role.setPermission(UserDAO.PERM_CLIENT);
-					user.setRole(role);
+					user.setRole(userService.findRole(UserDAO.ROLE_NAME_CLIENT));
 					if ( ! userService.createUser(user) ){
 						user = null;
 						messages.add("User " + user.getName() + " didn't log on.");

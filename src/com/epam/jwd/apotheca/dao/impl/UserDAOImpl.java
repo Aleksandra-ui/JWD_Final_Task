@@ -245,15 +245,15 @@ public class UserDAOImpl implements UserDAO {
 	}
 
 	@Override
-	public List<User> findUsersByRole(Integer roleId) {
+	public List<User> findUsersByRole(String roleName) {
 
 		List<User> users = new ArrayList<User>();
 		String query = "select u.id, u.name, u.password, r.id, r.name, r.permission from mydb.users u "
-				+ "join mydb.roles r on r.id = u.role_id where r.id = ? order by u.id";
+				+ "join mydb.roles r on r.id = u.role_id where r.name = '" + roleName + "' order by u.id";
 
-		try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement(query);) {
-			st.setInt(1, roleId);
-			ResultSet rs = st.executeQuery();
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
+			ResultSet rs = st.executeQuery(query);
+			logger.trace("following query was executed successfully:\n" + query);
 			while (rs.next()) {
 				User user = new User();
 				Role role = new Role();
@@ -267,12 +267,17 @@ public class UserDAOImpl implements UserDAO {
 				users.add(user);
 			}
 			rs.close();
+			if ( users.isEmpty() ) {
+				logger.info("no users with role '{}' were found", roleName);
+			} else {
+				logger.info("found {} users with role '{}'", users.size(), roleName);
+			}
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find users by role");
+			logger.error("failure during handling an SQL:\n" + query);
 			e.printStackTrace();
 		}
 
-		logger.info("found users by role");
 		return users;
 	}
 	
@@ -349,45 +354,29 @@ public class UserDAOImpl implements UserDAO {
 		
 		User user = findById(userId);
 		if ( user == null ) {
-			logger.error("error while attempting to change role. user with id " + userId + " doesn't exist");
+			logger.error("error while attempting to change role. user with id {} doesn't exist", userId);
 			return null;
 		}
 		String userName = user.getName();
 		
 		if ( roleName.equals( user.getRole().getName() ) ) {
-			logger.trace("the role is already assigned to user " + user.getName());
+			logger.trace("the role is already assigned to user '{}'", user.getName());
 			return user;
 		}
 		
-		Role role = new Role();
+		Role role = findRole(roleName);
 		
-		switch ( roleName ) {
-		
-			case "doctor":
-				role.setPermission(PERM_CLIENT + PERM_DOCTOR);
-				role.setId(ROLE_DOCTOR);
-				break;
-			case "pharmacist":
-				role.setPermission(PERM_CLIENT + PERM_PHARMACIST);
-				role.setId(ROLE_PHARMACIST);
-				break;
-			case "client":
-				role.setPermission(PERM_CLIENT);
-				role.setId(ROLE_CLIENT);
-				break;
-			default:
-				logger.warn("such role doesn't exist");
-				return null;
-				
+		if ( role == null ) {
+			logger.warn("such role doesn't exist");
+			return null;
 		}
 		
-		role.setName(roleName);
 		user.setRole(role);
 		user = update(user);
 		if ( user != null ) {
-			logger.info("role of user " + user.getName() + " was changed");
+			logger.info("role of user {} was changed to '{}'", user.getName(), roleName);
 		} else {
-			logger.warn("cannot change the role of user " + userName);
+			logger.warn("cannot change the role of user '{}'", userName);
 		}
 		
 		return user;
@@ -395,34 +384,30 @@ public class UserDAOImpl implements UserDAO {
 	}
 	
 	public Role findRole( String name ) {
-		//TODO получать роли из БД
-		Role role = new Role();
 		
-		switch ( name ) {
+		String query = "select r.name, r.permission, r.id from mydb.roles r where r.name = '" + name + "'";
+		Role role = null;
 		
-			case "doctor":
-				role.setPermission(PERM_CLIENT + PERM_DOCTOR);
-				role.setId(ROLE_DOCTOR);
-				break;
-			case "pharmacist":
-				role.setPermission(PERM_CLIENT + PERM_PHARMACIST);
-				role.setId(ROLE_PHARMACIST);
-				break;
-			case "client":
-				role.setPermission(PERM_CLIENT);
-				role.setId(ROLE_CLIENT);
-				break;
-			case "admin":
-				role.setPermission(PERM_ADMIN);
-				role.setId(ROLE_ADMIN);
-				break;
-			default:
-				logger.warn("such role doesn't exist");
-				return null;
-			
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
+			ResultSet rs = st.executeQuery( query );
+			logger.trace("following query was executed successfully:\n" + query);
+			if (rs.next()) {
+				role = new Role();
+				role.setId(rs.getInt("r.id"));
+				role.setPermission(rs.getInt("r.permission"));
+				role.setName(name);
+			}
+			rs.close();
+			if ( role == null ) {
+				logger.warn("cannot find a role with name '" + name + "'");
+			} else {
+				logger.info("found a role with name '" + name + "'");
+			}
+		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to find a role with name '" + name + "'");
+			logger.error("failed SQL:\n" + query);
+			e.printStackTrace();
 		}
-		
-		role.setName(name);
 		
 		return role;
 		

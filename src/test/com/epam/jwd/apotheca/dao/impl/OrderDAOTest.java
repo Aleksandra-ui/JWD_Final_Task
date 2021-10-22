@@ -74,8 +74,7 @@ public class OrderDAOTest {
 	public void testGetTotalCount() throws InterruptedException {
 		
 		User user = new User();
-		Role role = new Role();
-		role.setId(UserDAO.ROLE_CLIENT);
+		Role role = ((UserDAOImpl)userDAO).findRole(UserDAO.ROLE_NAME_CLIENT);
 
 		user.setName("test user");
 		user.setPassword("789");
@@ -113,11 +112,8 @@ public class OrderDAOTest {
 	static User createStandardUser() {
 		
 		User user = new User();
-		Role role = new Role();
-		role.setId(UserDAO.ROLE_CLIENT);
-		role.setName("client");
-		role.setPermission(UserDAO.PERM_CLIENT);
-
+		Role role = ((UserDAOImpl)userDAO).findRole(UserDAO.ROLE_NAME_CLIENT);
+		
 		user.setName("Maksim Fiodorov");
 		user.setPassword("789");
 		user.setRole(role);

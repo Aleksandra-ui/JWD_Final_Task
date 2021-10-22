@@ -36,10 +36,7 @@
 				user = new User();
 				user.setName(userName);
 				user.setPassword(userPass);
-				Role role = new Role();
-				role.setId(UserDAO.ROLE_CLIENT);
-				role.setName("client");
-				role.setPermission(UserDAO.PERM_CLIENT);
+				Role role = service.findRole(UserDAO.ROLE_NAME_CLIENT);
 				user.setRole(role);
 				if (!service.createUser(user, session)){
 					user=null;
