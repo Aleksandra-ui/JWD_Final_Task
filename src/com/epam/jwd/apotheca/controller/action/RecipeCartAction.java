@@ -23,7 +23,7 @@ public abstract class RecipeCartAction implements RunCommand, RecipeCartAware {
 	private List<Drug> drugs;
 	private List<User> clients;
 	private User user;
-	private Validator validator;
+	private Map<String, Validator> validators;
 	protected List<Drug> invalidDrugs;
 	private Map<String, String> errors;
 	
@@ -31,7 +31,8 @@ public abstract class RecipeCartAction implements RunCommand, RecipeCartAware {
 		invalidDrugs = new ArrayList<Drug>();
 		errors = new HashMap<String, String>();
 		clients = new ArrayList<User>();
-		validator = new RecipeCartValidator();
+		validators = new HashMap<String, Validator>();
+		validators.put( "cart", new RecipeCartValidator() );
 	}
 	
 	public Integer getTotalCount() {
@@ -45,7 +46,8 @@ public abstract class RecipeCartAction implements RunCommand, RecipeCartAware {
 		
 		UserManagerService userService = UserManagerService.getInstance();
 		setClients( userService.getClients() );
-		getCart().setExpieryDate(null);
+//		getCart().setExpieryDate(null);
+//		getCart().setUserId(null);
 		pageSize = params.get("pageSize") == null ? 5 : Integer.valueOf(params.get("pageSize")[0]);
 		currentPage = params.get("currentPage") == null ? 1
 				: Integer.valueOf(params.get("currentPage")[0]);
@@ -101,7 +103,7 @@ public abstract class RecipeCartAction implements RunCommand, RecipeCartAware {
 	}
 
 	public void setClients(List<User> clients) {
-		this.clients.addAll(clients);
+		this.clients = clients;
 	}
 	
 	@Override
@@ -119,11 +121,7 @@ public abstract class RecipeCartAction implements RunCommand, RecipeCartAware {
 		return true;
 	}
 
-	public Validator getValidator() {
-		return validator;
-	}
-
-	protected void updateDrugs() {
+	protected void updateCart() {
 		
 		invalidDrugs.clear();
 		errors.clear();
@@ -131,25 +129,32 @@ public abstract class RecipeCartAction implements RunCommand, RecipeCartAware {
 		
 		List<Drug> drugsToDisplay = getCart().getDrugs(getPageSize() * (getCurrentPage() - 1), getPageSize());
 		
-		getValidator().setValue(getCart());
-		if ( ! getValidator().validate() ) {
-			getCart().setInvalid(true);
+		setValidators();
+		for ( Validator v : getValidators().values() ) {
+			if ( ! v.validate() ) {
+				getCart().setInvalid(true);
+			}
 		}
 		
 		if ( getCart().isInvalid() ) {
-			
-			
 			
 			//TODO 2.ecли дата истечения  рецепта вышла за пределы допустимого интервала
 			//TODO 3.существует ли польз-тель в системе
 			Date currentDate = new Date(System.currentTimeMillis());
 
-			if ( ! ( getCart().getExpieryDate() == null && UserManagerService.getInstance().getUser(getCart().getUserId()) == null )  ) {
-				if ( UserManagerService.getInstance().getUser(getCart().getUserId()) == null ) {
-					errors.put("user", "no such user is present in the system");
-				}
+			if ( getCart().getExpieryDate() != null ) {
 				if ( currentDate.after(getCart().getExpieryDate()) ) {
 					errors.put("date", "expiery date has expired");
+				}
+			} 
+			if ( getCart().getUserId() == null ) {
+				if ( params.get("clientId") != null ) {
+					errors.put("user", "no such user in the system");
+				}
+			} else {
+				if ( UserManagerService.getInstance().getUser(getCart().getUserId()) == null ) {
+					getCart().setUserId(null);
+					errors.put("user", "no such user in the system");
 				}
 			} 
 			
@@ -167,12 +172,20 @@ public abstract class RecipeCartAction implements RunCommand, RecipeCartAware {
 		
 	}
 
+	public void setValidators() {
+		getValidators().get("cart").setValue(getCart());
+	}
+
 	public List<Drug> getInvalidDrugs() {
 		return invalidDrugs;
 	}
 
 	public Map<String, String> getErrors() {
 		return errors;
+	}
+
+	public Map<String, Validator> getValidators() {
+		return validators;
 	}
 	
 }

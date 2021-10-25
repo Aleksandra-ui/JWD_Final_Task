@@ -50,19 +50,18 @@
 					dayOpt.hidden = true;
 				}
 		}
-	}	
-
+	}
+	
 </script>
 
 <body onload="fillDaySelect();">
 
 	<%
-		RecipeCartAction bean = (RecipeCartAction)request.getAttribute("action");
-	
-		Integer totalCount = bean.getTotalCount();
-		int pageSize = bean.getPageSize();
-		int currentPage = bean.getCurrentPage();
+			RecipeCartAction bean = (RecipeCartAction)request.getAttribute("action");
 		
+			Integer totalCount = bean.getTotalCount();
+			int pageSize = bean.getPageSize();
+			int currentPage = bean.getCurrentPage();
 	%>
 
 	<c:if test="${(not empty action.cart) and (not empty action.drugs) }">
@@ -172,23 +171,23 @@
 			
 			<div id = "errorStatus" class="container" align="center"></div>
 		
-		${action.errors }
 			<form action="createRecipe.run" method="POST" class="container" align="center" style="margin-top: 20px">
 				<div id = "div" <c:if test="${empty action.cart.drugs}">style="display:none"</c:if>>
 					<input class="btn btn-primary" type="submit" <c:if test="${action.cart.invalid }">disabled</c:if> value="<%=rb.getString("drugs.recipe")%>"/>
-					<select name="clientName">
-					<c:forEach items="${action.clients}" var="client">
-						<option>
-							<c:out value="${client.name }"/>
-						</option>
-					</c:forEach>
+					<select id="clientId" name="clientId" onchange="updateUser(this.value);">
+						<c:if test="${empty action.cart.userId }"><option/></c:if>
+						<c:forEach items="${action.clients}" var="client">
+							<option value="${client.id }"
+							<c:if test="${action.cart.userId eq client.id }">selected</c:if>
+							>${client.name }</option>
+						</c:forEach>
 					</select>
-					<select id="Year" name="year" onchange="fillDaySelect()">
+					<select id="Year" name="year" onchange="fillDaySelect();setExpieryDate()">
 					<c:forEach begin="2022" end="2024" var="a">
 						<option id="${a }">${a }</option>
 					</c:forEach>
 					</select> 
-					<select id="Month" name="month" onchange="fillDaySelect()" >
+					<select id="Month" name="month" onchange="fillDaySelect();setExpieryDate()" >
 						<option id="january"  value="01">january</option>
 						<option id="february"  value="02">february </option>
 						<option id="march"  value="03">march</option>
@@ -202,7 +201,7 @@
 						<option id="november"  value="11">november</option>	
 						<option id="december" value="12">december</option>	
 					</select> 
-					<select id="Day" name="day" >
+					<select id="Day" name="day" onchange="setExpieryDate()">
 						<c:forEach var="d" begin="1" end="28">
 							<option>${(d lt 10) ? '0' : ''}${d}</option>  	
 						</c:forEach>

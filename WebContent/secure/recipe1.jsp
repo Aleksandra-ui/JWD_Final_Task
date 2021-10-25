@@ -112,6 +112,71 @@ function displayCart(currentPage, pageSize) {
 	
 }
 
+function setClientName(select) {
+	
+		var opt = select.options[select.selectedIndex];
+		var clientName = opt.text;
+	
+		var xmlhttp = new XMLHttpRequest();
+		
+		xmlhttp.open("GET", "setClientName.run?clientName=" + clientName, true);	
+		xmlhttp.send();
+	
+}
+
+function setClientName(select) {
+	
+	var opt = select.options[select.selectedIndex];
+	var clientName = opt.text;
+
+	var xmlhttp = new XMLHttpRequest();
+	
+	xmlhttp.open("GET", "setClientName.run?clientName=" + clientName, true);	
+	xmlhttp.send();
+
+}
+
+function setExpieryDate(select) {
+	
+	var yearSelect = document.getElementById("Year");
+	var monthSelect = document.getElementById("Month");
+	var daySelect = document.getElementById("Day");
+	
+	var year = yearSelect.options[yearSelect.selectedIndex].text;
+	var month = monthSelect.options[monthSelect.selectedIndex].text;
+	var day = daySelect.options[daySelect.selectedIndex].text;
+	
+	var xmlhttp = new XMLHttpRequest();
+	
+	xmlhttp.onreadystatechange = function() {
+		//this это объект xmlhttp
+		if (this.readyState == 4 && this.status == 200) {
+			displayShoppingCart(this);
+	  	}
+	};
+	
+	xmlhttp.open("GET", "setExpieryDate.run?year=" + year + "&month=" + month + "&day=" + day, true);	
+	xmlhttp.send();
+	
+}
+
+function updateUser( clientId ) {
+	
+	var xmlhttp = new XMLHttpRequest();
+	//функция которая вызывается когда завершилась загрузка
+	xmlhttp.onreadystatechange = function() {
+		//this это объект xmlhttp
+		if (this.readyState == 4 && this.status == 200) {
+			displayShoppingCart(this);
+	  	}
+	};
+	
+	xmlhttp.open("GET", "setClientName.run?clientId=" + clientId, true);	
+	
+	xmlhttp.send();
+		
+}
+
 </script>
 
 <body onload="displayCart();">

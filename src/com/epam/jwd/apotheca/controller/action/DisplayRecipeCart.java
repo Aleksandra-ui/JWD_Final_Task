@@ -11,7 +11,7 @@ public class DisplayRecipeCart extends RecipeCartAction implements RecipeCartAwa
 		
 		super.run();
 		
-		updateDrugs();
+		updateCart();
 		return null;
 	}
 

@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.epam.jwd.apotheca.controller.UserManagerService;
+import java.util.Arrays;
 
 public class UserIdValidator implements Validator {
 	
@@ -49,7 +50,7 @@ public class UserIdValidator implements Validator {
 				messages.add("User id value is wrong.");
 				logger.warn("user id value is wrong");
 				result = false;
-				e.printStackTrace();
+				logger.error(Arrays.toString(e.getStackTrace()));
 			}
 			
 		}

@@ -24,7 +24,7 @@ public class AddToRecipeCart extends RecipeCartAction implements RecipeCartAware
 		
 		
 		
-		updateDrugs();
+		updateCart();
 		
 		return null;
 	}

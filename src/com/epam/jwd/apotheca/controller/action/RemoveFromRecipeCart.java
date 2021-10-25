@@ -19,7 +19,7 @@ public class RemoveFromRecipeCart extends RecipeCartAction implements RecipeCart
 		
 		
 		
-		updateDrugs();
+		updateCart();
 		return null;
 		
 	}

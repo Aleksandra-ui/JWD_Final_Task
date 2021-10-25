@@ -44,8 +44,8 @@ public class RecipeCartValidator implements Validator {
 			} else {
 				User client = UserManagerService.getInstance().getUser(cart.getUserId());
 				if ( client == null ) {
-					messages.add("Cannot create a recipe. Specified client is not present in the system.");
-					logger.error("cannot create a recipe.  Specified client is not present in the system");
+					messages.add("Cannot create a recipe. Specified client with id " + cart.getUserId() + " is not present in the system.");
+					logger.error("cannot create a recipe.  Specified client with id {} is not present in the system", cart.getUserId());
 					result = false;
 				} else {
 					for ( Drug d : cart.getDrugs() ) {
