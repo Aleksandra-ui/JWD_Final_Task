@@ -22,6 +22,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 
 <script type="text/javascript">
 	
+	/* 	
 	function addRemoveFromCart(checkbox, drugId) {
 	
 		amount = document.getElementById("amount" + drugId);
@@ -35,7 +36,8 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 			amount.setAttribute("disabled", true);
 		}
 	
-	}
+ 	}
+ 	*/
 	
 	function changePageSize (select) {
 	
@@ -45,16 +47,23 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 	
 	function validateAmount(input) {
 		
+		control = document.getElementById("buyButton");
 		result = false;
 		if (input.value < 1 || input.value > 100) {
+			if (control) {
+				control.setAttribute("disabled", true);
+			}
 			input.className = "error";
 			document.getElementById("errorStatus").innerHTML = "<label style='color:red;'>Value exceeds allowed range</label>";
 		} else {
+			if (control) {
+				control.setAttribute("disabled", false);
+			}
 			input.className = "";
 			document.getElementById("errorStatus").innerHTML = "";
 			result = true;
 		}
-		console.log("input " + input.id + ", value " + input.value + ", class " + input.className);
+		// console.log("input " + input.id + ", value " + input.value + ", class " + input.className);
 		return result;
 		
 	}
@@ -62,7 +71,11 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 	function updateShoppingCart( drugId, add, amountControlId ) {
 		
 		if ( add ) {
-			var amount = document.getElementById(amountControlId).value;	
+			control = document.getElementById(amountControlId);
+			var amount = 1;
+			if ( control ) {
+				amount = document.getElementById(amountControlId).value;	
+			}
 		}
 		
 		var xmlhttp = new XMLHttpRequest();
@@ -74,12 +87,13 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 				if ( element ) {
 					element.checked = add;  
 				}
-				element = document.getElementById("amount" + drugId);
+				/*code block for enabling/disabling input in drugs table
+				element = document.getElementById(amountControlId);
 				if ( element ) {
 					element.disabled = ! add;  
 				}
+				*/
 				
-				console.log(this.getAllResponseHeaders());
 				displayShoppingCart(this);
 		  	}
 		};
@@ -184,7 +198,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 				<th><%=rb.getString("drugs.quantity")%></th>
 				<th><%=rb.getString("drugs.price")%></th>
 				<th><%=rb.getString("drugs.prescription")%></th>
-				<th><%=rb.getString("drugs.amount")%></th>
+ 				<%--th><%=rb.getString("drugs.amount")%></th--%> 
 				<th><%=rb.getString("drugs.date")%></th>
 				<th><%=rb.getString("drugs.cart")%></th>
 			</tr>
@@ -214,14 +228,14 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 								<c:if test="${d.prescription}"><%=rb.getString("drugs.yes")%></c:if>
 								<c:if test="${not d.prescription}"><%=rb.getString("drugs.no")%></c:if>
 							</td>
-							<td>
-								<input type="number" 
-								<c:choose>
-									<c:when test="${present }">value=${amount }</c:when>
-									<c:otherwise>value=0 disabled</c:otherwise>
-								</c:choose>
-								id="amount${d.id}" onchange="if (validateAmount(this)){onkeyup();}" onkeyup="updateShoppingCart(${d.id}, document.getElementById('drug${d.id}').checked, 'amount${d.id}')"/>
-							</td>
+							<%-- <td> 
+ 								<input type="number"  
+ 								<c:choose> 
+ 									<c:when test="${present }">value=${amount }</c:when> 
+ 									<c:otherwise>value=0 disabled</c:otherwise> 
+ 								</c:choose> 
+ 								id="amount${d.id}" onchange="if (validateAmount(this)){onkeyup();}" onkeyup="updateShoppingCart(${d.id}, document.getElementById('drug${d.id}').checked, 'amount${d.id}')"/> 
+ 							</td> --%>
 							<!-- expiery date -->
 							<td>
 								<c:if test="${not empty action.drugsFromRecipe[d.id] }">
@@ -233,8 +247,8 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 								<c:choose>
 									<c:when test="${(not d.prescription)}">
 										<input type="checkbox" id="drug${d.id}" value="${d.id}" name="drug"
-											onchange="addRemoveFromCart(this, ${d.id });
-													  updateShoppingCart(${d.id}, this.checked, 'amount${d.id}');"
+											onchange="/*addRemoveFromCart(this, ${d.id });*/
+													  updateShoppingCart(${d.id}, this.checked, 'cartAmount${d.id}');"
 													  <c:if test="${d.quantity eq 0 }">disabled</c:if>
 											<c:out value="${present ? 'checked' : ''}"/> />
 									</c:when>
@@ -256,7 +270,8 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 		</tbody>
 	</table>
 		
-	<div id = "errorStatus" class="container" align="center"></div>
+	<!-- 	element for displaying validator errors -->
+ 	<!-- div id = "errorStatus" class="container" align="center"></div -->
 	
 	<div id = "shoppingCart" class="container" align="center"></div>
 		

@@ -10,13 +10,14 @@ public class RemoveFromRecipeCart extends RecipeCartAction implements RecipeCart
 	@Override
 	public String run() {
 		
+		super.run();
 		String id = getParams().get("drugId") == null ? null : getParams().get("drugId")[0];
 		
 		if ( id != null ) {
 			getCart().removeDrug(DrugManagerService.getInstance().getDrug(Integer.valueOf(id)));
 		}
 		
-		super.run();
+		
 		
 		updateDrugs();
 		return null;

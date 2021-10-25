@@ -49,6 +49,11 @@ public class ShoppingCartValidator implements Validator {
 					result = false;
 				} else {
 					Integer amountToBuy = cart.getProducts().get(drug);
+					if ( amountToBuy < 1 || amountToBuy > 100 ) {
+						messages.add("Amount " + amountToBuy + " exceeds allowed range (between 1 and 100).");
+						logger.error("amount exceeds allowed range (between 1 and 100)");
+						result = false;
+					}
 					if ( amountToBuy > actualDrug.getQuantity() ) {
 						messages.add("Cannot create an order.");
 						String message = String.format("Cannot sell drug '%s'. You asked for %d grand, when there are %d grand left.", drug.getName(), amountToBuy, actualDrug.getQuantity());

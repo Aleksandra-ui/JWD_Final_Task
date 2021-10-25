@@ -97,6 +97,9 @@ public abstract class CartAction implements RunCommand, ShoppingCartAware {
 	}
 
 	public void updateProducts() {
+		
+		invalidDrugs.clear();
+		
 		Map<Drug, Integer> drugsToDisplay = getCart().getProducts(getPageSize() * (getCurrentPage() - 1), getPageSize());
 		//запустить валидатор shoppingcart
 		//ecли валидатор имеет замечания,сетить в карт invalid(true),иначе false
@@ -108,7 +111,6 @@ public abstract class CartAction implements RunCommand, ShoppingCartAware {
 		
 		if ( getCart().isInvalid() ) {
 			
-			invalidDrugs.clear();
 			//заполнять список невалидными драгами по примеру shoppingCartValidator
 			//итер по drugsToDisplay
 			List<Integer> ids = new ArrayList<Integer>(drugsToDisplay.size());
@@ -132,6 +134,9 @@ public abstract class CartAction implements RunCommand, ShoppingCartAware {
 					errorColumns.put("absent", "1");
 				} else {
 					Integer amountToBuy = drugsToDisplay.get(drug);
+					if ( amountToBuy < 1 || amountToBuy > 100 ) {
+						errorColumns.put("amount", String.valueOf(actualDrug.getQuantity()));
+					}
 					if ( amountToBuy > actualDrug.getQuantity() ) {
 						errorColumns.put("amount", String.valueOf(actualDrug.getQuantity()));
 					}

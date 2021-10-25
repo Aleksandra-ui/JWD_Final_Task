@@ -110,7 +110,7 @@
 									<c:when
 										test="${displayPage == (empty param.currentPage ? 1 : param.currentPage)}">${displayPage} &nbsp;</c:when>
 									<c:otherwise>
-										<a onclick="displayCart(${displayPage}, ${action.pageSize })"><u>${displayPage}</u></a>&nbsp;
+										<a onclick="displayCart(${displayPage}, ${action.pageSize })" style="text-decoration: underline;">${displayPage}</a>&nbsp;
 									</c:otherwise>
 								</c:choose>
 							</c:forEach>
@@ -130,18 +130,33 @@
 					</tr>
 				</thead>
 	
-				<tbody align="center">
+				<tbody align="center" <c:if test="${not empty action.errors['user'] }">
+									  	   bgcolor="LightPink" title="${action.errors['user'] }"
+									  </c:if>
+									  <c:if test="${not empty action.errors['date'] }">
+									  	   bgcolor="LightPink" title="${action.errors['date'] }"
+									  </c:if>
+				>
 					
 					<c:choose>
 						<c:when test="${not empty action.cart}">
 							<c:forEach items="${action.drugs}" var="d">
-	
-								<tr>
+								
+								<c:set var="present" value="false"/>
+								<c:forEach items="${action.invalidDrugs}" var="i">
+									<c:if test="${i eq d }"><c:set var="present" value="true"/></c:if>
+								</c:forEach>
+								
+								<tr
+									<c:if test="${present }">
+											  bgcolor="LightPink" title="this drug now does not require prescription"
+									</c:if>
+								>
 									<td><c:out value="${d.id}" /></td>
 									<td><c:out value="${d.name}" /></td>
 									<td><c:out value="${d.dose }" /></td>
 									<td><c:out value="${d.price }" /></td>
-									<td><a onclick="updateRecipeCart(${d.id}, false);"><u>remove</u></a></td>
+									<td><a onclick="updateRecipeCart(${d.id}, false);" style="text-decoration: underline;">remove</a></td>
 								</tr>
 							</c:forEach>
 						</c:when>
@@ -157,6 +172,7 @@
 			
 			<div id = "errorStatus" class="container" align="center"></div>
 		
+		${action.errors }
 			<form action="createRecipe.run" method="POST" class="container" align="center" style="margin-top: 20px">
 				<div id = "div" <c:if test="${empty action.cart.drugs}">style="display:none"</c:if>>
 					<input class="btn btn-primary" type="submit" <c:if test="${action.cart.invalid }">disabled</c:if> value="<%=rb.getString("drugs.recipe")%>"/>
@@ -168,7 +184,7 @@
 					</c:forEach>
 					</select>
 					<select id="Year" name="year" onchange="fillDaySelect()">
-					<c:forEach begin="2021" end="2024" var="a">
+					<c:forEach begin="2022" end="2024" var="a">
 						<option id="${a }">${a }</option>
 					</c:forEach>
 					</select> 

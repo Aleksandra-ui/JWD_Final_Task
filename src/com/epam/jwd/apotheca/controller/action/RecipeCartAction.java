@@ -24,9 +24,12 @@ public abstract class RecipeCartAction implements RunCommand, RecipeCartAware {
 	private List<User> clients;
 	private User user;
 	private Validator validator;
-	private Map<Drug, Drug> invalidDrugs = new HashMap<Drug, Drug>();
+	protected List<Drug> invalidDrugs;
+	private Map<String, String> errors;
 	
 	public RecipeCartAction() {
+		invalidDrugs = new ArrayList<Drug>();
+		errors = new HashMap<String, String>();
 		clients = new ArrayList<User>();
 		validator = new RecipeCartValidator();
 	}
@@ -42,7 +45,7 @@ public abstract class RecipeCartAction implements RunCommand, RecipeCartAware {
 		
 		UserManagerService userService = UserManagerService.getInstance();
 		setClients( userService.getClients() );
-		
+		getCart().setExpieryDate(null);
 		pageSize = params.get("pageSize") == null ? 5 : Integer.valueOf(params.get("pageSize")[0]);
 		currentPage = params.get("currentPage") == null ? 1
 				: Integer.valueOf(params.get("currentPage")[0]);
@@ -122,6 +125,8 @@ public abstract class RecipeCartAction implements RunCommand, RecipeCartAware {
 
 	protected void updateDrugs() {
 		
+		invalidDrugs.clear();
+		errors.clear();
 		getCart().setInvalid(false);
 		
 		List<Drug> drugsToDisplay = getCart().getDrugs(getPageSize() * (getCurrentPage() - 1), getPageSize());
@@ -133,28 +138,41 @@ public abstract class RecipeCartAction implements RunCommand, RecipeCartAware {
 		
 		if ( getCart().isInvalid() ) {
 			
+			
+			
 			//TODO 2.ecли дата истечения  рецепта вышла за пределы допустимого интервала
 			//TODO 3.существует ли польз-тель в системе
 			Date currentDate = new Date(System.currentTimeMillis());
-			if ( getCart().getExpieryDate() != null && (currentDate.after(getCart().getExpieryDate()) || UserManagerService.getInstance().getUser(getCart().getUserId()) == null) ) {
-				drugsToDisplay.stream().forEach(d -> invalidDrugs.put(d, d));
-			} else {
-				for ( Drug d : getCart().getDrugs() ) {
-					Drug actualDrug = DrugManagerService.getInstance().getDrug(d.getId());
-					//TODO 1.ecли лек-во было по рецепту,а стало в свободном доступе
-					if ( ! actualDrug.isPrescription() ) {
-						invalidDrugs.put(d, actualDrug);
-					}
+
+			if ( ! ( getCart().getExpieryDate() == null && UserManagerService.getInstance().getUser(getCart().getUserId()) == null )  ) {
+				if ( UserManagerService.getInstance().getUser(getCart().getUserId()) == null ) {
+					errors.put("user", "no such user is present in the system");
+				}
+				if ( currentDate.after(getCart().getExpieryDate()) ) {
+					errors.put("date", "expiery date has expired");
+				}
+			} 
+			
+			for ( Drug d : getCart().getDrugs() ) {
+				Drug actualDrug = DrugManagerService.getInstance().getDrug(d.getId());
+				//TODO 1.ecли лек-во было по рецепту,а стало в свободном доступе
+				if ( ! actualDrug.isPrescription() ) {
+					invalidDrugs.add(d);
 				}
 			}
+			
 		}
 		
 		setDrugs( drugsToDisplay );
 		
 	}
 
-	public Map<Drug, Drug> getInvalidDrugs() {
+	public List<Drug> getInvalidDrugs() {
 		return invalidDrugs;
+	}
+
+	public Map<String, String> getErrors() {
+		return errors;
 	}
 	
 }

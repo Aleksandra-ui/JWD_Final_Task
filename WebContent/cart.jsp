@@ -88,7 +88,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 							<c:choose>
 								<c:when test="${displayPage == (empty param.currentPage ? 1 : param.currentPage)}">${displayPage} &nbsp;</c:when>
 								<c:otherwise>
-									<a onclick="displayCart(${displayPage}, ${action.pageSize })"><u>${displayPage}</u></a>&nbsp;
+									<a onclick="displayCart(${displayPage}, ${action.pageSize })" style="text-decoration: underline;">${displayPage}</a>&nbsp;
 								</c:otherwise>
 							</c:choose>
 						</c:forEach>
@@ -114,18 +114,17 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 				<c:when test="${not empty action.cart}">
 					<c:set var="totalA" value="0"></c:set>
 					<c:forEach items="${action.products}" var="d">
-						${action.invalidDrugs[d.key] }
 						<tr 
-								<c:if test="${not empty action.invalidDrugs[d.key] and 
-											((not empty action.invalidDrugs[d.key]['absent']) or 
-											 (not empty action.invalidDrugs[d.key]['prescription'])) }">
-									bgcolor="LightPink"
-									<c:if test="${not empty action.invalidDrugs[d.key] and (not empty action.invalidDrugs[d.key]['prescription']) }">
+							<c:if test="${not empty action.invalidDrugs[d.key] and 
+										((not empty action.invalidDrugs[d.key]['absent']) or 
+										 (not empty action.invalidDrugs[d.key]['prescription'])) }">
+										bgcolor="LightPink"
+							</c:if>
+							<c:if test="${not empty action.invalidDrugs[d.key] and (not empty action.invalidDrugs[d.key]['prescription']) }">
 										title="${action.invalidDrugs[d.key]['prescription'] }"
-									</c:if>
-								</c:if>
+							</c:if>
+								
 						>
-<%-- 							<td>${d}${action.invalidDrugs[d.key] }</td> --%>
 							<td>${d.key.id}</td>
 							<td>${d.key.name}</td>
 							<td>${d.key.dose }</td>
@@ -135,12 +134,17 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 									bgcolor="LightPink" title="${action.invalidDrugs[d.key]['price'] }"
 								</c:if>
 							>${d.key.price }</td>
-							<td
-								<c:if test="${not empty action.invalidDrugs[d.key] and (not empty action.invalidDrugs[d.key]['amount']) }">
-									bgcolor="LightPink" title="${action.invalidDrugs[d.key]['amount'] }"
-								</c:if>
-							>${d.value }</td>
-							<td><a onclick="updateShoppingCart(${d.key.id}, false);"><u>remove</u></a></td>
+							<td>
+								<input type="number"
+									id="cartAmount${d.key.id}"
+									<c:if test="${not empty action.invalidDrugs[d.key] and (not empty action.invalidDrugs[d.key]['amount']) }">
+										class="error" title="${action.invalidDrugs[d.key]['amount'] }"
+									</c:if>
+									onchange="if (validateAmount(this)){onkeyup();}"
+									onkeyup="updateShoppingCart(${d.key.id}, true, 'cartAmount${d.key.id}')"
+								 	value="${d.value }"/>
+							</td>
+							<td><a onclick="updateShoppingCart(${d.key.id}, false);" style="text-decoration: underline;">remove</a></td>
 						</tr>
 						<c:set var="totalA" value="${totalA + d.key.price * d.value }"></c:set>
 					</c:forEach>
@@ -158,7 +162,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 
 	<form action="drugsBill.run" method="POST">
 		<div id = "div" <c:if test="${empty action.cart.products}">style="display:none"</c:if> class="container" align="center">
-			<div id="totalAmount1"><font color="Blue">Total : </font><c:out value="${totalA }"/> <input type="submit" class="btn btn-primary" <c:if test="${action.cart.invalid }">disabled</c:if> value="<%=rb.getString("drugs.buy")%>"/></div>
+			<div id="totalAmount1"><font color="Blue">Total : </font><c:out value="${totalA }"/> <input id="buyButton" type="submit" class="btn btn-primary" <c:if test="${action.cart.invalid }">disabled</c:if> value="<%=rb.getString("drugs.buy")%>"/></div>
 		</div>
 	</form>
 

@@ -12,6 +12,8 @@ public class AddToRecipeCart extends RecipeCartAction implements RecipeCartAware
 	@Override
 	public String run() {
 
+		super.run();
+		
 		String id = getParams().get("drugId") == null ? null : getParams().get("drugId")[0];
 		if ( id != null ) {
 			Drug drug = DrugManagerService.getInstance().getDrug(Integer.valueOf(id));
@@ -20,7 +22,7 @@ public class AddToRecipeCart extends RecipeCartAction implements RecipeCartAware
 			}
 		}
 		
-		super.run();
+		
 		
 		updateDrugs();
 		
