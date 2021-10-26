@@ -13,7 +13,7 @@
 %>
 
 <style>
-	input.error{
+	.error{
 		background-color: #FFAAAA;
 	}
 </style>
@@ -63,6 +63,10 @@
 			int pageSize = bean.getPageSize();
 			int currentPage = bean.getCurrentPage();
 	%>
+
+	<c:if test="${(not empty action.errors) and (not empty action.errors['access']) }">
+		<div class="error">You are not allowed to view this section. Your role is '${action.errors['access'] }', while 'doctor' is required.</div>
+	</c:if>
 
 	<c:if test="${(not empty action.cart) and (not empty action.drugs) }">
 		
@@ -184,7 +188,7 @@
 					</select>
 					<select id="Year" name="year" onchange="fillDaySelect();setExpieryDate()">
 					<c:forEach begin="2022" end="2024" var="a">
-						<option id="${a }">${a }</option>
+						<option id="${a }" value="${a }" <c:if test="${action.cart.year eq a }">selected</c:if>>${a }</option>
 					</c:forEach>
 					</select> 
 					<select id="Month" name="month" onchange="fillDaySelect();setExpieryDate()" >
@@ -203,11 +207,11 @@
 					</select> 
 					<select id="Day" name="day" onchange="setExpieryDate()">
 						<c:forEach var="d" begin="1" end="28">
-							<option>${(d lt 10) ? '0' : ''}${d}</option>  	
+							<option value="${d }">${(d lt 10) ? '0' : ''}${d}</option>  	
 						</c:forEach>
-						<option id="29" hidden="true">29</option>	
-						<option id="30" hidden="true">30</option>	
-						<option id="31" hidden="true">31</option>	
+						<option id="29" hidden="true" value="29">29</option>	
+						<option id="30" hidden="true" value="30">30</option>	
+						<option id="31" hidden="true" value="31">31</option>	
 					</select>   
 				</div>
 			</form>

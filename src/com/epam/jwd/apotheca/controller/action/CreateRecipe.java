@@ -1,7 +1,6 @@
 package com.epam.jwd.apotheca.controller.action;
 
 import java.sql.Date;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,9 +52,9 @@ public class CreateRecipe implements RunCommand, RecipeCartAware {
 		params = new HashMap<String, String[]>();
 		errorMessages = new ArrayList<String>();
 		validators = new HashMap<String, Validator>();
-		validators.put("date", new DateValidator("year", "month", "day"));
+//		validators.put("date", new DateValidator("year", "month", "day"));
 //		validators.add(new DrugValidator(drugs));
-		validators.put("client", new UserValidator("clientName"));
+//		validators.put("client", new UserValidator("clientName"));
 //		validators.put("access", new ActionAccessValidator("createRecipe"));
 		validators.put("access", new RoleAccessValidator(UserDAO.ROLE_NAME_DOCTOR));
 		validators.put("cart", new RecipeCartValidator());
@@ -84,25 +83,13 @@ public class CreateRecipe implements RunCommand, RecipeCartAware {
 		
 		clearFields();
 		
-		validators.get("date").setValue(params);
-		validators.get("client").setValue(params);
-		validators.get("doctor").setValue(user);
+//		validators.get("date").setValue(params);
+//		validators.get("client").setValue(params);
 		validators.get("access").setValue(user);
 		validators.get("cart").setValue(cart);
-		
-		String expieryDate = params.get("year")[0] + "/" + params.get("month")[0] + "/" + params.get("day")[0];
-		SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
-	    java.util.Date utilDate = null;
-		try {
-			utilDate = format.parse(expieryDate);
-		} catch (ParseException e) {
-			logger.error(Arrays.toString(e.getStackTrace()));
-		}
-	    Date sqlDate = new Date(utilDate.getTime());
 	    
 		UserManagerService uService = UserManagerService.getInstance();
-	    String clientName = params.get("clientName")[0];
-		User client = uService.getUser(clientName);
+		User client = uService.getUser(getCart().getUserId());
 		
 		for (Validator validator : validators.values()) {
 			if ( ! validator.validate() ) {
@@ -125,13 +112,14 @@ public class CreateRecipe implements RunCommand, RecipeCartAware {
 			
 	 		recipe.setDrugIds(drugIds);
 	 		
-			recipe.setExpieryDate(sqlDate);
+			recipe.setExpieryDate(getCart().getExpieryDate());
 			
-			getCart().setExpieryDate(sqlDate);
-			getCart().setUserId(client.getId());
+//			getCart().setExpieryDate(sqlDate);
+//			getCart().setUserId(client.getId());
 			
 			if ( service.addRecipe(recipe) ) {
-				this.expieryDate = expieryDate;
+			  
+				expieryDate = getFormattedDate(getCart().getExpieryDate());
 				this.client = client;
 				allDrugs.clear();
 				allDrugs.addAll( DrugManagerService.getInstance().getDrugs(drugIds.toArray(new Integer[0])) );
@@ -153,6 +141,18 @@ public class CreateRecipe implements RunCommand, RecipeCartAware {
 		} 
 		return actionTime;
 		
+	}
+
+	private String getFormattedDate(Date date) {
+		SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
+		String stringDate = null;
+		try {
+			stringDate = format.format(date);
+		} catch (Exception e) {
+			logger.error(Arrays.toString(e.getStackTrace()));
+		}
+		
+		return stringDate;
 	}
 
 	@Override

@@ -142,9 +142,9 @@ function setExpieryDate(select) {
 	var monthSelect = document.getElementById("Month");
 	var daySelect = document.getElementById("Day");
 	
-	var year = yearSelect.options[yearSelect.selectedIndex].text;
-	var month = monthSelect.options[monthSelect.selectedIndex].text;
-	var day = daySelect.options[daySelect.selectedIndex].text;
+	var year = yearSelect.options[yearSelect.selectedIndex].value;
+	var month = monthSelect.options[monthSelect.selectedIndex].value;
+	var day = daySelect.options[daySelect.selectedIndex].value;
 	
 	var xmlhttp = new XMLHttpRequest();
 	

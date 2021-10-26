@@ -10,7 +10,10 @@ import com.epam.jwd.apotheca.controller.DrugManagerService;
 import com.epam.jwd.apotheca.controller.RecipeCart;
 import com.epam.jwd.apotheca.controller.UserManagerService;
 import com.epam.jwd.apotheca.controller.validator.RecipeCartValidator;
+import com.epam.jwd.apotheca.controller.validator.RoleAccessValidator;
+import com.epam.jwd.apotheca.controller.validator.RoleNameValidator;
 import com.epam.jwd.apotheca.controller.validator.Validator;
+import com.epam.jwd.apotheca.dao.api.UserDAO;
 import com.epam.jwd.apotheca.model.Drug;
 import com.epam.jwd.apotheca.model.User;
 
@@ -33,6 +36,7 @@ public abstract class RecipeCartAction implements RunCommand, RecipeCartAware {
 		clients = new ArrayList<User>();
 		validators = new HashMap<String, Validator>();
 		validators.put( "cart", new RecipeCartValidator() );
+		validators.put( "doctor", new RoleAccessValidator(UserDAO.ROLE_NAME_DOCTOR) );
 	}
 	
 	public Integer getTotalCount() {
@@ -46,8 +50,6 @@ public abstract class RecipeCartAction implements RunCommand, RecipeCartAware {
 		
 		UserManagerService userService = UserManagerService.getInstance();
 		setClients( userService.getClients() );
-//		getCart().setExpieryDate(null);
-//		getCart().setUserId(null);
 		pageSize = params.get("pageSize") == null ? 5 : Integer.valueOf(params.get("pageSize")[0]);
 		currentPage = params.get("currentPage") == null ? 1
 				: Integer.valueOf(params.get("currentPage")[0]);
@@ -127,44 +129,53 @@ public abstract class RecipeCartAction implements RunCommand, RecipeCartAware {
 		errors.clear();
 		getCart().setInvalid(false);
 		
-		List<Drug> drugsToDisplay = getCart().getDrugs(getPageSize() * (getCurrentPage() - 1), getPageSize());
-		
-		setValidators();
-		for ( Validator v : getValidators().values() ) {
-			if ( ! v.validate() ) {
-				getCart().setInvalid(true);
-			}
-		}
-		
-		if ( getCart().isInvalid() ) {
+		List<Drug> drugsToDisplay = new ArrayList<Drug>();
+		if ( UserDAO.ROLE_NAME_DOCTOR.equalsIgnoreCase(user.getRole().getName()) ) {
 			
-			//TODO 2.ecли дата истечения  рецепта вышла за пределы допустимого интервала
-			//TODO 3.существует ли польз-тель в системе
-			Date currentDate = new Date(System.currentTimeMillis());
-
-			if ( getCart().getExpieryDate() != null ) {
-				if ( currentDate.after(getCart().getExpieryDate()) ) {
-					errors.put("date", "expiery date has expired");
-				}
-			} 
-			if ( getCart().getUserId() == null ) {
-				if ( params.get("clientId") != null ) {
-					errors.put("user", "no such user in the system");
-				}
-			} else {
-				if ( UserManagerService.getInstance().getUser(getCart().getUserId()) == null ) {
-					getCart().setUserId(null);
-					errors.put("user", "no such user in the system");
-				}
-			} 
+			drugsToDisplay = getCart().getDrugs(getPageSize() * (getCurrentPage() - 1), getPageSize());
 			
-			for ( Drug d : getCart().getDrugs() ) {
-				Drug actualDrug = DrugManagerService.getInstance().getDrug(d.getId());
-				//TODO 1.ecли лек-во было по рецепту,а стало в свободном доступе
-				if ( ! actualDrug.isPrescription() ) {
-					invalidDrugs.add(d);
+			setValidators();
+			for ( Validator v : getValidators().values() ) {
+				if ( ! v.validate() ) {
+					getCart().setInvalid(true);
 				}
 			}
+			
+			if ( getCart().isInvalid() ) {
+				
+				//TODO 2.ecли дата истечения  рецепта вышла за пределы допустимого интервала
+				//TODO 3.существует ли польз-тель в системе
+				Date currentDate = new Date(System.currentTimeMillis());
+	
+				if ( getCart().getExpieryDate() != null ) {
+					if ( currentDate.after(getCart().getExpieryDate()) ) {
+						errors.put("date", "expiery date has expired");
+					}
+				} 
+				if ( getCart().getUserId() == null ) {
+					if ( params.get("clientId") != null ) {
+						errors.put("user", "no such user in the system");
+					}
+				} else {
+					if ( UserManagerService.getInstance().getUser(getCart().getUserId()) == null ) {
+						getCart().setUserId(null);
+						errors.put("user", "no such user in the system");
+					}
+				} 
+				
+				for ( Drug d : getCart().getDrugs() ) {
+					Drug actualDrug = DrugManagerService.getInstance().getDrug(d.getId());
+					//TODO 1.ecли лек-во было по рецепту,а стало в свободном доступе
+					if ( ! actualDrug.isPrescription() ) {
+						invalidDrugs.add(d);
+					}
+				}
+				
+			}
+		
+		} else {
+			
+			errors.put("access", user.getRole().getName());
 			
 		}
 		
@@ -174,6 +185,7 @@ public abstract class RecipeCartAction implements RunCommand, RecipeCartAware {
 
 	public void setValidators() {
 		getValidators().get("cart").setValue(getCart());
+		getValidators().get("doctor").setValue(user);
 	}
 
 	public List<Drug> getInvalidDrugs() {

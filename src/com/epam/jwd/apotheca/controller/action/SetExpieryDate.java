@@ -12,6 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.epam.jwd.apotheca.controller.RecipeCart;
+import com.epam.jwd.apotheca.controller.validator.DateValidator;
+import com.epam.jwd.apotheca.controller.validator.UserIdValidator;
+import com.epam.jwd.apotheca.controller.validator.Validator;
 import com.epam.jwd.apotheca.model.User;
 
 public class SetExpieryDate extends RecipeCartAction {
@@ -20,6 +23,7 @@ public class SetExpieryDate extends RecipeCartAction {
 	private static SetExpieryDate instance = new SetExpieryDate();
 	
 	private SetExpieryDate() {
+		getValidators().put("date", new DateValidator("year", "month", "day"));
 	}
 	
 	public static SetExpieryDate getInstance() {
@@ -28,54 +32,41 @@ public class SetExpieryDate extends RecipeCartAction {
 		
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public String run() {
 		
 		super.run();
 		
-		updateCart();
+		Validator validator = getValidators().get("date");
+		validator.setValue(getParams());
 		
-		Date date = getCart().getExpieryDate();
-		Calendar calendar = new GregorianCalendar();
-		if ( date != null ) {
-			calendar.setTime(date);
-		}
+		if ( validator.validate() ) {
 		
-		//&&  && 
-		// + "/" + getParams().get("month")[0] + "/" + getParams().get("day")[0]
-		if (  getParams().get("year") != null  ) {
+			Date date = getCart().getExpieryDate();
+			Calendar calendar = new GregorianCalendar();
+			if ( date != null ) {
+				calendar.setTime(date);
+			}
+			
 			String yearStr = getParams().get("year")[0];
-			Integer year = null;
-			try {
-				year = Integer.valueOf(yearStr);
-				calendar.set(Calendar.YEAR, year);
-			} catch (NumberFormatException e) {
-				logger.error(Arrays.toString(e.getStackTrace()));
-			}
-		} 
-		if ( getParams().get("month") != null ) {
+			Integer year = Integer.valueOf(yearStr);
+			calendar.set(Calendar.YEAR, year);
+			
 			String monthStr = getParams().get("month")[0];
-			Integer month = null;
-			try {
-				month = Integer.valueOf(monthStr);
-				calendar.set(Calendar.MONTH, month);
-			} catch (NumberFormatException e) {
-				logger.error(Arrays.toString(e.getStackTrace()));
-			}
-		}
-		if ( getParams().get("day") != null ) {
+			Integer month = Integer.valueOf(monthStr);
+			calendar.set(Calendar.MONTH, month);
+				
 			String dayStr = getParams().get("day")[0];
-			Integer day = null;
-			try {
-				day = Integer.valueOf(dayStr);
-				calendar.set(Calendar.DAY_OF_MONTH, day);
-			} catch (NumberFormatException e) {
-				logger.error(Arrays.toString(e.getStackTrace()));
-			}
+			Integer day = Integer.valueOf(dayStr);
+			calendar.set(Calendar.DAY_OF_MONTH, day);
+				
+			logger.trace("values {}/{}/{} were set into {}/{}/{}", year, month, day, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+			
+			getCart().setExpieryDate(new java.sql.Date(calendar.getTime().getTime()));
+			
 		}
 		
-		getCart().setExpieryDate(new java.sql.Date(calendar.getTime().getTime()));
+		updateCart();
 		
 		return null;
 		

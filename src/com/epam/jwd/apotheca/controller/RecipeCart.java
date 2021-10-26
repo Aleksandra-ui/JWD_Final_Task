@@ -2,7 +2,9 @@ package com.epam.jwd.apotheca.controller;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import com.epam.jwd.apotheca.model.Drug;
@@ -69,5 +71,16 @@ public class RecipeCart {
 		this.invalid = invalid;
 	}
 	
-
+	public String getYear() {
+		
+		String year = null;
+		if (expieryDate != null) {
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(expieryDate);
+			year = String.valueOf(calendar.get(Calendar.YEAR));
+		}
+		return year;
+		
+	}
+	
 }

@@ -26,12 +26,18 @@ public class UserValidator implements Validator {
 		boolean result = true;
 		messages.clear();
 		
-		String user = params.get(userParamName)[0];
-		
-		if ( UserManagerService.getInstance().getUser(user) == null ) {
+		if ( params.get(userParamName) == null || params.get(userParamName)[0] == null || "".equals(params.get(userParamName)[0]) ) {
 			result = false;
-			messages.add("User " + user + " is not present in the system.");
-			logger.warn("User " + user + " is not present in the system.");
+			messages.add("User is not specified.");
+			logger.warn("user is not specified.");
+		} else {
+			String user = params.get(userParamName)[0];
+			
+			if ( UserManagerService.getInstance().getUser(user) == null ) {
+				result = false;
+				messages.add("User " + user + " is not present in the system.");
+				logger.warn("User " + user + " is not present in the system.");
+			}
 		}
 		
 		return result;

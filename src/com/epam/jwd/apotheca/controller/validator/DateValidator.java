@@ -31,16 +31,39 @@ public class DateValidator implements Validator {
 	public boolean validate() {
 		
 		boolean result = true;
+		Integer year = null;
+		Integer month = null;
+		Integer day = null;
 		messages.clear();
 		
-		String yearStr = params.get(yearParamName)[0];
-		Integer year = Integer.valueOf(yearStr);
-		String monthStr = params.get(monthParamName)[0];
-		Integer month = Integer.valueOf(monthStr);
-		String dayStr = params.get(dayParamName)[0];
-		Integer day = Integer.valueOf(dayStr);
+		String yearStr = params.get(yearParamName) == null ? null : params.get(yearParamName)[0];
+		String monthStr = params.get(monthParamName) == null ? null : params.get(monthParamName)[0];
+		String dayStr = params.get(dayParamName) == null ? null : params.get(dayParamName)[0];
+		
+		if ( yearStr == null || monthStr == null || dayStr == null ) {
+			messages.add("Expiery date isn't specified.");
+			logger.warn("expiery date isn't specified");
+			result = false;
+		}
+		
+		if ( result ) {
+			try {
+				year = Integer.valueOf(yearStr);
+				month = Integer.valueOf(monthStr);
+				day = Integer.valueOf(dayStr);
+			} catch ( NumberFormatException e ) {
+				messages.add("Illegal format of expiery date!");
+				logger.error("illegal format of expiery date!");
+				logger.error(Arrays.toString(e.getStackTrace()));
+				result = false;
+			}
+		}
 	
-		result = validateLogic(year, month, day) && validateDifference(year, month, day);
+		if ( result ) {
+		
+			result = validateLogic(year, month, day) && validateDifference(year, month, day);
+			
+		}
 		
 		return result;
 		
