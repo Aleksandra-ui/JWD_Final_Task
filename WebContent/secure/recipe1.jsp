@@ -28,37 +28,7 @@ function changePageSize (select) {
 	
 }
 
-function fillDaySelect() {
-	
-	var year = document.getElementById('Year');
-	var month = document.getElementById('Month');
-	var day = document.getElementById('Day');
-	var yearOpt = year.options[year.selectedIndex];
-	var monthOpt = month.options[month.selectedIndex];
-	if (monthOpt.id == 'february'){
-		var dayOpt = document.getElementById('30');
-		dayOpt.hidden = true;
-		var dayOpt = document.getElementById('31');
-		dayOpt.hidden = true;
-		var dayOpt = document.getElementById('29');
-		if (yearOpt.id == '2024'){
-			dayOpt.hidden = false;
-		} else {
-			dayOpt.hidden = true;
-		}
-	} else {
-			var dayOpt = document.getElementById('29');
-			dayOpt.hidden = false;
-			var dayOpt = document.getElementById('30');
-			dayOpt.hidden = false;
-			var dayOpt = document.getElementById('31');
-			if ( (Number(monthOpt.value) < "8" && Number(monthOpt.value) % 2 == 1)||(Number(monthOpt.value) >= "8" && Number(monthOpt.value) % 2 == 0) ) {
-				dayOpt.hidden = false;
-			} else {
-				dayOpt.hidden = true;
-			}
-	}
-}
+
 
 function updateRecipeCart( drugId, add ) {
 	
@@ -89,6 +59,7 @@ function displayShoppingCart(xml) {
 		window.location = "/apotheca/logon.run";
 	} else {
 		document.getElementById("shoppingCart").innerHTML = xml.responseText;
+		fillDaySelect();
 	}
 	
 }
@@ -160,6 +131,45 @@ function setExpieryDate(select) {
 	
 }
 
+function fillDaySelect() {
+	
+	//alert("select");
+	var year = document.getElementById('Year');
+	var month = document.getElementById('Month');
+	var day = document.getElementById('Day');
+	var yearOpt = year.options[year.selectedIndex];
+	var monthOpt = month.options[month.selectedIndex];
+	console.log(monthOpt, yearOpt, day, month, year);
+	var dayOpt;
+	if (monthOpt.id == 'month02'){
+		dayOpt = document.getElementById('30');
+		dayOpt.hidden = true;
+		dayOpt = document.getElementById('31');
+		dayOpt.hidden = true;
+		dayOpt = document.getElementById('29');
+		if (yearOpt.id == '2024'){
+			dayOpt.hidden = false;
+		} else {
+			dayOpt.hidden = true;
+		}
+	} else {
+			dayOpt = document.getElementById('29');
+			console.log(dayOpt);
+			dayOpt.hidden = false;
+			dayOpt = document.getElementById('30');
+			console.log(dayOpt);
+			dayOpt.hidden = false;
+			dayOpt = document.getElementById('31');
+			console.log(dayOpt);
+			if ( (monthOpt.value < "08" && Number(monthOpt.value) % 2 == 1)||(monthOpt.value >= "08" && Number(monthOpt.value) % 2 == 0) ) {
+				dayOpt.hidden = false;
+			} else {
+				dayOpt.hidden = true;
+			}
+	}
+}
+
+
 function updateUser( clientId ) {
 	
 	var xmlhttp = new XMLHttpRequest();
@@ -179,7 +189,7 @@ function updateUser( clientId ) {
 
 </script>
 
-<body onload="displayCart();">
+<body onload="displayCart()">
 
 	<%
 	RecipeDrugs bean = (RecipeDrugs)request.getAttribute("action");

@@ -39,6 +39,10 @@ java.util.Map,java.util.HashMap"%>
  		langMap.put("en", new String[]{"en","US"});
  		
  		Cookie cookie = null;
+ 		locale =(Locale) session.getAttribute("locale");
+ 		if (locale==null){
+ 			locale=Locale.getDefault();
+ 		}
  		//if user clicked "change language"
  		if (langMap.containsKey(request.getParameter("locale"))) {
  			String[] value = langMap.get(request.getParameter("locale"));
@@ -83,6 +87,7 @@ java.util.Map,java.util.HashMap"%>
  		}
 		
 		ResourceBundle rb0 = ResourceBundle.getBundle("Menu", locale);
+		session.setAttribute("locale", locale);
 		
 	%>
 	

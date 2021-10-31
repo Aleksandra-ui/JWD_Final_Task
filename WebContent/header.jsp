@@ -10,5 +10,5 @@ ResourceBundle rb = ResourceBundle.getBundle("Index", locale);
 %>
 <title><%=rb.getString("index.title")%></title>
 </head>
-<body>
+<body onload="fillDaySelect();">
 <div style="justify-content: center; width: 80%" class="container">

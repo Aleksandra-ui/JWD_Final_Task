@@ -66,15 +66,17 @@ public class Logon implements RunCommand {
 					user.setName(userName);
 					user.setPassword(userPass);
 					user.setRole(userService.findRole(UserDAO.ROLE_NAME_CLIENT));
-					if ( ! userService.createUser(user) ){
-						user = null;
+					User newUser = userService.createUser(user);
+					if ( newUser == null  ){
 						messages.add("User " + user.getName() + " didn't log on.");
 						messages.add("Internal error during user creation.");
 						logger.trace("User " + user.getName() + " didn't log on.");
 						logger.trace("Internal error during user creation.");
+						user = null;
 					} else {
 						messages.add("User " + user.getName() + " was successfully registered.");
 						logger.trace("User " + user.getName() + " was successfully registered.");
+						user = newUser;
 					}
 				}
 			} else {

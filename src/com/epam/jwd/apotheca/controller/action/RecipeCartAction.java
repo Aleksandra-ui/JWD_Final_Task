@@ -2,9 +2,15 @@ package com.epam.jwd.apotheca.controller.action;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import com.epam.jwd.apotheca.controller.DrugManagerService;
 import com.epam.jwd.apotheca.controller.RecipeCart;
@@ -198,6 +204,23 @@ public abstract class RecipeCartAction implements RunCommand, RecipeCartAware {
 
 	public Map<String, Validator> getValidators() {
 		return validators;
+	}
+	
+	public  Map<String, String> getMonthNames() {
+
+		Map<String, String> sortedMonthNames = new TreeMap<String, String>();
+		Map<String, Integer> monthNames = GregorianCalendar.getInstance().getDisplayNames(Calendar.MONTH, Calendar.LONG, new Locale("en", "US"));
+		for ( Map.Entry<String, Integer> e : monthNames.entrySet() ) {
+			int v = e.getValue() + 1;
+			sortedMonthNames.put( v < 10 ? ("0" + v) : String.valueOf(v),
+					              e.getKey().toLowerCase() );
+		}
+		return sortedMonthNames;
+		
+	}
+	
+	public static void main(String[]args) {
+		//getMonthNames();
 	}
 	
 }

@@ -4,8 +4,8 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 
 import com.epam.jwd.apotheca.model.Drug;
 
@@ -71,15 +71,46 @@ public class RecipeCart {
 		this.invalid = invalid;
 	}
 	
+	
+	
+	public String getMonth() {
+		 
+	
+		Integer month= Integer.valueOf( getField(Calendar.MONTH) ) + 1 ;
+		 return String.valueOf(month<10 ? ("0"+month) : month);
+		
+	}
+	public String getDay() {
+		
+		String day = getField(Calendar.DAY_OF_MONTH);
+		return Integer.valueOf(day)<10 ? "0"+ day : day;
+		
+	}
 	public String getYear() {
 		
-		String year = null;
+		
+		return getField(Calendar.YEAR);
+		
+	}
+	
+	
+	
+	public String getField(int field) {
+		
+		String fieldValue = null;
 		if (expieryDate != null) {
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTime(expieryDate);
-			year = String.valueOf(calendar.get(Calendar.YEAR));
+			fieldValue = String.valueOf(calendar.get(field));
 		}
-		return year;
+		return fieldValue;
+		
+	}
+	
+	public static void main(String[] args) {
+		RecipeCart c=new RecipeCart(); 
+		c.expieryDate = new Date(2020, 5, 28);
+		System.out.println( c.getDay());;
 		
 	}
 	

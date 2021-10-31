@@ -143,7 +143,7 @@ public class CreateRecipe implements RunCommand, RecipeCartAware {
 		
 	}
 
-	private String getFormattedDate(Date date) {
+	public static String getFormattedDate(Date date) {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
 		String stringDate = null;
 		try {

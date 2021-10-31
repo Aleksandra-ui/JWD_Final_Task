@@ -34,18 +34,13 @@ public class UserManagerService {
 		return result;
 	}
 	
-	public boolean createUser(User user) {
+	public User createUser(User user) {
 
-		boolean result = false;
 		if ( UserDAO.ROLE_NAME_SUPER_DOC.equals( user.getName() ) ) {
-			return false;
+			return null;
 		}
-		User newUser = userDAO.save(user);
-		if (newUser != null) {
-			user = newUser;
-			result = true;
-		}
-		return result;
+		return userDAO.save(user);
+		
 		
 	}
 

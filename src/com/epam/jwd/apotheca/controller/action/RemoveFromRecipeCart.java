@@ -17,7 +17,10 @@ public class RemoveFromRecipeCart extends RecipeCartAction implements RecipeCart
 			getCart().removeDrug(DrugManagerService.getInstance().getDrug(Integer.valueOf(id)));
 		}
 		
-		
+		if ( getCart().getDrugs().isEmpty() ) {
+			getCart().setExpieryDate(null);
+			getCart().setUserId(null);
+		}
 		
 		updateCart();
 		return null;

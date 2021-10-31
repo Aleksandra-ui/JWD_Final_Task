@@ -103,7 +103,7 @@ ResourceBundle rb = ResourceBundle.getBundle("CreateRecipe", locale);
 	
 			<tbody align="center">
 						<c:forEach items="${action.drugs}" var="d">
-							<tr bgcolor="LightPink">
+							<tr bgcolor="LightBlue">
 								<td>${d.id}</td>
 								<td>${d.name}</td>
 								<td>${d.dose }</td>

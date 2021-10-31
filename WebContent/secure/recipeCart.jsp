@@ -18,39 +18,9 @@
 	}
 </style>
 
-<script type="text/javascript">
+<script type="text/javascript" >
 	
-	function fillDaySelect() {
-		
-		var year = document.getElementById('Year');
-		var month = document.getElementById('Month');
-		var day = document.getElementById('Day');
-		var yearOpt = year.options[year.selectedIndex];
-		var monthOpt = month.options[month.selectedIndex];
-		if (monthOpt.id == 'february'){
-			var dayOpt = document.getElementById('30');
-			dayOpt.hidden = true;
-			var dayOpt = document.getElementById('31');
-			dayOpt.hidden = true;
-			var dayOpt = document.getElementById('29');
-			if (yearOpt.id == '2024'){
-				dayOpt.hidden = false;
-			} else {
-				dayOpt.hidden = true;
-			}
-		} else {
-				var dayOpt = document.getElementById('29');
-				dayOpt.hidden = false;
-				var dayOpt = document.getElementById('30');
-				dayOpt.hidden = false;
-				var dayOpt = document.getElementById('31');
-				if ( (Number(monthOpt.value) < "8" && Number(monthOpt.value) % 2 == 1)||(Number(monthOpt.value) >= "8" && Number(monthOpt.value) % 2 == 0) ) {
-					dayOpt.hidden = false;
-				} else {
-					dayOpt.hidden = true;
-				}
-		}
-	}
+
 	
 </script>
 
@@ -186,32 +156,34 @@
 							>${client.name }</option>
 						</c:forEach>
 					</select>
-					<select id="Year" name="year" onchange="fillDaySelect();setExpieryDate()">
-					<c:forEach begin="2022" end="2024" var="a">
+					${action.cart.year} ${ action.errors } ${action.cart.month } ${action.cart.day}
+					<select id="Year" name="year" onchange="setExpieryDate()">
+					<c:forEach begin="2021" end="2024" var="a">
 						<option id="${a }" value="${a }" <c:if test="${action.cart.year eq a }">selected</c:if>>${a }</option>
 					</c:forEach>
 					</select> 
-					<select id="Month" name="month" onchange="fillDaySelect();setExpieryDate()" >
-						<option id="january"  value="01">january</option>
-						<option id="february"  value="02">february </option>
-						<option id="march"  value="03">march</option>
-						<option id="april"  value="04">april</option>	
-						<option id="may"  value="05">may</option>	
-						<option id="june"  value="06">june</option>	
-						<option id="july"  value="07">july</option>	
-						<option id="august"  value="08">august</option>	
-						<option id="september"  value="09">september</option>	
-						<option id="october"  value="10">october</option>	
-						<option id="november"  value="11">november</option>	
-						<option id="december" value="12">december</option>	
-					</select> 
-					<select id="Day" name="day" onchange="setExpieryDate()">
-						<c:forEach var="d" begin="1" end="28">
-							<option value="${d }">${(d lt 10) ? '0' : ''}${d}</option>  	
+					<select id="Month" name="month" onchange="setExpieryDate()" >
+						<c:forEach var="m" items="${action.monthNames }">
+							<option id="month${m.key }" value="${m.key}"
+							<c:if test="${action.cart.month eq m.key  }">selected</c:if>
+							>${m.value }</option>	
 						</c:forEach>
-						<option id="29" hidden="true" value="29">29</option>	
-						<option id="30" hidden="true" value="30">30</option>	
-						<option id="31" hidden="true" value="31">31</option>	
+					</select> 
+					<select id="Day" name="day" onchange="setExpieryDate();">
+						<c:forEach var="d" begin="1" end="28">
+							<option value="${d }" 
+							<c:if test="${action.cart.day eq ( ((d lt 10) ? '0' : '')+d) }">selected</c:if>
+							>${(d lt 10) ? '0' : ''}${d}</option>  	
+						</c:forEach>
+						<option id="29" hidden="true" value="29" 
+						<c:if test="${action.cart.day eq 29 }">selected</c:if>
+						>29</option>	
+						<option id="30" hidden="true" value="30"
+						<c:if test="${action.cart.day eq 30 }">selected</c:if>
+						>30</option>	
+						<option id="31" hidden="true" value="31"
+						<c:if test="${action.cart.day eq 31 }">selected</c:if>
+						>31</option>	
 					</select>   
 				</div>
 			</form>
