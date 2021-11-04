@@ -20,30 +20,8 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 	}
 </style>
 
+<c:set var="baseURL" value="/apotheca/drugs.run"/>
 <script type="text/javascript">
-	
-	/* 	
-	function addRemoveFromCart(checkbox, drugId) {
-	
-		amount = document.getElementById("amount" + drugId);
-		
-		if (checkbox.checked) {
-			amount.removeAttribute("disabled");
-			if ( amount.value == 0 ) {
-				amount.value = 1;	
-			}
-		} else {
-			amount.setAttribute("disabled", true);
-		}
-	
- 	}
- 	*/
-	
-	function changePageSize (select) {
-	
-		return select.options[select.selectedIndex].value && (window.location = select.options[select.selectedIndex].value); 
-	
-	}
 	
 	function validateAmount(input) {
 		
@@ -146,6 +124,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 		int currentPage = bean.getCurrentPage();
 	%>
 
+<%-- 
 	<div style="width:50%" class="container">
 		<div style="overflow: hidden" class="container" align="center">
 			<div style="float: left">
@@ -187,7 +166,9 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 			</div>
 		</div>
 	</div>
+--%>
 	
+<%@ include file = "/pagination.jsp" %>
 	<table border = "1" style="width:50%; margin-top: 20px" class="container" align="center">
 		<caption><%=rb.getString("drugs.list")%></caption>
 		<thead align="center">
