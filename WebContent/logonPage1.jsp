@@ -34,15 +34,12 @@
 		window.location = select.options[select.selectedIndex].value;
 		
 	}
-	
-	function changePageSize (select) {
-		
-		return select.options[select.selectedIndex].value && (window.location = select.options[select.selectedIndex].value); 
-	
-	}
 
 </script>
 </head>
+
+<c:set var="baseURL" value="/apotheca/logon.run"/>
+
 <body>
 
 	<div align="center" class="container" style="width: 40%; <c:if test="${not empty action.user }">display: none</c:if>">
@@ -95,48 +92,50 @@
 	
 	<c:if test="${isAdmin and not empty action.users }">	
 	
-		<div style="width:50%" class="container">
-			<div style="overflow: hidden" class="container" align="center">
-				<div style="float: left">
-					<p>records from
-						${action.currentPage * action.pageSize - action.pageSize + 1 }
-						to
-						<%=currentPage * pageSize - pageSize + 1 + ((totalCount % pageSize != 0 && totalCount / pageSize * pageSize + 1 == currentPage * pageSize - pageSize + 1)
-								? totalCount % pageSize : pageSize) - 1%>
-						of
-						${action.totalCount}&nbsp;&nbsp;
-					</p>
-				</div>
-				<span style="float: none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-				<div style="float: right">
-					<div style="float: left">
-						records per page:&nbsp; <select name="pageSize"
-							onChange="changePageSize(this);" >
-							<option
-								${(empty action.pageSize or action.pageSize == 5) ? "selected='true'" : "" }
-								value="/apotheca/logon.run?pageSize=5">5</option>
-							<option
-								${(not empty action.pageSize and action.pageSize  == 10) ? "selected='true'" : "" }
-								value="/apotheca/logon.run?pageSize=10">10</option>
-							<option
-								${(not empty action.pageSize and action.pageSize  == 20) ? "selected='true'" : "" }
-								value="/apotheca/logon.run?pageSize=20">20</option>
-						</select>
-					</div>
-					<span style="float: none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-					<div style="float: right">
-						<c:forEach var="displayPage" begin="1" end="${action.pagesCount}">
-							<c:choose>
-								<c:when
-									test="${displayPage == (empty action.currentPage ? 1 : action.currentPage)}">${displayPage} &nbsp;</c:when>
-								<c:otherwise>
-									<a href="/apotheca/logon.run?pageSize=${empty action.pageSize ? 5 : action.pageSize}&currentPage=${displayPage}">${displayPage}</a>&nbsp;</c:otherwise>
-							</c:choose>
-						</c:forEach>
-					</div>
-				</div>
-			</div>
-		</div>
+<!-- 		<div style="width:50%" class="container"> -->
+<!-- 			<div style="overflow: hidden" class="container" align="center"> -->
+<!-- 				<div style="float: left"> -->
+<!-- 					<p>records from -->
+<%-- 						${action.currentPage * action.pageSize - action.pageSize + 1 } --%>
+<!-- 						to -->
+<%-- 						<%=currentPage * pageSize - pageSize + 1 + ((totalCount % pageSize != 0 && totalCount / pageSize * pageSize + 1 == currentPage * pageSize - pageSize + 1) --%>
+<%-- 								? totalCount % pageSize : pageSize) - 1%> --%>
+<!-- 						of -->
+<%-- 						${action.totalCount}&nbsp;&nbsp; --%>
+<!-- 					</p> -->
+<!-- 				</div> -->
+<!-- 				<span style="float: none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> -->
+<!-- 				<div style="float: right"> -->
+<!-- 					<div style="float: left"> -->
+<!-- 						records per page:&nbsp; <select name="pageSize" -->
+<!-- 							onChange="changePageSize(this);" > -->
+<!-- 							<option -->
+<%-- 								${(empty action.pageSize or action.pageSize == 5) ? "selected='true'" : "" } --%>
+<!-- 								value="/apotheca/logon.run?pageSize=5">5</option> -->
+<!-- 							<option -->
+<%-- 								${(not empty action.pageSize and action.pageSize  == 10) ? "selected='true'" : "" } --%>
+<!-- 								value="/apotheca/logon.run?pageSize=10">10</option> -->
+<!-- 							<option -->
+<%-- 								${(not empty action.pageSize and action.pageSize  == 20) ? "selected='true'" : "" } --%>
+<!-- 								value="/apotheca/logon.run?pageSize=20">20</option> -->
+<!-- 						</select> -->
+<!-- 					</div> -->
+<!-- 					<span style="float: none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> -->
+<!-- 					<div style="float: right"> -->
+<%-- 						<c:forEach var="displayPage" begin="1" end="${action.pagesCount}"> --%>
+<%-- 							<c:choose> --%>
+<%-- 								<c:when --%>
+<%-- 									test="${displayPage == (empty action.currentPage ? 1 : action.currentPage)}">${displayPage} &nbsp;</c:when> --%>
+<%-- 								<c:otherwise> --%>
+<%-- 									<a href="/apotheca/logon.run?pageSize=${empty action.pageSize ? 5 : action.pageSize}&currentPage=${displayPage}">${displayPage}</a>&nbsp;</c:otherwise> --%>
+<%-- 							</c:choose> --%>
+<%-- 						</c:forEach> --%>
+<!-- 					</div> -->
+<!-- 				</div> -->
+<!-- 			</div> -->
+<!-- 		</div> -->
+
+		<%@ include file = "/pagination.jsp" %>
 	
 		<table border = "1" style="width:50%; margin-top: 20px; margin-bottom: 20px" class="container" align="center">
 		<thead align ="center">

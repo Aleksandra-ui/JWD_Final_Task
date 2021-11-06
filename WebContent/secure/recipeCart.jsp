@@ -18,11 +18,7 @@
 	}
 </style>
 
-<script type="text/javascript" >
-	
 
-	
-</script>
 
 <body onload="fillDaySelect();">
 
@@ -74,11 +70,7 @@
 						</div>
 						<span style="float: none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 						<div style="float: right">
-							<%
-							Integer pagesCount = totalCount / pageSize + ((totalCount % pageSize) == 0 ? 0 : 1);
-							request.setAttribute("pagesCount", pagesCount);
-							%>
-							<c:forEach var="displayPage" begin="1" end="${pagesCount}">
+							<c:forEach var="displayPage" begin="1" end="${action.pagesCount}">
 								<c:choose>
 									<c:when
 										test="${displayPage == (empty param.currentPage ? 1 : param.currentPage)}">${displayPage} &nbsp;</c:when>

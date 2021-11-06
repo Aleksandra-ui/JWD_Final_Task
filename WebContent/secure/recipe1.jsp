@@ -20,15 +20,9 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 <title><%=rb.getString("drugs.list")%></title>
 </head>
 
+<c:set var="baseURL" value="/apotheca/recipe.run"/>
+
 <script type="text/javascript">
-
-function changePageSize (select) {
-	
-	return select.options[select.selectedIndex].value && (window.location = select.options[select.selectedIndex].value); 
-	
-}
-
-
 
 function updateRecipeCart( drugId, add ) {
 	
@@ -195,39 +189,42 @@ function updateUser( clientId ) {
 	RecipeDrugs bean = (RecipeDrugs)request.getAttribute("action");
 			int pageSize = bean.getPageSize();
 			int currentPage = bean.getCurrentPage();
+			int totalCount = bean.getTotalCount();
 	%>
 	
-	<div style="width:50%" class="container">
-		<div style="overflow: hidden" class="container" align="center">
-			<div style="float: left">
-				<%=rb.getString("drugs.records1")%> <%= currentPage*pageSize - pageSize + 1 %> <%=rb.getString("drugs.records2")%> <%= currentPage*pageSize - pageSize + 1 + ( (bean.getTotalCount() % pageSize != 0 && bean.getTotalCount() / pageSize * pageSize + 1 == currentPage*pageSize - pageSize + 1)? bean.getTotalCount() % pageSize : pageSize ) - 1 %> <%=rb.getString("drugs.records3")%> <%= bean.getTotalCount()%>
-			</div>
-			<span style="float: none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-			<div style="float: right">
-				<div style="float: left">
-					<%=rb.getString("drugs.records4")%>:&nbsp;
-					<select name="pageSize" onChange = "changePageSize(this);"> <!-- checking if there is a value in the first part of an and -->
-						<option  ${param.pageSize  == 5 ? "selected='true'" : "" } value="/apotheca/recipe.run?pageSize=5">5</option>
-						<option  ${param.pageSize  == 10 ? "selected='true'" : "" } value="/apotheca/recipe.run?pageSize=10" >10</option>
-						<option  ${param.pageSize  == 20 ? "selected='true'" : "" } value="/apotheca/recipe.run?pageSize=20" >20</option>
-					</select>
-				</div>
-				<span style="float: none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-				<div style="float: right">
-					<%
-						Integer pagesCount = bean.getTotalCount() / pageSize + ((bean.getTotalCount() % pageSize) == 0 ? 0 : 1);
-						request.setAttribute("pagesCount", pagesCount);
-					%>
-					<c:forEach var="displayPage" begin="1" end="${pagesCount}">
-						<c:choose>
-							<c:when test="${displayPage == (empty param.currentPage ? 1 : param.currentPage)}">${displayPage} &nbsp;</c:when>
-							<c:otherwise><a href = "/apotheca/recipe.run?pageSize=${empty param.pageSize ? 5 : param.pageSize}&currentPage=${displayPage}">${displayPage}</a>&nbsp;</c:otherwise>
-						</c:choose>
-					</c:forEach>
-				</div>
-			</div>
-		</div>
-	</div>
+<!-- 	<div style="width:50%" class="container"> -->
+<!-- 		<div style="overflow: hidden" class="container" align="center"> -->
+<!-- 			<div style="float: left"> -->
+<%-- 				<%=rb.getString("drugs.records1")%> <%= currentPage*pageSize - pageSize + 1 %> <%=rb.getString("drugs.records2")%> <%= currentPage*pageSize - pageSize + 1 + ( (bean.getTotalCount() % pageSize != 0 && bean.getTotalCount() / pageSize * pageSize + 1 == currentPage*pageSize - pageSize + 1)? bean.getTotalCount() % pageSize : pageSize ) - 1 %> <%=rb.getString("drugs.records3")%> <%= bean.getTotalCount()%> --%>
+<!-- 			</div> -->
+<!-- 			<span style="float: none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> -->
+<!-- 			<div style="float: right"> -->
+<!-- 				<div style="float: left"> -->
+<%-- 					<%=rb.getString("drugs.records4")%>:&nbsp; --%>
+<!-- 					<select name="pageSize" onChange = "changePageSize(this);"> checking if there is a value in the first part of an and -->
+<%-- 						<option  ${param.pageSize  == 5 ? "selected='true'" : "" } value="/apotheca/recipe.run?pageSize=5">5</option> --%>
+<%-- 						<option  ${param.pageSize  == 10 ? "selected='true'" : "" } value="/apotheca/recipe.run?pageSize=10" >10</option> --%>
+<%-- 						<option  ${param.pageSize  == 20 ? "selected='true'" : "" } value="/apotheca/recipe.run?pageSize=20" >20</option> --%>
+<!-- 					</select> -->
+<!-- 				</div> -->
+<!-- 				<span style="float: none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> -->
+<!-- 				<div style="float: right"> -->
+<%-- 					<% --%>
+<!--  						Integer pagesCount = bean.getTotalCount() / pageSize + ((bean.getTotalCount() % pageSize) == 0 ? 0 : 1); -->
+<!--  						request.setAttribute("pagesCount", pagesCount); -->
+<%-- 					%> --%>
+<%-- 					<c:forEach var="displayPage" begin="1" end="${pagesCount}"> --%>
+<%-- 						<c:choose> --%>
+<%-- 							<c:when test="${displayPage == (empty param.currentPage ? 1 : param.currentPage)}">${displayPage} &nbsp;</c:when> --%>
+<%-- 							<c:otherwise><a href = "/apotheca/recipe.run?pageSize=${empty param.pageSize ? 5 : param.pageSize}&currentPage=${displayPage}">${displayPage}</a>&nbsp;</c:otherwise> --%>
+<%-- 						</c:choose> --%>
+<%-- 					</c:forEach> --%>
+<!-- 				</div> -->
+<!-- 			</div> -->
+<!-- 		</div> -->
+<!-- 	</div> -->
+		
+	<%@ include file = "/pagination.jsp" %>
 	
 	<table border = "1" style="width:50%; margin-top: 20px" class="container" align="center" >
 		<caption><%=rb.getString("drugs.list")%></caption>

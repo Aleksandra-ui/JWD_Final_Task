@@ -28,6 +28,7 @@ public abstract class RecipeCartAction implements RunCommand, RecipeCartAware {
 	private RecipeCart cart;
 	private Integer pageSize;
 	private Integer currentPage;
+	private int pagesCount;
 	private Map<String, String[]> params;
 	private List<Drug> drugs;
 	private List<User> clients;
@@ -59,6 +60,7 @@ public abstract class RecipeCartAction implements RunCommand, RecipeCartAware {
 		pageSize = params.get("pageSize") == null ? 5 : Integer.valueOf(params.get("pageSize")[0]);
 		currentPage = params.get("currentPage") == null ? 1
 				: Integer.valueOf(params.get("currentPage")[0]);
+		pagesCount = getTotalCount() / pageSize + ((getTotalCount() % pageSize) == 0 ? 0 : 1);
 		
 		return null;
 		
@@ -218,9 +220,9 @@ public abstract class RecipeCartAction implements RunCommand, RecipeCartAware {
 		return sortedMonthNames;
 		
 	}
-	
-	public static void main(String[]args) {
-		//getMonthNames();
+
+	public int getPagesCount() {
+		return pagesCount;
 	}
 	
 }

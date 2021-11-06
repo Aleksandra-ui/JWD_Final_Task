@@ -12,16 +12,9 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title><%=rb.getString("drugs.title")%></title>
-<script type="text/javascript">
 
-	function changePageSize (select) {
-		
-		return select.options[select.selectedIndex].value && (window.location = select.options[select.selectedIndex].value); 
-	
-	}
-
-</script>
 </head>
+<c:set var="baseURL" value="/apotheca/drugsBill.run"/>
 <body>
 
 	<%
@@ -47,50 +40,49 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 		</c:when>
 
 		<c:otherwise>
-			<div class="container" style="width:50%">
-				<div style="overflow: hidden" class="container" align="center">
-					<div style="float: left">
-						records from&nbsp;
-						<%=currentPage * pageSize - pageSize + 1%>
-						<%=rb.getString("drugs.records2")%>
-						<%=currentPage * pageSize - pageSize + 1
-						+ ((totalCount % pageSize != 0
-						&& totalCount / pageSize * pageSize + 1 == currentPage * pageSize - pageSize + 1)
-								? totalCount % pageSize
-								: pageSize) - 1%>
-						<%=rb.getString("drugs.records3")%>
-						${action.totalCount}
-					</div>
-					<span style="float: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-					<div style="float: right">
-						<div style="float: left">
-							<%=rb.getString("drugs.records4")%>:&nbsp; <select name="pageSize"
-							onChange="changePageSize(this);">
-								<option
-								${(empty action.pageSize or action.pageSize == 5) ? "selected='true'" : "" }
-								value="/apotheca/drugsBill.run?pageSize=5">5</option>
-								<option
-								${(not empty action.pageSize and action.pageSize  == 10) ? "selected='true'" : "" }
-								value="/apotheca/drugsBill.run?pageSize=10">10</option>
-								<option
-								${(not empty action.pageSize and action.pageSize  == 20) ? "selected='true'" : "" }
-								value="/apotheca/drugsBill.run?pageSize=20">20</option>
-							</select>
-						</div>
-						<span style="float: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-						<div style="float: right">
-							<c:forEach var="displayPage" begin="1" end="${action.pagesCount}">
-								<c:choose>
-									<c:when test="${displayPage == (empty action.currentPage ? 1 : action.currentPage)}">${displayPage} &nbsp;</c:when>
-									<c:otherwise>
-										<a href="/apotheca/drugsBill.run?pageSize=${empty action.pageSize ? 5 : action.pageSize}&currentPage=${displayPage}">${displayPage}</a>&nbsp;
-									</c:otherwise>
-								</c:choose>
-							</c:forEach>
-						</div>
-					</div>
-				</div>
-			</div>
+<!-- 			<div class="container" style="width:50%"> -->
+<!-- 				<div style="overflow: hidden" class="container" align="center"> -->
+<!-- 					<div style="float: left"> -->
+<!-- 						records from&nbsp; -->
+<%-- 						<%=currentPage * pageSize - pageSize + 1%> --%>
+<%-- 						<%=rb.getString("drugs.records2")%> --%>
+<%-- 						<%=currentPage * pageSize - pageSize + 1 --%>
+<%-- 								: pageSize) - 1%> --%>
+<%-- 						<%=rb.getString("drugs.records3")%> --%>
+<%-- 						${action.totalCount} --%>
+<!-- 					</div> -->
+<!-- 					<span style="float: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> -->
+<!-- 					<div style="float: right"> -->
+<!-- 						<div style="float: left"> -->
+<%-- 							<%=rb.getString("drugs.records4")%>:&nbsp; <select name="pageSize" --%>
+<!-- 							onChange="changePageSize(this);"> -->
+<!-- 								<option -->
+<%-- 								${(empty action.pageSize or action.pageSize == 5) ? "selected='true'" : "" } --%>
+<!-- 								value="/apotheca/drugsBill.run?pageSize=5">5</option> -->
+<!-- 								<option -->
+<%-- 								${(not empty action.pageSize and action.pageSize  == 10) ? "selected='true'" : "" } --%>
+<!-- 								value="/apotheca/drugsBill.run?pageSize=10">10</option> -->
+<!-- 								<option -->
+<%-- 								${(not empty action.pageSize and action.pageSize  == 20) ? "selected='true'" : "" } --%>
+<!-- 								value="/apotheca/drugsBill.run?pageSize=20">20</option> -->
+<!-- 							</select> -->
+<!-- 						</div> -->
+<!-- 						<span style="float: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> -->
+<!-- 						<div style="float: right"> -->
+<%-- 							<c:forEach var="displayPage" begin="1" end="${action.pagesCount}"> --%>
+<%-- 								<c:choose> --%>
+<%-- 									<c:when test="${displayPage == (empty action.currentPage ? 1 : action.currentPage)}">${displayPage} &nbsp;</c:when> --%>
+<%-- 									<c:otherwise> --%>
+<%-- 										<a href="/apotheca/drugsBill.run?pageSize=${empty action.pageSize ? 5 : action.pageSize}&currentPage=${displayPage}">${displayPage}</a>&nbsp; --%>
+<%-- 									</c:otherwise> --%>
+<%-- 								</c:choose> --%>
+<%-- 							</c:forEach> --%>
+<!-- 						</div> -->
+<!-- 					</div> -->
+<!-- 				</div> -->
+<!-- 			</div> -->
+
+			<%@ include file = "/pagination.jsp" %>
 		
 			<table border = "1" style="width:50%; margin-top: 20px" class="container" align="center">
 				<caption><%=rb.getString("drugs.caption")%></caption>

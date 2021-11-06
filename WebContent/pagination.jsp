@@ -5,18 +5,22 @@
 
 <script type="text/javascript">
 
+canNavigate = false;
+
 	function changePageSize (select) {
 		
 		return select.options[select.selectedIndex].value && (window.location = select.options[select.selectedIndex].value); 
 	
 	}
 	
-	function changeCurrentPage (input, baseURL) {
-		console.log(input.value);
-		url = baseURL + "?pageSize=" + ${empty action.pageSize ? 5 : action.pageSize} + "&currentPage=" + input.value;
-		console.log(url);
-		return isPageValid(input.value) && (window.location = url); 
+	function changeCurrentPage ( input, baseURL) {
 	
+		if ( canNavigate) {
+			console.log(input.value);
+			url = baseURL + "?pageSize=" + ${empty action.pageSize ? 5 : action.pageSize} + "&currentPage=" + input.value;
+			console.log(url);
+			return isPageValid(input.value) && (window.location = url); 
+		}
 	}
 	
 	function isPageValid (page) {
@@ -24,11 +28,30 @@
 		return page ? true : false; 
 	
 	}
+	
+	function showHideInput() {
+		
+		var input = document.getElementById("goToPage");
+		input.removeAttribute("hidden");
+	}
+	
+	
+	function registerEvent(e) {
+		console.log(e.code);
+		if (e.code == "Enter") {
+			canNavigate = true;
+			myInput = document.getElementById("goToPage");
+			changeCurrentPage(myInput, '${baseURL}');
+		}
+	
+	}
 
 </script>
 	
-<div style="width:50%" class="container">
-	<div style="overflow: hidden" class="container" align="center">
+<body onload="">
+	
+<!-- <div  class="container"> -->
+	<div style="overflow: hidden"  class="container" align="center">
 		<div style="float: left">
 			items from&nbsp;
 			<%=currentPage * pageSize - pageSize + 1%>
@@ -120,10 +143,18 @@
 				</c:if>
 				
 				<c:if test="${action.pagesCount > 3 }">
-					<input type="number" min="1" max="${action.pagesCount }" id="goToPage" onkeyup="changeCurrentPage(this, '${baseURL}');" value="${action.currentPage }" />
+					<button id="pageButton" onclick="showHideInput();">go to page</button>
+					<input hidden type="number" min="1" max="${action.pagesCount }" id="goToPage" 
+<%-- 					onkeyup="changeCurrentPage(this, '${baseURL}');" --%>
+					 value="${action.currentPage }" />
+					 <script>
+					 	document.getElementById("goToPage").addEventListener("keyup", registerEvent);
+					 </script>
 				</c:if>
 				
 			</div>
 		</div>
 	</div>
-</div>
+<!-- </div> -->
+
+</body>

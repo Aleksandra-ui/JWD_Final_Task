@@ -23,6 +23,8 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 	function validateAmount(input) {
 		
 		result = false;
+		console.log(input.value);
+		if (input.value){
 		if (input.value < 1 || input.value > 100) {
 			input.className = "error";
 			document.getElementById("errorStatus").innerHTML = "<label style='color:red;'>Value exceeds allowed range</label>";
@@ -31,9 +33,23 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 			document.getElementById("errorStatus").innerHTML = "";
 			result = true;
 		}
+		}
 		console.log("input " + input.id + ", value " + input.value + ", class " + input.className);
 		return result;
 		
+	}
+	
+	function changeDynamicPage (input) {
+		console.log(input.value);
+		
+		return isDynamicPageValid(input.value) && displayCart(input.value, ${empty action.pageSize ? 5 : action.pageSize}); 
+	
+	}
+	
+	function isDynamicPageValid (page) {
+		
+		return page ? true : false; 
+	
 	}
 
 </script>
@@ -47,8 +63,8 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 	%>
 
 	<c:if test="${(not empty action.cart) and (not empty action.products) }">
-		<div style="width:50%" class="container">
-			<div style="overflow: hidden" class="container" align="center">
+		<div  class="container">
+			<div style="overflow: hidden" align="center">
 				<div style="float: left">
 					<%=rb.getString("drugs.records1")%>
 					<%=currentPage * pageSize - pageSize + 1%>
@@ -84,20 +100,93 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 							Integer pagesCount = totalCount / pageSize + ((totalCount % pageSize) == 0 ? 0 : 1);
 							request.setAttribute("pagesCount", pagesCount);
 						%>
-						<c:forEach var="displayPage" begin="1" end="${pagesCount}">
-							<c:choose>
-								<c:when test="${displayPage == (empty param.currentPage ? 1 : param.currentPage)}">${displayPage} &nbsp;</c:when>
-								<c:otherwise>
-									<a onclick="displayCart(${displayPage}, ${action.pageSize })" style="text-decoration: underline;">${displayPage}</a>&nbsp;
-								</c:otherwise>
-							</c:choose>
-						</c:forEach>
+<%-- 						<c:forEach var="displayPage" begin="1" end="${pagesCount}"> --%>
+<%-- 							<c:choose> --%>
+<%-- 								<c:when test="${displayPage == (empty param.currentPage ? 1 : param.currentPage)}">${displayPage} &nbsp;</c:when> --%>
+<%-- 								<c:otherwise> --%>
+<%-- 									<a onclick="displayCart(${displayPage}, ${action.pageSize })" style="text-decoration: underline;">${displayPage}</a>&nbsp; --%>
+<%-- 								</c:otherwise> --%>
+<%-- 							</c:choose> --%>
+<%-- 						</c:forEach> --%>
+				<%--Button "previous", shown when current page > 1--%>
+				<c:if test="${action.currentPage != 1 }">
+					<span>
+						<a onclick="displayCart(${action.currentPage - 1}, ${empty action.pageSize ? 5 : action.pageSize})" style="text-decoration: underline;"
+						 >&lt;</a>&nbsp;
+					</span>
+				</c:if>
+					
+				<%--First page--%>
+				
+				<c:choose>
+					<c:when test="${empty action.currentPage or action.currentPage eq 1 }">
+						1&nbsp;
+					</c:when>
+					<c:otherwise>
+						<a onclick="displayCart(1, ${empty action.pageSize ? 5 : action.pageSize})" style="text-decoration: underline;"
+						>1</a>&nbsp;
+					</c:otherwise>
+				</c:choose>
+				
+				<%--spacer after first page --%>
+				<c:if test="${not (empty action.currentPage or action.currentPage < 4) }">
+					<span>...&nbsp;</span>
+				</c:if>
+				
+				<%--previous page --%>
+				<c:if test="${(not empty action.currentPage) and (action.currentPage > 2) and (pagesCount > 2) }">
+					<a onclick="displayCart(${action.currentPage - 1}, ${empty action.pageSize ? 5 : action.pageSize})" style="text-decoration: underline;"
+					>${action.currentPage - 1}</a> &nbsp;
+				</c:if>
+				
+				<%--current page --%>
+				<c:if test="${(not empty action.currentPage) and ( action.currentPage > 1 ) and (action.currentPage < pagesCount)}">
+					${action.currentPage} &nbsp;
+				</c:if>
+				
+				<%--next page --%>
+				<c:if test="${(not empty action.currentPage) and (action.currentPage < pagesCount - 1) and (pagesCount > 2) }">
+					<a onclick="displayCart(${action.currentPage + 1}, ${empty action.pageSize ? 5 : action.pageSize})" style="text-decoration: underline;"
+					 >${action.currentPage + 1}</a> &nbsp;
+				</c:if>
+				
+				<%--spacer before last page --%>
+				<c:if test="${action.currentPage < pagesCount - 2 }">
+					<span>...&nbsp;</span>
+				</c:if>
+				
+				<%--Button "last" --%>
+				<c:if test="${ pagesCount > 1 }">
+					<c:choose>
+						<c:when test="${not empty action.currentPage and (action.currentPage eq pagesCount) }">
+							${ pagesCount}&nbsp;
+						</c:when>
+						<c:otherwise>
+							<a onclick="displayCart(${pagesCount}, ${empty action.pageSize ? 5 : action.pageSize})" style="text-decoration: underline;"
+							>${ pagesCount}</a> &nbsp;
+						</c:otherwise>
+					</c:choose>
+				</c:if>
+				
+				<%--Button "next", shown when current page < total pages count--%>
+				<c:if test="${(empty action.currentPage and pagesCount > 1 ) or (action.currentPage < pagesCount) }">
+					<span>
+						<a onclick="displayCart(${action.currentPage + 1}, ${empty action.pageSize ? 5 : action.pageSize})" style="text-decoration: underline;"
+						>&gt;</a> &nbsp;
+					</span>
+				</c:if>
+				
+				<c:if test="${pagesCount > 3 }">
+					<button id="pageButton" onclick="showHideInput();">go to page</button>
+					<input hidden type="number" min="1" max="${pagesCount }" id="goToPage" onkeyup="changeDynamicPage(this);" value="${action.currentPage }" />
+				</c:if>
+				
 					</div>
 				</div>
 			</div>
 		</div>
 			
-	<table border = "1" style="width:50%; margin-top: 20px" class="container" align="center">
+	<table border = "1" style="margin-top: 20px" class="container" align="center">
 	<caption>Shopping Cart</caption>
 		<thead align="center">
 			<tr>
@@ -135,13 +224,13 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 								</c:if>
 							>${d.key.price }</td>
 							<td>
-								<input type="number"
+								<input type="number" min="1" max="100"
 									id="cartAmount${d.key.id}"
 									<c:if test="${not empty action.invalidDrugs[d.key] and (not empty action.invalidDrugs[d.key]['amount']) }">
 										class="error" title="${action.invalidDrugs[d.key]['amount'] }"
 									</c:if>
-									onchange="if (validateAmount(this)){onkeyup();}"
-									onkeyup="updateShoppingCart(${d.key.id}, true, 'cartAmount${d.key.id}')"
+									onchange="onkeyup();"
+									onkeyup="if (validateAmount(this)){updateShoppingCart(${d.key.id}, true, 'cartAmount${d.key.id}');}"
 								 	value="${d.value }"/>
 							</td>
 							<td><a onclick="updateShoppingCart(${d.key.id}, false);" style="text-decoration: underline;">remove</a></td>

@@ -12,15 +12,8 @@ ResourceBundle rb = ResourceBundle.getBundle("CreateRecipe", locale);
 %> 
 <title><%=rb.getString("create.title")%></title>
 </head>
-<script type="text/javascript">
+<c:set var="baseURL" value="/apotheca/createRecipe.run"/>
 
-	function changePageSize (select) {
-		
-		return select.options[select.selectedIndex].value && (window.location = select.options[select.selectedIndex].value); 
-	
-	}
-
-</script>
 <body>
      
     <div id = "errorMessages" class="container" align="center">
@@ -45,49 +38,51 @@ ResourceBundle rb = ResourceBundle.getBundle("CreateRecipe", locale);
 			</font>
 		</div>
 	
-		<div style="width:50%" class="container">
-			<div style="overflow: hidden" class="container" align="center">
-				<div style="float: left">
-					<%out.print("records from");%>
-					${ action.currentPage * action.pageSize - action.pageSize + 1}
-					<%out.print("to");%>
-					<%=currentPage * pageSize - pageSize + 1
-					+ ((totalCount % pageSize != 0
-					&& totalCount / pageSize * pageSize + 1 == currentPage * pageSize - pageSize + 1)
-							? totalCount % pageSize
-							: pageSize)
-					- 1%>
-					<%out.print("of");%>
-					${action.totalCount}
-				</div>
-				<span style="float: none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-				<div style="float: right">
-					<div style="float: left">
-				 		items per page:&nbsp; <select name="pageSize"
-						onChange="changePageSize(this);">
-							<option
-							${(empty action.pageSize or action.pageSize == 5) ? "selected='true'" : "" }
-							value="/apotheca/createRecipe.run?pageSize=5&currentPage=1">5</option>
-							<option
-							${(not empty action.pageSize and action.pageSize  == 10) ? "selected='true'" : "" }
-							value="/apotheca/createRecipe.run?pageSize=10&currentPage=1">10</option>
-							<option
-							${(not empty action.pageSize and action.pageSize  == 20) ? "selected='true'" : "" }
-							value="/apotheca/createRecipe.run?pageSize=20&currentPage=1">20</option>
-						</select>
-					</div>
-					<span style="float: none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-					<div style="float: right">
-						<c:forEach var="displayPage" begin="1" end="${action.pagesCount}">
-							<c:choose>
-								<c:when test="${displayPage == (empty action.currentPage ? 1 : action.currentPage)}">${displayPage} &nbsp;</c:when>
-								<c:otherwise><a href="/apotheca/createRecipe.run?pageSize=${empty action.pageSize ? 5 : action.pageSize}&currentPage=${displayPage}">${displayPage}</a>&nbsp;</c:otherwise>
-							</c:choose>
-						</c:forEach>
-					</div>
-				</div>
-			</div>
-		</div>
+<!-- 		<div style="width:50%" class="container"> -->
+<!-- 			<div style="overflow: hidden" class="container" align="center"> -->
+<!-- 				<div style="float: left"> -->
+<%-- 					<%out.print("records from");%> --%>
+<%-- 					${ action.currentPage * action.pageSize - action.pageSize + 1} --%>
+<%-- 					<%out.print("to");%> --%>
+<%-- 					<%=currentPage * pageSize - pageSize + 1 --%>
+// 					+ ((totalCount % pageSize != 0
+// 					&& totalCount / pageSize * pageSize + 1 == currentPage * pageSize - pageSize + 1)
+// 							? totalCount % pageSize
+// 							: pageSize)
+<%-- 					- 1%> --%>
+<%-- 					<%out.print("of");%> --%>
+<%-- 					${action.totalCount} --%>
+<!-- 				</div> -->
+<!-- 				<span style="float: none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> -->
+<!-- 				<div style="float: right"> -->
+<!-- 					<div style="float: left"> -->
+<!-- 				 		items per page:&nbsp; <select name="pageSize" -->
+<!-- 						onChange="changePageSize(this);"> -->
+<!-- 							<option -->
+<%-- 							${(empty action.pageSize or action.pageSize == 5) ? "selected='true'" : "" } --%>
+<!-- 							value="/apotheca/createRecipe.run?pageSize=5&currentPage=1">5</option> -->
+<!-- 							<option -->
+<%-- 							${(not empty action.pageSize and action.pageSize  == 10) ? "selected='true'" : "" } --%>
+<!-- 							value="/apotheca/createRecipe.run?pageSize=10&currentPage=1">10</option> -->
+<!-- 							<option -->
+<%-- 							${(not empty action.pageSize and action.pageSize  == 20) ? "selected='true'" : "" } --%>
+<!-- 							value="/apotheca/createRecipe.run?pageSize=20&currentPage=1">20</option> -->
+<!-- 						</select> -->
+<!-- 					</div> -->
+<!-- 					<span style="float: none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> -->
+<!-- 					<div style="float: right"> -->
+<%-- 						<c:forEach var="displayPage" begin="1" end="${action.pagesCount}"> --%>
+<%-- 							<c:choose> --%>
+<%-- 								<c:when test="${displayPage == (empty action.currentPage ? 1 : action.currentPage)}">${displayPage} &nbsp;</c:when> --%>
+<%-- 								<c:otherwise><a href="/apotheca/createRecipe.run?pageSize=${empty action.pageSize ? 5 : action.pageSize}&currentPage=${displayPage}">${displayPage}</a>&nbsp;</c:otherwise> --%>
+<%-- 							</c:choose> --%>
+<%-- 						</c:forEach> --%>
+<!-- 					</div> -->
+<!-- 				</div> -->
+<!-- 			</div> -->
+<!-- 		</div> -->
+	
+		<%@ include file = "/pagination.jsp" %>
 	
 		<table border = "1" style="width:50%; margin-top: 20px" class="container" align="center">
 			<caption><%=rb.getString("create.caption")%></caption>

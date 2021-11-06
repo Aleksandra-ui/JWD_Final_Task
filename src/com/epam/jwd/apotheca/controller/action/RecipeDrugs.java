@@ -19,6 +19,7 @@ public class RecipeDrugs implements RunCommand, RecipeCartAware {
 	private Map<String, String[]> params;
 	private int pageSize;
 	private int currentPage;
+	private int pagesCount;
 	private List<Drug> drugs;
 	private int totalCount;
 	private List<User> clients;
@@ -43,6 +44,7 @@ public class RecipeDrugs implements RunCommand, RecipeCartAware {
 		pageSize = params.get("pageSize") == null ? 5 : Integer.valueOf(params.get("pageSize")[0]);
 		currentPage = params.get("currentPage") == null ? 1
 				: Integer.valueOf(params.get("currentPage")[0]);
+		pagesCount = totalCount / pageSize + ((totalCount % pageSize) == 0 ? 0 : 1);
 		drugs = DrugManagerService.getInstance().getPrescriptedDrugs(pageSize * (currentPage - 1), pageSize);
 		clients = UserManagerService.getInstance().getClients();
 		
@@ -84,6 +86,10 @@ public class RecipeDrugs implements RunCommand, RecipeCartAware {
 
 	public int getTotalCount() {
 		return totalCount;
+	}
+	
+	public int getPagesCount() {
+		return pagesCount;
 	}
 
 	public List<User> getClients() {

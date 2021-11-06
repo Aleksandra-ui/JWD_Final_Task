@@ -6,7 +6,13 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
+<%
+		Drugs bean = (Drugs)request.getAttribute("action");
+	
+		Integer totalCount = bean.getTotalCount();
+		int pageSize = bean.getPageSize();
+		int currentPage = bean.getCurrentPage();
+	%>
 <%@ include file = "/mainMenu.jsp" %>
 <%
 ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
@@ -116,13 +122,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 </script>
 
 <body onload="displayCart();">
-	<%
-		Drugs bean = (Drugs)request.getAttribute("action");
 	
-		Integer totalCount = bean.getTotalCount();
-		int pageSize = bean.getPageSize();
-		int currentPage = bean.getCurrentPage();
-	%>
 
 <%-- 
 	<div style="width:50%" class="container">
@@ -168,8 +168,10 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 	</div>
 --%>
 	
+<div class="container" style="width: 70%;">	
+	
 <%@ include file = "/pagination.jsp" %>
-	<table border = "1" style="width:50%; margin-top: 20px" class="container" align="center">
+	<table border = "1" style=" margin-top: 20px" class="container" align="center">
 		<caption><%=rb.getString("drugs.list")%></caption>
 		<thead align="center">
 			<tr>
@@ -255,6 +257,8 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
  	<!-- div id = "errorStatus" class="container" align="center"></div -->
 	
 	<div id = "shoppingCart" class="container" align="center"></div>
+	
+	</div>
 		
 </body>
 </html>
