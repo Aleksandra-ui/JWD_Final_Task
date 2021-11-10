@@ -13,6 +13,7 @@ import com.epam.jwd.apotheca.model.User;
 
 public class RecipeDrugs implements RunCommand, RecipeCartAware {
 
+	private static final String name = "RecipeDrugs";
 	private static RecipeDrugs instance = new RecipeDrugs();
 	private User user;
 	private String actionTime;
@@ -112,4 +113,8 @@ public class RecipeDrugs implements RunCommand, RecipeCartAware {
 		this.cart = cart;
 	}
 
+	public String getName() {
+		return name;
+	}
+	
 }

@@ -11,6 +11,7 @@ import com.epam.jwd.apotheca.model.User;
 
 public class Orders implements RunCommand {
 
+	private static final String name = "Orders";
 	private static Orders instance = new Orders();
 	private static final Logger logger = LoggerFactory.getLogger(Orders.class);
 	private String actionTime;
@@ -100,6 +101,10 @@ public class Orders implements RunCommand {
 
 	public List<Map<String, String>> getDrugsInfo() {
 		return drugsInfo;
+	}
+	
+	public String getName() {
+		return name;
 	}
 	
 }

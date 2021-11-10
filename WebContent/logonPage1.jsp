@@ -91,97 +91,58 @@
 	<c:set var="isAdmin" value="${not empty action.user and action.user.role.name eq 'admin' }"/>
 	
 	<c:if test="${isAdmin and not empty action.users }">	
-	
-<!-- 		<div style="width:50%" class="container"> -->
-<!-- 			<div style="overflow: hidden" class="container" align="center"> -->
-<!-- 				<div style="float: left"> -->
-<!-- 					<p>records from -->
-<%-- 						${action.currentPage * action.pageSize - action.pageSize + 1 } --%>
-<!-- 						to -->
-<%-- 						<%=currentPage * pageSize - pageSize + 1 + ((totalCount % pageSize != 0 && totalCount / pageSize * pageSize + 1 == currentPage * pageSize - pageSize + 1) --%>
-<%-- 								? totalCount % pageSize : pageSize) - 1%> --%>
-<!-- 						of -->
-<%-- 						${action.totalCount}&nbsp;&nbsp; --%>
-<!-- 					</p> -->
-<!-- 				</div> -->
-<!-- 				<span style="float: none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> -->
-<!-- 				<div style="float: right"> -->
-<!-- 					<div style="float: left"> -->
-<!-- 						records per page:&nbsp; <select name="pageSize" -->
-<!-- 							onChange="changePageSize(this);" > -->
-<!-- 							<option -->
-<%-- 								${(empty action.pageSize or action.pageSize == 5) ? "selected='true'" : "" } --%>
-<!-- 								value="/apotheca/logon.run?pageSize=5">5</option> -->
-<!-- 							<option -->
-<%-- 								${(not empty action.pageSize and action.pageSize  == 10) ? "selected='true'" : "" } --%>
-<!-- 								value="/apotheca/logon.run?pageSize=10">10</option> -->
-<!-- 							<option -->
-<%-- 								${(not empty action.pageSize and action.pageSize  == 20) ? "selected='true'" : "" } --%>
-<!-- 								value="/apotheca/logon.run?pageSize=20">20</option> -->
-<!-- 						</select> -->
-<!-- 					</div> -->
-<!-- 					<span style="float: none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> -->
-<!-- 					<div style="float: right"> -->
-<%-- 						<c:forEach var="displayPage" begin="1" end="${action.pagesCount}"> --%>
-<%-- 							<c:choose> --%>
-<%-- 								<c:when --%>
-<%-- 									test="${displayPage == (empty action.currentPage ? 1 : action.currentPage)}">${displayPage} &nbsp;</c:when> --%>
-<%-- 								<c:otherwise> --%>
-<%-- 									<a href="/apotheca/logon.run?pageSize=${empty action.pageSize ? 5 : action.pageSize}&currentPage=${displayPage}">${displayPage}</a>&nbsp;</c:otherwise> --%>
-<%-- 							</c:choose> --%>
-<%-- 						</c:forEach> --%>
-<!-- 					</div> -->
-<!-- 				</div> -->
-<!-- 			</div> -->
-<!-- 		</div> -->
 
-		<%@ include file = "/pagination.jsp" %>
-	
-		<table border = "1" style="width:50%; margin-top: 20px; margin-bottom: 20px" class="container" align="center">
-		<thead align ="center">
-			<tr>
-				<th><%=rb.getString("logon.name")%></th>
-				<th><%=rb.getString("logon.role")%></th>
-				<th>action</th>
-				<th>apply</th>
-			</tr>
-		</thead>
-		<tbody align ="center">
-			<c:set var="classStyle" value="even"/>
-			<c:set var="currId" value="0"/>
-			<c:forEach var="u" items="${action.users }">
-				<c:if test="${ not (currId  eq u.id) }">
-					<c:set var="currId" value="${u.id }"/>
-					<c:choose>
-						<c:when test="${classStyle eq 'even' }">
-							<c:set var="classStyle" value="odd"/>
-						</c:when>
-						<c:otherwise>
-							<c:set var="classStyle" value="even"/>
-						</c:otherwise>
-					</c:choose>
-				</c:if>
-				<tr class="${classStyle }">
-					<td>${u.name}</td>
-					<td>${u.role.name}</td>
-					<td>
-						<c:if test="${ not (u.role.name eq 'admin') }">
-							<select id="userAction${u.id }">
-								<option value="deleteUser.run?userId=${u.id }" selected>delete</option>
-								<option value="changeUserRole.run?userId=${u.id }&role=pharmacist">change role to pharmacist</option>
-								<option value="changeUserRole.run?userId=${u.id }&role=doctor">change role to doctor</option>
-								<option value="changeUserRole.run?userId=${u.id }&role=client">change role to client</option>
-							</select>
-						</c:if>
-					</td>
-					<td>
-						<c:if test="${ not (u.role.name eq 'admin') }">
-							<a onclick="applyAction(${u.id });"><u>apply action</u></a>
-						</c:if>
-					</td>
-				</tr>			
-			</c:forEach>			
-		</table>
+		<div class="container" style="width: 70%;">	
+
+			<%@ include file = "/pagination.jsp" %>
+		
+			<table border = "1" style="margin-top: 20px; margin-bottom: 20px" class="container" align="center">
+			<thead align ="center">
+				<tr>
+					<th><%=rb.getString("logon.name")%></th>
+					<th><%=rb.getString("logon.role")%></th>
+					<th>action</th>
+					<th>apply</th>
+				</tr>
+			</thead>
+			<tbody align ="center">
+				<c:set var="classStyle" value="even"/>
+				<c:set var="currId" value="0"/>
+				<c:forEach var="u" items="${action.users }">
+					<c:if test="${ not (currId  eq u.id) }">
+						<c:set var="currId" value="${u.id }"/>
+						<c:choose>
+							<c:when test="${classStyle eq 'even' }">
+								<c:set var="classStyle" value="odd"/>
+							</c:when>
+							<c:otherwise>
+								<c:set var="classStyle" value="even"/>
+							</c:otherwise>
+						</c:choose>
+					</c:if>
+					<tr class="${classStyle }">
+						<td>${u.name}</td>
+						<td>${u.role.name}</td>
+						<td>
+							<c:if test="${ not (u.role.name eq 'admin') }">
+								<select id="userAction${u.id }">
+									<option value="deleteUser.run?userId=${u.id }" selected>delete</option>
+									<option value="changeUserRole.run?userId=${u.id }&role=pharmacist">change role to pharmacist</option>
+									<option value="changeUserRole.run?userId=${u.id }&role=doctor">change role to doctor</option>
+									<option value="changeUserRole.run?userId=${u.id }&role=client">change role to client</option>
+								</select>
+							</c:if>
+						</td>
+						<td>
+							<c:if test="${ not (u.role.name eq 'admin') }">
+								<a onclick="applyAction(${u.id });"><u>apply action</u></a>
+							</c:if>
+						</td>
+					</tr>			
+				</c:forEach>			
+			</table>
+			
+		</div>
 		
 	</c:if>
 

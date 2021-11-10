@@ -39,18 +39,8 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 		
 	}
 	
-	function changeDynamicPage (input) {
-		console.log(input.value);
-		
-		return isDynamicPageValid(input.value) && displayCart(input.value, ${empty action.pageSize ? 5 : action.pageSize}); 
-	
-	}
-	
-	function isDynamicPageValid (page) {
-		
-		return page ? true : false; 
-	
-	}
+
+
 
 </script>
 
@@ -60,9 +50,20 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 		Integer totalCount = bean.getTotalCount();
 		int pageSize = bean.getPageSize();
 		int currentPage = bean.getCurrentPage();
+		Integer pagesCount = totalCount / pageSize + ((totalCount % pageSize) == 0 ? 0 : 1);
+		request.setAttribute("pagesCount", pagesCount);
 	%>
 
 	<c:if test="${(not empty action.cart) and (not empty action.products) }">
+	
+		<div id="popUpGo" style="display: none; float: right; margin-right: 25px">
+			<input type="number" min="1" max="${pagesCount }" id="goToCartPage" value="${action.currentPage }" />
+			<button  id="cartButton" style="display: block; margin-left: 15px; float: right;">go</button>  
+		</div>
+		<script>
+			
+		</script>
+	
 		<div  class="container">
 			<div style="overflow: hidden" align="center">
 				<div style="float: left">
@@ -96,10 +97,6 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 					</div>
 					<span style="float: none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 					<div style="float: right">
-						<%
-							Integer pagesCount = totalCount / pageSize + ((totalCount % pageSize) == 0 ? 0 : 1);
-							request.setAttribute("pagesCount", pagesCount);
-						%>
 <%-- 						<c:forEach var="displayPage" begin="1" end="${pagesCount}"> --%>
 <%-- 							<c:choose> --%>
 <%-- 								<c:when test="${displayPage == (empty param.currentPage ? 1 : param.currentPage)}">${displayPage} &nbsp;</c:when> --%>
@@ -117,7 +114,6 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 				</c:if>
 					
 				<%--First page--%>
-				
 				<c:choose>
 					<c:when test="${empty action.currentPage or action.currentPage eq 1 }">
 						1&nbsp;
@@ -177,8 +173,8 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 				</c:if>
 				
 				<c:if test="${pagesCount > 3 }">
-					<button id="pageButton" onclick="showHideInput();">go to page</button>
-					<input hidden type="number" min="1" max="${pagesCount }" id="goToPage" onkeyup="changeDynamicPage(this);" value="${action.currentPage }" />
+					<button id="cartPageButton" onclick="showHideInput('popUpGo', 'cartButton', registerCartEvent);">go to page</button>
+<%-- 					<input hidden type="number" min="1" max="${pagesCount }" id="goToPage" onkeyup="changeDynamicPage(this);" value="${action.currentPage }" /> --%>
 				</c:if>
 				
 					</div>

@@ -102,28 +102,65 @@ java.util.Map,java.util.HashMap"%>
 	
 		<div class="container" align="center" style="width: 80%">
 			<ul class="list-group-horizontal">
-				<li class="menu-item"><a href="/apotheca/drugs.run"><%=rb0.getString("menu.drugs")%></a></li>
-				<c:if test="${ canPrescribe }">
-					<li class="menu-item"><a href="/apotheca/recipe.run"><%=rb0.getString("menu.prescribe")%></a></li>
-				</c:if> 
-				<c:if test="${ canPrescribe }">
-					<li class="menu-item"><a href="/apotheca/prescribedRecipes.run"><%=rb0.getString("menu.recipes")%></a></li>
-				</c:if> 
-				<c:if test="${not empty sessionScope.user }">
-					<li class="menu-item"><a href="/apotheca/orders.run"><%=rb0.getString("menu.orders")%></a></li>
-				</c:if> 
-				<c:if test="${canAddDrugs}">
-					<li class="menu-item"><a href="/apotheca/createDrug.run"><%=rb0.getString("menu.create")%></a></li>
-				</c:if> 
+			
 				<li class="menu-item">
 					<c:choose>
-						<c:when test="${not empty sessionScope.user}"><font color = "blue"><%=rb0.getString("menu.user")%>: ${sessionScope.user.name}</font></c:when>
+						<c:when test="${action.name eq 'Drugs' }"><%=rb0.getString("menu.drugs")%></c:when>
+						<c:otherwise><a href="/apotheca/drugs.run"><%=rb0.getString("menu.drugs")%></a></c:otherwise>
+					</c:choose>
+				</li>
+				
+				<c:if test="${ canPrescribe }">
+				
+					<li class="menu-item">
+						<c:choose>
+							<c:when test="${action.name eq 'RecipeDrugs' }"><%=rb0.getString("menu.prescribe")%></c:when>
+							<c:otherwise><a href="/apotheca/recipe.run"><%=rb0.getString("menu.prescribe")%></a></c:otherwise>
+						</c:choose>
+					</li>
+					
+				</c:if> 
+				
+				<c:if test="${ canPrescribe }">
+				
+					<li class="menu-item">
+						<c:choose>
+							<c:when test="${action.name eq 'PrescribedRecipes' }"><%=rb0.getString("menu.recipes")%></c:when>
+							<c:otherwise><a href="/apotheca/prescribedRecipes.run"><%=rb0.getString("menu.recipes")%></a></c:otherwise>
+						</c:choose>
+					</li>
+					
+				</c:if> 
+				
+				<c:if test="${not empty sessionScope.user }">
+					<li class="menu-item">
+						<c:choose>
+							<c:when test="${action.name eq 'Orders' }"><%=rb0.getString("menu.orders")%></c:when>
+							<c:otherwise><a href="/apotheca/orders.run"><%=rb0.getString("menu.orders")%></a></c:otherwise>
+						</c:choose>
+					</li>
+				</c:if> 
+				
+				<c:if test="${canAddDrugs}">
+					<li class="menu-item">
+						<c:choose>
+							<c:when test="${action.name eq 'CreateDrug' }"><%=rb0.getString("menu.create")%></c:when>
+							<c:otherwise><a href="/apotheca/createDrug.run"><%=rb0.getString("menu.create")%></a></c:otherwise>
+						</c:choose>
+					</li>
+				</c:if> 
+				
+				<li class="menu-item">
+					<c:choose>
+						<c:when test="${not empty sessionScope.user}"><%=rb0.getString("menu.user")%>: ${sessionScope.user.name}</c:when>
 						<c:otherwise><%=rb0.getString("menu.logon1")%> <a href="/apotheca/logon.run"><%=rb0.getString("menu.logon2")%></a></c:otherwise>
 					</c:choose>
 				</li>
+				
 				<li class="last-item">
 					<c:if test="${not empty sessionScope.user}"><a href="/apotheca/logon.run?logoff=1"><%=rb0.getString("menu.logoff")%></a></c:if>
 				</li>
+				
 			</ul>
 		</div>
 	

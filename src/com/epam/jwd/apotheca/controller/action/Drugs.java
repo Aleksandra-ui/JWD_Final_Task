@@ -21,6 +21,7 @@ public class Drugs implements RunCommand, ShoppingCartAware {
 
 	private static Drugs instance = new Drugs();
 	private static final Logger logger = LoggerFactory.getLogger(Drugs.class);
+	private static final String name = "Drugs";
 	private String actionTime;
 	private List<Drug> drugs;
 	private Map<String, String[]> params;
@@ -31,7 +32,6 @@ public class Drugs implements RunCommand, ShoppingCartAware {
 	private User user;
 	private Map<Integer, Date> drugsFromRecipe;
 	private ShoppingCart cart;
-	
 
 	private Drugs() {
 		drugs = new ArrayList<Drug>();
@@ -132,6 +132,10 @@ public class Drugs implements RunCommand, ShoppingCartAware {
 
 	public int getTotalCount() {
 		return totalCount;
+	}
+	
+	public String getName() {
+		return name;
 	}
 	
 }

@@ -170,7 +170,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 	
 <div class="container" style="width: 70%;">	
 	
-<%@ include file = "/pagination.jsp" %>
+	<%@ include file = "/pagination.jsp" %>
 	<table border = "1" style=" margin-top: 20px" class="container" align="center">
 		<caption><%=rb.getString("drugs.list")%></caption>
 		<thead align="center">
@@ -258,7 +258,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 	
 	<div id = "shoppingCart" class="container" align="center"></div>
 	
-	</div>
+</div>
 		
 </body>
 </html>

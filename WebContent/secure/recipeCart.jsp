@@ -36,8 +36,8 @@
 
 	<c:if test="${(not empty action.cart) and (not empty action.drugs) }">
 		
-		<div style="width:50%" class="container">
-			<div style="overflow: hidden" class="container" align="center">
+		<div class="container">
+			<div style="overflow: hidden" align="center">
 				<span style="align-content: center; align-self: center;">Current recipe</span>
 					<div style="float: left">
 						<%=rb.getString("drugs.records1")%>
@@ -70,21 +70,85 @@
 						</div>
 						<span style="float: none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 						<div style="float: right">
-							<c:forEach var="displayPage" begin="1" end="${action.pagesCount}">
+
+							<%--Button "previous", shown when current page > 1--%>
+							<c:if test="${action.currentPage != 1 }">
+								<span>
+									<a onclick="displayCart(${action.currentPage - 1}, ${empty action.pageSize ? 5 : action.pageSize})" style="text-decoration: underline;"
+						 			>&lt;</a>&nbsp;
+								</span>
+							</c:if>
+							
+							<%--First page--%>
+							<c:choose>
+								<c:when test="${empty action.currentPage or action.currentPage eq 1 }">
+									1&nbsp;
+								</c:when>
+								<c:otherwise>
+									<a onclick="displayCart(1, ${empty action.pageSize ? 5 : action.pageSize})" style="text-decoration: underline;"
+									>1</a>&nbsp;
+								</c:otherwise>
+							</c:choose>
+							
+							<%--spacer after first page --%>
+							<c:if test="${not (empty action.currentPage or action.currentPage < 4) }">
+								<span>...&nbsp;</span>
+							</c:if>
+							
+							<%--previous page --%>
+							<c:if test="${(not empty action.currentPage) and (action.currentPage > 2) and (action.pagesCount > 2) }">
+								<a onclick="displayCart(${action.currentPage - 1}, ${empty action.pageSize ? 5 : action.pageSize})" style="text-decoration: underline;"
+								>${action.currentPage - 1}</a> &nbsp;
+							</c:if>
+							
+							<%--current page --%>
+							<c:if test="${(not empty action.currentPage) and ( action.currentPage > 1 ) and (action.currentPage < action.pagesCount)}">
+								${action.currentPage} &nbsp;
+							</c:if>
+							
+							<%--next page --%>
+							<c:if test="${(not empty action.currentPage) and (action.currentPage < action.pagesCount - 1) and (action.pagesCount > 2) }">
+								<a onclick="displayCart(${action.currentPage + 1}, ${empty action.pageSize ? 5 : action.pageSize})" style="text-decoration: underline;"
+								 >${action.currentPage + 1}</a> &nbsp;
+							</c:if>
+							
+							<%--spacer before last page --%>
+							<c:if test="${action.currentPage < action.pagesCount - 2 }">
+								<span>...&nbsp;</span>
+							</c:if>
+							
+							<%--Button "last" --%>
+							<c:if test="${ action.pagesCount > 1 }">
 								<c:choose>
-									<c:when
-										test="${displayPage == (empty param.currentPage ? 1 : param.currentPage)}">${displayPage} &nbsp;</c:when>
+									<c:when test="${not empty action.currentPage and (action.currentPage eq action.pagesCount) }">
+										${ action.pagesCount}&nbsp;
+									</c:when>
 									<c:otherwise>
-										<a onclick="displayCart(${displayPage}, ${action.pageSize })" style="text-decoration: underline;">${displayPage}</a>&nbsp;
+										<a onclick="displayCart(${action.pagesCount}, ${empty action.pageSize ? 5 : action.pageSize})" style="text-decoration: underline;"
+										>${ action.pagesCount}</a> &nbsp;
 									</c:otherwise>
 								</c:choose>
-							</c:forEach>
+							</c:if>
+							
+							<%--Button "next", shown when current page < total pages count--%>
+							<c:if test="${(empty action.currentPage and action.pagesCount > 1 ) or (action.currentPage < action.pagesCount) }">
+								<span>
+									<a onclick="displayCart(${action.currentPage + 1}, ${empty action.pageSize ? 5 : action.pageSize})" style="text-decoration: underline;"
+									>&gt;</a> &nbsp;
+								</span>
+							</c:if>
+							
+							<c:if test="${action.pagesCount > 3 }">
+								<button id="pageButton" onclick="showHideInput();">go to page</button>
+								<input hidden type="number" min="1" max="${action.pagesCount }" id="goToPage" onkeyup="changeDynamicPage(this);" value="${action.currentPage }" />
+							</c:if>
+
 						</div>
 					</div>
 				</div>
 			</div>
 			
-			<table border = "1" style="width:50%; margin-top: 20px" class="container" align="center">
+			<table border = "1" style="margin-top: 20px" class="container" align="center">
 				<thead align="center">
 					<tr>
 						<th>#</th>
@@ -148,7 +212,7 @@
 							>${client.name }</option>
 						</c:forEach>
 					</select>
-					${action.cart.year} ${ action.errors } ${action.cart.month } ${action.cart.day}
+					
 					<select id="Year" name="year" onchange="setExpieryDate()">
 					<c:forEach begin="2021" end="2024" var="a">
 						<option id="${a }" value="${a }" <c:if test="${action.cart.year eq a }">selected</c:if>>${a }</option>

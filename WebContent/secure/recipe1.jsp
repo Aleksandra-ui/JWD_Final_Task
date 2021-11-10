@@ -190,87 +190,59 @@ function updateUser( clientId ) {
 			int pageSize = bean.getPageSize();
 			int currentPage = bean.getCurrentPage();
 			int totalCount = bean.getTotalCount();
-	%>
-	
-<!-- 	<div style="width:50%" class="container"> -->
-<!-- 		<div style="overflow: hidden" class="container" align="center"> -->
-<!-- 			<div style="float: left"> -->
-<%-- 				<%=rb.getString("drugs.records1")%> <%= currentPage*pageSize - pageSize + 1 %> <%=rb.getString("drugs.records2")%> <%= currentPage*pageSize - pageSize + 1 + ( (bean.getTotalCount() % pageSize != 0 && bean.getTotalCount() / pageSize * pageSize + 1 == currentPage*pageSize - pageSize + 1)? bean.getTotalCount() % pageSize : pageSize ) - 1 %> <%=rb.getString("drugs.records3")%> <%= bean.getTotalCount()%> --%>
-<!-- 			</div> -->
-<!-- 			<span style="float: none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> -->
-<!-- 			<div style="float: right"> -->
-<!-- 				<div style="float: left"> -->
-<%-- 					<%=rb.getString("drugs.records4")%>:&nbsp; --%>
-<!-- 					<select name="pageSize" onChange = "changePageSize(this);"> checking if there is a value in the first part of an and -->
-<%-- 						<option  ${param.pageSize  == 5 ? "selected='true'" : "" } value="/apotheca/recipe.run?pageSize=5">5</option> --%>
-<%-- 						<option  ${param.pageSize  == 10 ? "selected='true'" : "" } value="/apotheca/recipe.run?pageSize=10" >10</option> --%>
-<%-- 						<option  ${param.pageSize  == 20 ? "selected='true'" : "" } value="/apotheca/recipe.run?pageSize=20" >20</option> --%>
-<!-- 					</select> -->
-<!-- 				</div> -->
-<!-- 				<span style="float: none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> -->
-<!-- 				<div style="float: right"> -->
-<%-- 					<% --%>
-<!--  						Integer pagesCount = bean.getTotalCount() / pageSize + ((bean.getTotalCount() % pageSize) == 0 ? 0 : 1); -->
-<!--  						request.setAttribute("pagesCount", pagesCount); -->
-<%-- 					%> --%>
-<%-- 					<c:forEach var="displayPage" begin="1" end="${pagesCount}"> --%>
-<%-- 						<c:choose> --%>
-<%-- 							<c:when test="${displayPage == (empty param.currentPage ? 1 : param.currentPage)}">${displayPage} &nbsp;</c:when> --%>
-<%-- 							<c:otherwise><a href = "/apotheca/recipe.run?pageSize=${empty param.pageSize ? 5 : param.pageSize}&currentPage=${displayPage}">${displayPage}</a>&nbsp;</c:otherwise> --%>
-<%-- 						</c:choose> --%>
-<%-- 					</c:forEach> --%>
-<!-- 				</div> -->
-<!-- 			</div> -->
-<!-- 		</div> -->
-<!-- 	</div> -->
+	%>	
+
+	<div class="container" style="width: 70%;">	
 		
-	<%@ include file = "/pagination.jsp" %>
-	
-	<table border = "1" style="width:50%; margin-top: 20px" class="container" align="center" >
-		<caption><%=rb.getString("drugs.list")%></caption>
-		<thead align ="center">
-			<tr>
-				<th>#</th>
-				<th><%=rb.getString("drugs.name")%></th>
-				<th><%=rb.getString("drugs.dose")%></th>
-				<th><%=rb.getString("drugs.quantity")%></th>
-				<th><%=rb.getString("drugs.price")%></th>
-				<th><%=rb.getString("drugs.add")%></th>
-			</tr>
-		</thead>
-		<tbody align ="center">
-			<c:choose>
-				<c:when test="${not empty action.drugs}">
-					<c:forEach items="${action.drugs}" var="d">
-						<tr bgcolor="LightBlue">
-							<td><c:out value="${d.id}" /></td>
-							<td><c:out value="${d.name}" /></td>
-							<td><c:out value="${d.dose }" /></td>
-							<td><c:out value="${d.quantity }" /></td>
-							<td><c:out value="${d.price }" /></td>
-							<td>
-								<c:set var="present" value="false"/>
-								<c:forEach var="drug" items="${action.cart.drugs }">
-									<c:if test="${drug.id == d.id}">
-										<c:set var="present" value="true"/>
-									</c:if>
-								</c:forEach>
-								<input type="checkbox" id="drug${d.id}" value="${d.id}" name="drug" onchange="updateRecipeCart(${d.id}, this.checked);"
-								   <c:out value="${present ? 'checked' : ''}"/>/> 
-								<input type="hidden" id="checkbox${d.id}" value="${d.name}&nbsp;|&nbsp;${d.dose}"/>
-							&nbsp; 
-							</td>
-						</tr>
-					</c:forEach>
-				</c:when>
-				<c:otherwise>
-					<tr><td colspan="6">no records found</td></tr>
-				</c:otherwise>
-			</c:choose>
-		</tbody>
-	</table>
-	
-	<div id = "shoppingCart"></div>
+		<%@ include file = "/pagination.jsp" %>
+		
+		<table border = "1" style="margin-top: 20px" class="container" align="center" >
+			<caption><%=rb.getString("drugs.list")%></caption>
+			<thead align ="center">
+				<tr>
+					<th>#</th>
+					<th><%=rb.getString("drugs.name")%></th>
+					<th><%=rb.getString("drugs.dose")%></th>
+					<th><%=rb.getString("drugs.quantity")%></th>
+					<th><%=rb.getString("drugs.price")%></th>
+					<th><%=rb.getString("drugs.add")%></th>
+				</tr>
+			</thead>
+			<tbody align ="center">
+				<c:choose>
+					<c:when test="${not empty action.drugs}">
+						<c:forEach items="${action.drugs}" var="d">
+							<tr bgcolor="LightBlue">
+								<td><c:out value="${d.id}" /></td>
+								<td><c:out value="${d.name}" /></td>
+								<td><c:out value="${d.dose }" /></td>
+								<td><c:out value="${d.quantity }" /></td>
+								<td><c:out value="${d.price }" /></td>
+								<td>
+									<c:set var="present" value="false"/>
+									<c:forEach var="drug" items="${action.cart.drugs }">
+										<c:if test="${drug.id == d.id}">
+											<c:set var="present" value="true"/>
+										</c:if>
+									</c:forEach>
+									<input type="checkbox" id="drug${d.id}" value="${d.id}" name="drug" onchange="updateRecipeCart(${d.id}, this.checked);"
+									   <c:out value="${present ? 'checked' : ''}"/>/> 
+									<input type="hidden" id="checkbox${d.id}" value="${d.name}&nbsp;|&nbsp;${d.dose}"/>
+								&nbsp; 
+								</td>
+							</tr>
+						</c:forEach>
+					</c:when>
+					<c:otherwise>
+						<tr><td colspan="6">no records found</td></tr>
+					</c:otherwise>
+				</c:choose>
+			</tbody>
+		</table>
+		
+		<div id = "shoppingCart"></div>
+		
+		</div>
 
 </body>
 </html>

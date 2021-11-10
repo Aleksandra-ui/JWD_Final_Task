@@ -29,26 +29,63 @@ canNavigate = false;
 	
 	}
 	
-	function showHideInput() {
-		
-		var input = document.getElementById("goToPage");
-		input.removeAttribute("hidden");
+	function showHideInput(popUpId, goButton, registerFunction) {
+		var div = document.getElementById(popUpId);
+		if ( div.style.display=="none" ) {
+			div.style.display="inline-block";
+			document.getElementById(goButton).addEventListener("click", registerFunction);
+		} else {
+			div.style.display="none";
+			document.getElementById(goButton).removeEventListener("click", registerFunction);
+		}
 	}
 	
 	
 	function registerEvent(e) {
-		console.log(e.code);
-		if (e.code == "Enter") {
-			canNavigate = true;
-			myInput = document.getElementById("goToPage");
-			changeCurrentPage(myInput, '${baseURL}');
-		}
+
+		canNavigate = true;
+		myInput = document.getElementById("goToPage");
+		changeCurrentPage(myInput, '${baseURL}');
+
+	}
+	
+	function registerCartEvent(e) {
+
+		canNavigate = true;
+		myInput = document.getElementById("goToCartPage");
+		changeDynamicPage(myInput);
+
+	}
+	
+	function changeDynamicPage (input) {
+		console.log(input.value);
+		
+		return isDynamicPageValid(input.value) && displayCart(input.value, ${empty action.pageSize ? 5 : action.pageSize}); 
 	
 	}
+	
+
+	
+	function isDynamicPageValid (page) {
+		
+		return page ? true : false; 
+	
+	}
+	
 
 </script>
 	
 <body onload="">
+	
+<%-- 	<c:if test="${action.pagesCount > 3 }"> --%>
+		<div id="popUpNavigate" style="display: none; float: right; margin-right: 25px; margin-bottom: 10px;">
+			<input type="number" min="1" max="${action.pagesCount }" id="goToPage" value="${action.currentPage }" />
+			<button  id="navigateButton" style="display: block; margin-left: 15px; float: right;">go</button>  
+		</div>
+		<script>
+			document.getElementById("navigateButton").addEventListener("click", registerEvent);
+		</script>
+<%-- 	</c:if> --%>
 	
 <!-- <div  class="container"> -->
 	<div style="overflow: hidden"  class="container" align="center">
@@ -143,13 +180,7 @@ canNavigate = false;
 				</c:if>
 				
 				<c:if test="${action.pagesCount > 3 }">
-					<button id="pageButton" onclick="showHideInput();">go to page</button>
-					<input hidden type="number" min="1" max="${action.pagesCount }" id="goToPage" 
-<%-- 					onkeyup="changeCurrentPage(this, '${baseURL}');" --%>
-					 value="${action.currentPage }" />
-					 <script>
-					 	document.getElementById("goToPage").addEventListener("keyup", registerEvent);
-					 </script>
+					<button id="pageButton" onclick="showHideInput('popUpNavigate', 'navigateButton', registerEvent);">go to page</button>
 				</c:if>
 				
 			</div>

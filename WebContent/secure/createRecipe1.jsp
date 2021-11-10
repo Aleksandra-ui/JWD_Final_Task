@@ -32,83 +32,41 @@ ResourceBundle rb = ResourceBundle.getBundle("CreateRecipe", locale);
 		%>
 	
 	<c:if test="${empty action.errorMessages}">
-		<div class="container" align="center">
-			<font color="blue">
-				<%=rb.getString("create.message1")%> ${action.client.name} <%=rb.getString("create.message2")%> ${ action.user.name } <%=rb.getString("create.message3")%> ${action.expieryDate}
-			</font>
+		<div class="container" style="width: 70%;">	
+			<div class="container" align="center">
+				<font color="blue">
+					<%=rb.getString("create.message1")%> ${action.client.name} <%=rb.getString("create.message2")%> ${ action.user.name } <%=rb.getString("create.message3")%> ${action.expieryDate}
+				</font>
+			</div>
+
+			<%@ include file = "/pagination.jsp" %>
+		
+			<table border = "1" style="margin-top: 20px" class="container" align="center">
+				<caption><%=rb.getString("create.caption")%></caption>
+				<thead align="center">
+					<tr>
+						<th>#</th>
+						<th><%=rb.getString("create.name")%></th>
+						<th><%=rb.getString("create.dose")%></th>
+						<th><%=rb.getString("create.quantity")%></th>
+						<th><%=rb.getString("create.price")%></th>
+					</tr>
+				</thead>
+		
+				<tbody align="center">
+							<c:forEach items="${action.drugs}" var="d">
+								<tr bgcolor="LightBlue">
+									<td>${d.id}</td>
+									<td>${d.name}</td>
+									<td>${d.dose }</td>
+									<td>${d.quantity }</td>
+									<td>${d.price }</td>
+								</tr>
+							</c:forEach>
+				</tbody>
+			</table>
+			<div  class="container" align="center"><a href="recipe.run"><%=rb.getString("create.link")%></a></div>
 		</div>
-	
-<!-- 		<div style="width:50%" class="container"> -->
-<!-- 			<div style="overflow: hidden" class="container" align="center"> -->
-<!-- 				<div style="float: left"> -->
-<%-- 					<%out.print("records from");%> --%>
-<%-- 					${ action.currentPage * action.pageSize - action.pageSize + 1} --%>
-<%-- 					<%out.print("to");%> --%>
-<%-- 					<%=currentPage * pageSize - pageSize + 1 --%>
-// 					+ ((totalCount % pageSize != 0
-// 					&& totalCount / pageSize * pageSize + 1 == currentPage * pageSize - pageSize + 1)
-// 							? totalCount % pageSize
-// 							: pageSize)
-<%-- 					- 1%> --%>
-<%-- 					<%out.print("of");%> --%>
-<%-- 					${action.totalCount} --%>
-<!-- 				</div> -->
-<!-- 				<span style="float: none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> -->
-<!-- 				<div style="float: right"> -->
-<!-- 					<div style="float: left"> -->
-<!-- 				 		items per page:&nbsp; <select name="pageSize" -->
-<!-- 						onChange="changePageSize(this);"> -->
-<!-- 							<option -->
-<%-- 							${(empty action.pageSize or action.pageSize == 5) ? "selected='true'" : "" } --%>
-<!-- 							value="/apotheca/createRecipe.run?pageSize=5&currentPage=1">5</option> -->
-<!-- 							<option -->
-<%-- 							${(not empty action.pageSize and action.pageSize  == 10) ? "selected='true'" : "" } --%>
-<!-- 							value="/apotheca/createRecipe.run?pageSize=10&currentPage=1">10</option> -->
-<!-- 							<option -->
-<%-- 							${(not empty action.pageSize and action.pageSize  == 20) ? "selected='true'" : "" } --%>
-<!-- 							value="/apotheca/createRecipe.run?pageSize=20&currentPage=1">20</option> -->
-<!-- 						</select> -->
-<!-- 					</div> -->
-<!-- 					<span style="float: none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> -->
-<!-- 					<div style="float: right"> -->
-<%-- 						<c:forEach var="displayPage" begin="1" end="${action.pagesCount}"> --%>
-<%-- 							<c:choose> --%>
-<%-- 								<c:when test="${displayPage == (empty action.currentPage ? 1 : action.currentPage)}">${displayPage} &nbsp;</c:when> --%>
-<%-- 								<c:otherwise><a href="/apotheca/createRecipe.run?pageSize=${empty action.pageSize ? 5 : action.pageSize}&currentPage=${displayPage}">${displayPage}</a>&nbsp;</c:otherwise> --%>
-<%-- 							</c:choose> --%>
-<%-- 						</c:forEach> --%>
-<!-- 					</div> -->
-<!-- 				</div> -->
-<!-- 			</div> -->
-<!-- 		</div> -->
-	
-		<%@ include file = "/pagination.jsp" %>
-	
-		<table border = "1" style="width:50%; margin-top: 20px" class="container" align="center">
-			<caption><%=rb.getString("create.caption")%></caption>
-			<thead align="center">
-				<tr>
-					<th>#</th>
-					<th><%=rb.getString("create.name")%></th>
-					<th><%=rb.getString("create.dose")%></th>
-					<th><%=rb.getString("create.quantity")%></th>
-					<th><%=rb.getString("create.price")%></th>
-				</tr>
-			</thead>
-	
-			<tbody align="center">
-						<c:forEach items="${action.drugs}" var="d">
-							<tr bgcolor="LightBlue">
-								<td>${d.id}</td>
-								<td>${d.name}</td>
-								<td>${d.dose }</td>
-								<td>${d.quantity }</td>
-								<td>${d.price }</td>
-							</tr>
-						</c:forEach>
-			</tbody>
-		</table>
-		<div  class="container" align="center"><a href="recipe.run"><%=rb.getString("create.link")%></a></div>
 	</c:if>
 	
 </body>

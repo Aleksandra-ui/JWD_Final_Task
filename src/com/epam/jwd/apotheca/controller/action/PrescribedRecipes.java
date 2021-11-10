@@ -9,6 +9,7 @@ import com.epam.jwd.apotheca.model.User;
 
 public class PrescribedRecipes implements RunCommand {
 
+	private static final String name = "PrescribedRecipes";
 	private static PrescribedRecipes instance = new PrescribedRecipes();
 	private User user;
 	private String actionTime;
@@ -89,6 +90,10 @@ public class PrescribedRecipes implements RunCommand {
 
 	public List<Map<String, String>> getRecipeInfo() {
 		return recipeInfo;
+	}
+	
+	public String getName() {
+		return name;
 	}
 	
 }

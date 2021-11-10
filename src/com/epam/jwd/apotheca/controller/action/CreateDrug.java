@@ -19,6 +19,7 @@ import com.epam.jwd.apotheca.model.User;
 
 public class CreateDrug implements RunCommand {
 
+	private static final String name = "CreateDrug";
 	private static CreateDrug instance = new CreateDrug();
 	private static final Logger logger = LoggerFactory.getLogger(CreateDrug.class);
 	private String actionTime;
@@ -128,4 +129,8 @@ public class CreateDrug implements RunCommand {
 		return errorMessages;
 	}
 
+	public String getName() {
+		return name;
+	}
+	
 }

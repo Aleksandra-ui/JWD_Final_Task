@@ -13,6 +13,7 @@ import com.epam.jwd.apotheca.model.User;
 
 public class Logon implements RunCommand {
 
+	private static final String name = "Logon";
 	private static Logon instance = new Logon();
 	private static final Logger logger = LoggerFactory.getLogger(Logon.class);
 	private String actionTime;
@@ -152,6 +153,10 @@ public class Logon implements RunCommand {
 
 	public int getTotalCount() {
 		return totalCount;
+	}
+	
+	public String getName() {
+		return name;
 	}
 	
 }
