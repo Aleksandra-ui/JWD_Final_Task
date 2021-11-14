@@ -16,6 +16,11 @@
 	.error{
 		background-color: #FFAAAA;
 	}
+	
+	#popUpGo{
+		position: relative;
+		left: 20px;
+	}
 </style>
 
 
@@ -35,6 +40,11 @@
 	</c:if>
 
 	<c:if test="${(not empty action.cart) and (not empty action.drugs) }">
+	
+		<div id="popUpGo" style="visibility: hidden; float: right; margin-right: 25px">
+			<input type="number" min="1" max="${action.pagesCount }" id="goToCartPage" value="${action.currentPage }" />
+			<button  id="cartButton" style="display: block; margin-left: 15px; float: right;">go</button>  
+		</div>
 		
 		<div class="container">
 			<div style="overflow: hidden" align="center">
@@ -55,7 +65,7 @@
 					<span style="float: none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 					<div style="float: right">
 						<div style="float: left">
-							<%=rb.getString("drugs.records4")%>:&nbsp;<select name="pageSize"
+							<%=rb.getString("drugs.records4")%>:&nbsp;<select id="cartPageSize" name="pageSize"
 							onChange="displayCart( 1, this.options[this.selectedIndex].value );">
 								<option
 								${(empty param.pageSize or param.pageSize == 5) ? "selected='true'" : "" }
@@ -139,8 +149,7 @@
 							</c:if>
 							
 							<c:if test="${action.pagesCount > 3 }">
-								<button id="pageButton" onclick="showHideInput();">go to page</button>
-								<input hidden type="number" min="1" max="${action.pagesCount }" id="goToPage" onkeyup="changeDynamicPage(this);" value="${action.currentPage }" />
+								<button id="cartPageButton" onclick="showHideInput('popUpGo', 'cartButton', registerCartEvent);">go to page</button>
 							</c:if>
 
 						</div>

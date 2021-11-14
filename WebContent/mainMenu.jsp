@@ -150,6 +150,16 @@ java.util.Map,java.util.HashMap"%>
 					</li>
 				</c:if> 
 				
+				<c:set var="isAdmin" value="${not empty action.user and action.user.role.name eq 'admin' }"/>
+				<c:if test="${isAdmin}">
+					<li class="menu-item">
+						<c:choose>
+							<c:when test="${action.name eq 'UserManagement' }">Manage users</c:when>
+							<c:otherwise><a href="/apotheca/userManagement.run">Manage users</a></c:otherwise>
+						</c:choose>
+					</li>
+				</c:if> 
+				
 				<li class="menu-item">
 					<c:choose>
 						<c:when test="${not empty sessionScope.user}"><%=rb0.getString("menu.user")%>: ${sessionScope.user.name}</c:when>

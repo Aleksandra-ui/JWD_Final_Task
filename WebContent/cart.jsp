@@ -16,6 +16,11 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 	input.error{
 		background-color: #FFAAAA;
 	}
+	
+	#popUpGo{
+		position: relative;
+		left: 20px;
+	}
 </style>
 
 <script type="text/javascript">
@@ -56,7 +61,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 
 	<c:if test="${(not empty action.cart) and (not empty action.products) }">
 	
-		<div id="popUpGo" style="display: none; float: right; margin-right: 25px">
+		<div id="popUpGo" style="visibility: hidden; float: right; margin-right: 25px">
 			<input type="number" min="1" max="${pagesCount }" id="goToCartPage" value="${action.currentPage }" />
 			<button  id="cartButton" style="display: block; margin-left: 15px; float: right;">go</button>  
 		</div>
@@ -173,7 +178,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 				</c:if>
 				
 				<c:if test="${pagesCount > 3 }">
-					<button id="cartPageButton" onclick="showHideInput('popUpGo', 'cartButton', registerCartEvent);">go to page</button>
+					<button id="cartPageButton" onclick="showHideInput('popUpGo', 'cartButton', registerCartEvent);" >go to page</button>
 <%-- 					<input hidden type="number" min="1" max="${pagesCount }" id="goToPage" onkeyup="changeDynamicPage(this);" value="${action.currentPage }" /> --%>
 				</c:if>
 				

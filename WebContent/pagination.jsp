@@ -3,6 +3,13 @@
 	com.epam.jwd.apotheca.controller.action.Orders"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
+<style>
+	#popUpNavigate{
+		position: relative;
+		left: 23px;
+	}
+</style>
+
 <script type="text/javascript">
 
 canNavigate = false;
@@ -31,11 +38,11 @@ canNavigate = false;
 	
 	function showHideInput(popUpId, goButton, registerFunction) {
 		var div = document.getElementById(popUpId);
-		if ( div.style.display=="none" ) {
-			div.style.display="inline-block";
+		if ( div.style.visibility=="hidden" ) {
+			div.style.visibility="visible";
 			document.getElementById(goButton).addEventListener("click", registerFunction);
 		} else {
-			div.style.display="none";
+			div.style.visibility="hidden";
 			document.getElementById(goButton).removeEventListener("click", registerFunction);
 		}
 	}
@@ -59,8 +66,9 @@ canNavigate = false;
 	
 	function changeDynamicPage (input) {
 		console.log(input.value);
-		
-		return isDynamicPageValid(input.value) && displayCart(input.value, ${empty action.pageSize ? 5 : action.pageSize}); 
+		cartPageSize = document.getElementById("cartPageSize");
+		return isDynamicPageValid(input.value) &&
+				displayCart(input.value, ${empty cartPageSize ? 5 : cartPageSize.options[cartPageSize.selectedIndex].value}); 
 	
 	}
 	
@@ -78,7 +86,7 @@ canNavigate = false;
 <body onload="">
 	
 <%-- 	<c:if test="${action.pagesCount > 3 }"> --%>
-		<div id="popUpNavigate" style="display: none; float: right; margin-right: 25px; margin-bottom: 10px;">
+		<div id="popUpNavigate" style="visibility: hidden; float: right; margin-right: 25px; margin-bottom: 10px;">
 			<input type="number" min="1" max="${action.pagesCount }" id="goToPage" value="${action.currentPage }" />
 			<button  id="navigateButton" style="display: block; margin-left: 15px; float: right;">go</button>  
 		</div>

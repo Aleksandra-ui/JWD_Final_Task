@@ -4,9 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.epam.jwd.apotheca.controller.RecipeCart;
+import com.epam.jwd.apotheca.controller.ShoppingCart;
 import com.epam.jwd.apotheca.controller.UserManagerService;
 import com.epam.jwd.apotheca.dao.api.UserDAO;
 import com.epam.jwd.apotheca.model.User;
@@ -25,6 +29,7 @@ public class Logon implements RunCommand {
 	private int pageSize;
 	private int currentPage;
 	private int pagesCount;
+	private HttpSession session;
 	
 	private Logon() {
 		messages = new ArrayList<String>();
@@ -104,7 +109,11 @@ public class Logon implements RunCommand {
 				messages.add("No users logged in the system.");
 				logger.trace("No users logged in the system.");
 			}
+			
 			user = null;
+			session.removeAttribute("recipeCart");
+			session.removeAttribute("cart");
+			
 		}
 		
 		return actionTime;
@@ -159,4 +168,12 @@ public class Logon implements RunCommand {
 		return name;
 	}
 	
+	public HttpSession getSession() {
+		return session;
+	}
+	
+	public void setSession(HttpSession session) {
+		this.session = session;
+	}
+
 }
