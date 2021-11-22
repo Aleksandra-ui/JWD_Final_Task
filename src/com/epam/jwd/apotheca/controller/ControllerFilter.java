@@ -37,6 +37,7 @@ import com.epam.jwd.apotheca.controller.action.ShoppingCartAware;
 import com.epam.jwd.apotheca.controller.action.SetClientName;
 import com.epam.jwd.apotheca.controller.action.SetExpieryDate;
 import com.epam.jwd.apotheca.controller.action.UserManagement;
+import com.epam.jwd.apotheca.controller.action.SortDrugs;
 import com.epam.jwd.apotheca.model.User;
 
 import ch.qos.logback.classic.Level;
@@ -68,6 +69,7 @@ public class ControllerFilter implements Filter {
     	actionMapping.put("setClientName", SetClientName.getInstance());
     	actionMapping.put("setExpieryDate", SetExpieryDate.getInstance());
     	actionMapping.put("userManagement", UserManagement.getInstance());
+    	actionMapping.put("sortDrugs", SortDrugs.getInstance());
     	
     	ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger)LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
 		root.setLevel(Level.TRACE);

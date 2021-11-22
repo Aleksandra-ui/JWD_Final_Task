@@ -15,5 +15,8 @@ public interface DAO<T extends Entity> {
     boolean delete(Integer id);
     
     Integer getTotalCount();
+    
+    final static boolean SORT_ASC = false;
+    final static boolean SORT_DESC = true;
 
 }

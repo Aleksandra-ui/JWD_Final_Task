@@ -17,12 +17,11 @@ import com.epam.jwd.apotheca.model.Drug;
 import com.epam.jwd.apotheca.model.Recipe;
 import com.epam.jwd.apotheca.model.User;
 
-public class Drugs implements RunCommand, ShoppingCartAware {
+public class SortDrugs implements RunCommand, ShoppingCartAware {
 
-	private static Drugs instance = new Drugs();
+	private static SortDrugs instance = new SortDrugs();
 	private static final Logger logger = LoggerFactory.getLogger(Drugs.class);
 	private static final String name = "Drugs";
-	private String actionTime;
 	private List<Drug> drugs;
 	private Map<String, String[]> params;
 	private int totalCount;
@@ -33,36 +32,17 @@ public class Drugs implements RunCommand, ShoppingCartAware {
 	private Map<Integer, Date> drugsFromRecipe;
 	private ShoppingCart cart;
 	
-	private Drugs() {
+	public SortDrugs() {
 		drugs = new ArrayList<Drug>();
 		drugsFromRecipe = new HashMap<Integer, Date>();
 	}
-	
-	public static Drugs getInstance() {
+
+	public static SortDrugs getInstance() {
 		return instance;
 	}
-
-	public Map<Integer, Date> getDrugsFromRecipe() {
-		return drugsFromRecipe;
-	}
-
-	public String getActionTime() {
-		return actionTime;
-	}
-
-	public String getView() {
-		return "drugs1.jsp";
-	}
-
-	public List<Drug> getDrugs() {
-		return drugs;
-	}
-
-	@Override      
+	
+	@Override
 	public String run() {
-
-		String sortColumn = params.get("sortColumn") == null ? null : params.get("sortColumn")[0];
-		boolean sortOrder = params.get("sortOrder") == null ? false : Boolean.valueOf(params.get("sortOrder")[0]);
 		
 		totalCount = DrugManagerService.getInstance().getTotalCount();
 		pageSize = params.get("pageSize") == null ? 5 : Integer.valueOf(params.get("pageSize")[0]);
@@ -71,9 +51,8 @@ public class Drugs implements RunCommand, ShoppingCartAware {
 		pagesCount = totalCount / pageSize + ((totalCount % pageSize) == 0 ? 0 : 1);
 		int startIndex =  pageSize * (currentPage - 1);
 		int count =  currentPage < pagesCount ? pageSize :totalCount % pageSize ;
-		drugs = DrugManagerService.getInstance().getDrugs(startIndex, count, sortColumn, sortOrder);
+		drugs = DrugManagerService.getInstance().getSortedDrugs(startIndex, count, false);
 		
-		actionTime = GregorianCalendar.getInstance().getTime().toString();
 		
 		RecipeManagerService recipeService = RecipeManagerService.getInstance();
 		if (user != null) {
@@ -86,8 +65,13 @@ public class Drugs implements RunCommand, ShoppingCartAware {
 			}
 		}
 		logger.trace("displaying " + count + " drugs starting from " + startIndex);
+		return null;
 		
-		return actionTime;
+	}
+
+	@Override
+	public String getView() {
+		return "drugs1.jsp";
 	}
 
 	@Override
@@ -99,29 +83,25 @@ public class Drugs implements RunCommand, ShoppingCartAware {
 	public void setUser(User user) {
 		this.user = user;
 	}
-	
+
 	@Override
 	public User getUser() {
-		
 		return user;
 	}
 
 	@Override
 	public boolean isSecure() {
-		
 		return false;
 	}
-
-	@Override
-	public ShoppingCart getCart() {
-		return cart;
+	
+	public List<Drug> getDrugs() {
+		return drugs;
 	}
-
-	@Override
-	public void setCart(ShoppingCart cart) {
-		this.cart = cart;
+	
+	public Map<Integer, Date> getDrugsFromRecipe() {
+		return drugsFromRecipe;
 	}
-
+	
 	public int getPagesCount() {
 		return pagesCount;
 	}
@@ -141,5 +121,15 @@ public class Drugs implements RunCommand, ShoppingCartAware {
 	public String getName() {
 		return name;
 	}
-	
+
+	@Override
+	public ShoppingCart getCart() {
+		return cart;
+	}
+
+	@Override
+	public void setCart(ShoppingCart cart) {
+		this.cart = cart;
+	}
+
 }

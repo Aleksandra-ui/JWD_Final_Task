@@ -10,6 +10,11 @@
 	}
 </style>
 
+<c:set var="sortCol" value="${empty param.sortColumn ? '' : 'sortColumn=name' }"/>
+<c:set var="order" value="${empty param.sortOrder ? '' : (param.sortOrder eq 'asc' ? 'sortOrder=asc' : 'sortOrder=desc') }"/>
+
+<c:if test='${not empty sortCol }'><c:set var="sortLine" value="&${sortCol }&${order}"/></c:if>
+
 <script type="text/javascript">
 
 canNavigate = false;
@@ -25,6 +30,7 @@ canNavigate = false;
 		if ( canNavigate) {
 			console.log(input.value);
 			url = baseURL + "?pageSize=" + ${empty action.pageSize ? 5 : action.pageSize} + "&currentPage=" + input.value;
+			url = url + "&${sortLine }";
 			console.log(url);
 			return isPageValid(input.value) && (window.location = url); 
 		}
@@ -83,8 +89,6 @@ canNavigate = false;
 
 </script>
 	
-<body onload="">
-	
 <%-- 	<c:if test="${action.pagesCount > 3 }"> --%>
 		<div id="popUpNavigate" style="visibility: hidden; float: right; margin-right: 25px; margin-bottom: 10px;">
 			<input type="number" min="1" max="${action.pagesCount }" id="goToPage" value="${action.currentPage }" />
@@ -109,17 +113,19 @@ canNavigate = false;
 		<span style="float: none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 		<div style="float: right">
 			<div style="float: left">
-				items per page:&nbsp; <select name="pageSize"
+				items per page:&nbsp; 
+				${sortCol } ${param.sortColumn }
+				<select name="pageSize"
 				onChange="changePageSize(this);">
 					<option
 					${(empty action.pageSize or action.pageSize == 5) ? "selected='true'" : "" }
-					value="${baseURL }?pageSize=5">5</option>
+					value="${baseURL }?pageSize=5${sortLine}">5</option>
 					<option
 					${(not empty action.pageSize and action.pageSize  == 10) ? "selected='true'" : "" }
-					value="${baseURL }?pageSize=10">10</option>
+					value="${baseURL }?pageSize=10${sortLine}">10</option>
 					<option
 					${(not empty action.pageSize and action.pageSize  == 20) ? "selected='true'" : "" }
-					value="${baseURL }?pageSize=20">20</option>
+					value="${baseURL }?pageSize=20${sortLine}">20</option>
 				</select>
 			</div>
 			<span style="float: none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -128,7 +134,7 @@ canNavigate = false;
 				<%--Button "previous", shown when current page > 1--%>
 				<c:if test="${action.currentPage != 1 }">
 					<span>
-						<a href="${baseURL }?pageSize=${empty action.pageSize ? 5 : action.pageSize}&currentPage=${action.currentPage - 1}">&lt;</a>&nbsp;
+						<a href="${baseURL }?pageSize=${empty action.pageSize ? 5 : action.pageSize}&currentPage=${action.currentPage - 1}${empty sortCol ? '' : ('&' + sortCol) }">&lt;</a>&nbsp;
 					</span>
 				</c:if>
 					
@@ -195,5 +201,3 @@ canNavigate = false;
 		</div>
 	</div>
 <!-- </div> -->
-
-</body>

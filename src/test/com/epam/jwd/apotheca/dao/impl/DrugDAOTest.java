@@ -106,7 +106,7 @@ public class DrugDAOTest {
 		
 		List<Drug> drugs = ((DrugDAOImpl)drugDAO).findAll();
 		
-		List<Drug> drugs2 = drugDAO.findByRange(0, drugs.size() / 2);
+		List<Drug> drugs2 = drugDAO.findByRange(0, drugs.size() / 2, null, 0);
 		
 		assert drugs.containsAll(drugs2);
 		

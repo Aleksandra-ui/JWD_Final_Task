@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,11 +122,15 @@ public class DrugDAOImpl implements DrugDAO {
 		return drug;
 	}
 
-	public List<Drug> findByRange(Integer start, Integer count) {
-
+	public List<Drug> findByRange(Integer start, Integer count, String columnName, boolean sortOrder) {
+		
 		List<Drug> drugs = new ArrayList<Drug>();
 
-		String sql = "select id,name,quantity,price,dose,prescription from mydb.drugs order by id asc limit ?,?";
+		columnName = columnName == null ? "id" : columnName;
+		String sortColumns = ("id".equals(columnName)) ? ("id" + (sortOrder ? " desc" : " asc")) : columnName + (sortOrder ? " desc" : " asc") + ", id asc";
+		
+		String sql = "select id,name,quantity,price,dose,prescription from mydb.drugs order by " + sortColumns
+				+ " limit ?,?";
 
 		try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement(sql);) {
 
@@ -256,7 +261,7 @@ public class DrugDAOImpl implements DrugDAO {
 			}
 			return drugs;
 		} else {
-			return Collections.EMPTY_LIST;
+			return Collections.emptyList();
 		}
 		
 	}
@@ -372,41 +377,42 @@ public class DrugDAOImpl implements DrugDAO {
 		return result;
 		
 	}
-//	
-//	public List<Drug> sortByName(List<Drug> drugs) {
-//		
-//		List<Drug> sortedDrugs = new ArrayList<Drug>();
-//		Integer[] ids = drugs.stream().map(d -> d.getId()).toArray(new Integer[drugs.size()]);
-//		
-//		String idsStr = "";
-//		for (Integer id : ids) {
-//			idsStr += String.valueOf(id) + ",";
-//		}
-//		if (idsStr.length() != 0) {
-//			idsStr = idsStr.substring(0, idsStr.length() - 1);
-//			
-//			String query = "select id,name,quantity,price,dose,prescription from mydb.drugs where id "
-//					+ (ids.length == 1 ? " = ?" : "in (" + idsStr + ")");
-//			try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement(query);) {
-//				if (ids.length == 1) {
-//					st.setInt(1, ids[0]);
-//				}
-//
-//				ResultSet rs = st.executeQuery();
-//				while (rs.next()) {
-//					drugs.add(readDrug(rs));
-//				}
-//				rs.close();
-//				logger.info("found drugs by ids");
-//			} catch (SQLException e) {
-//				logger.error("catched SQL exception while attempting to find drugs by ids");
-//				e.printStackTrace();
-//			}
-//			return drugs;
-//		} else {
-//			return Collections.EMPTY_LIST;
-//		}
-//		
-//	}
+	
+	public List<Drug> sortByName(List<Drug> drugs, boolean asc) {
+		
+		List<Drug> sortedDrugs = new ArrayList<Drug>();
+		List<Integer> ids = drugs.stream().map(d -> d.getId()).collect(Collectors.toList());
+		
+		String idsStr = "";
+		for (Integer id : ids) {
+			idsStr += String.valueOf(id) + ",";
+		}
+		if (idsStr.length() != 0) {
+			idsStr = idsStr.substring(0, idsStr.length() - 1);
+			
+			String query = "select id,name,quantity,price,dose,prescription from mydb.drugs where id "
+					+ (ids.size() == 1 ? " = ?" : "in (" + idsStr + ") order by name " + ( asc ? "asc" : "desc"));
+			try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement(query);) {
+				if (ids.size() == 1) {
+					st.setInt(1, ids.get(0));
+				}
+
+				ResultSet rs = st.executeQuery();
+				while (rs.next()) {
+					System.out.println(readDrug(rs));
+					sortedDrugs.add(readDrug(rs));
+				}
+				rs.close();
+				logger.info("sorted drugs by name");
+			} catch (SQLException e) {
+				logger.error("catched SQL exception while attempting to sort drugs by name");
+				e.printStackTrace();
+			}
+			return sortedDrugs;
+		} else {
+			return Collections.emptyList();
+		}
+		
+	}
 
 }

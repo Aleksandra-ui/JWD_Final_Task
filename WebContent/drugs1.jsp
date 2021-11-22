@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8" import="com.epam.jwd.apotheca.controller.action.Drugs, com.epam.jwd.apotheca.model.Drug, java.util.ResourceBundle, java.util.List"%>
+    pageEncoding="UTF-8" import="com.epam.jwd.apotheca.controller.action.Drugs, com.epam.jwd.apotheca.controller.action.SortDrugs, com.epam.jwd.apotheca.model.Drug, java.util.ResourceBundle, java.util.List"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -7,11 +7,21 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <%
-		Drugs bean = (Drugs)request.getAttribute("action");
+Integer totalCount ;
+int pageSize;
+int currentPage;
+		if ( request.getAttribute("action") instanceof Drugs ) {
+			Drugs bean = (Drugs)request.getAttribute("action");
+			totalCount = bean.getTotalCount();
+			pageSize = bean.getPageSize();
+			currentPage = bean.getCurrentPage();
+		} else {
+			SortDrugs bean = (SortDrugs)request.getAttribute("action");
+			totalCount = bean.getTotalCount();
+			pageSize = bean.getPageSize();
+			currentPage = bean.getCurrentPage();
+		}
 	
-		Integer totalCount = bean.getTotalCount();
-		int pageSize = bean.getPageSize();
-		int currentPage = bean.getCurrentPage();
 	%>
 <%@ include file = "/mainMenu.jsp" %>
 <%
@@ -26,7 +36,12 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 	}
 </style>
 
-<c:set var="baseURL" value="/apotheca/drugs.run"/>
+<% if ( request.getAttribute("action") instanceof Drugs ) { %>
+	<c:set var="baseURL" value="/apotheca/drugs.run"/>
+<% } else { %>
+	<c:set var="baseURL" value="/apotheca/sortDrugs.run"/>
+<% } %>
+
 <script type="text/javascript">
 	
 	function validateAmount(input) {
@@ -118,7 +133,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 		xmlhttp.send();
 		
 	}
-
+	
 </script>
 
 <body onload="displayCart();">
@@ -176,7 +191,18 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 		<thead align="center">
 			<tr>
 				<th>#</th>
-				<th><%=rb.getString("drugs.name")%></th>
+				<c:set var="icon" value="no_sort.png"/>
+				<c:if test="${not empty sortCol }">
+					<c:choose>
+						<c:when test="${param.sortOrder eq 'asc' }">
+							<c:set var="icon" value="asc.png"/>
+						</c:when>
+						<c:otherwise>
+							<c:set var="icon" value="desc.png"/>
+						</c:otherwise>
+					</c:choose>
+				</c:if>
+				<th><a href="/apotheca/drugs.run?pageSize=${empty action.pageSize ? 5 : action.pageSize}&sortColumn=name&sortOrder=asc" class="text-dark" style="text-decoration: none"><%=rb.getString("drugs.name")%>&nbsp;<img alt="" src="${icon }" width="10px"/></a></th>
 				<th><%=rb.getString("drugs.dose")%></th>
 				<th><%=rb.getString("drugs.quantity")%></th>
 				<th><%=rb.getString("drugs.price")%></th>
