@@ -134,7 +134,7 @@ canNavigate = false;
 				<%--Button "previous", shown when current page > 1--%>
 				<c:if test="${action.currentPage != 1 }">
 					<span>
-						<a href="${baseURL }?pageSize=${empty action.pageSize ? 5 : action.pageSize}&currentPage=${action.currentPage - 1}${empty sortCol ? '' : ('&' + sortCol) }">&lt;</a>&nbsp;
+						<a href="${baseURL }?pageSize=${empty action.pageSize ? 5 : action.pageSize}&currentPage=${action.currentPage - 1}${sortLine}">&lt;</a>&nbsp;
 					</span>
 				</c:if>
 					
@@ -145,7 +145,7 @@ canNavigate = false;
 						1&nbsp;
 					</c:when>
 					<c:otherwise>
-						<a href="${baseURL }?pageSize=${empty action.pageSize ? 5 : action.pageSize}&currentPage=1">1</a>&nbsp;
+						<a href="${baseURL }?pageSize=${empty action.pageSize ? 5 : action.pageSize}&currentPage=1${sortLine}">1</a>&nbsp;
 					</c:otherwise>
 				</c:choose>
 				
@@ -156,7 +156,7 @@ canNavigate = false;
 				
 				<%--previous page --%>
 				<c:if test="${(not empty action.currentPage) and (action.currentPage > 2) and (action.pagesCount > 3) }">
-					<a href="${baseURL }?pageSize=${empty action.pageSize ? 5 : action.pageSize}&currentPage=${action.currentPage - 1}">${action.currentPage - 1}</a> &nbsp;
+					<a href="${baseURL }?pageSize=${empty action.pageSize ? 5 : action.pageSize}&currentPage=${action.currentPage - 1}${sortLine}">${action.currentPage - 1}</a> &nbsp;
 				</c:if>
 				
 				<%--current page --%>
@@ -166,7 +166,7 @@ canNavigate = false;
 				
 				<%--next page --%>
 				<c:if test="${(not empty action.currentPage) and (action.currentPage < action.pagesCount - 1) and (action.pagesCount > 3) }">
-					<a href="${baseURL }?pageSize=${empty action.pageSize ? 5 : action.pageSize}&currentPage=${action.currentPage + 1}">${action.currentPage + 1}</a> &nbsp;
+					<a href="${baseURL }?pageSize=${empty action.pageSize ? 5 : action.pageSize}&currentPage=${action.currentPage + 1}${sortLine}">${action.currentPage + 1}</a> &nbsp;
 				</c:if>
 				
 				<%--spacer before last page --%>
@@ -181,7 +181,7 @@ canNavigate = false;
 							${ action.pagesCount}&nbsp;
 						</c:when>
 						<c:otherwise>
-							<a href="${baseURL }?pageSize=${empty action.pageSize ? 5 : action.pageSize}&currentPage=${ action.pagesCount}">${ action.pagesCount}</a> &nbsp;
+							<a href="${baseURL }?pageSize=${empty action.pageSize ? 5 : action.pageSize}&currentPage=${ action.pagesCount}${sortLine}">${ action.pagesCount}</a> &nbsp;
 						</c:otherwise>
 					</c:choose>
 				</c:if>
@@ -189,7 +189,7 @@ canNavigate = false;
 				<%--Button "next", shown when current page < total pages count--%>
 				<c:if test="${(empty action.currentPage and action.pagesCount > 1 ) or (action.currentPage < action.pagesCount) }">
 					<span>
-						<a href="${baseURL }?pageSize=${empty action.pageSize ? 5 : action.pageSize}&currentPage=${action.currentPage + 1}">&gt;</a> &nbsp;
+						<a href="${baseURL }?pageSize=${empty action.pageSize ? 5 : action.pageSize}&currentPage=${action.currentPage + 1}${sortLine}">&gt;</a> &nbsp;
 					</span>
 				</c:if>
 				
