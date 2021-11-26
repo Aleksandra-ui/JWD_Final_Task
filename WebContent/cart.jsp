@@ -5,7 +5,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%-- <%@include file = "/mainMenu.jsp" %> --%>
 <%
-Locale locale = null;
+	Locale locale = null;
 	
 	Map<String,String[]> langMap = new HashMap<String,String[]>(); 
 	langMap.put("zh", new String[]{"zh","CHINESE"});
@@ -59,9 +59,9 @@ Locale locale = null;
 		response.addCookie(new Cookie("lang", "en"));
 	}
 
-
-session.setAttribute("locale", locale);
-ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
+	session.setAttribute("locale", locale);
+	ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
+	
 %>
 
 <style>
