@@ -4,7 +4,13 @@ import com.epam.jwd.apotheca.controller.DrugManagerService;
 
 public class RemoveFromRecipeCart extends RecipeCartAction implements RecipeCartAware {
 
-	public RemoveFromRecipeCart() {
+	private static RemoveFromRecipeCart instance = new RemoveFromRecipeCart();
+	
+	private RemoveFromRecipeCart() {
+	}
+	
+	public static RemoveFromRecipeCart getInstance() {
+		return instance;
 	}
 
 	@Override

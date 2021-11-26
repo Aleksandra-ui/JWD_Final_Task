@@ -4,8 +4,14 @@ import com.epam.jwd.apotheca.controller.DrugManagerService;
 import com.epam.jwd.apotheca.model.Drug;
 
 public class AddToCart extends CartAction {
+	
+	private static AddToCart instance = new AddToCart();
 
-	public AddToCart() {
+	private AddToCart() {
+	}
+	
+	public static AddToCart getInstance() {
+		return instance;
 	}
 
 	@Override

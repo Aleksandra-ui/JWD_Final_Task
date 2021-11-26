@@ -8,8 +8,13 @@ import com.epam.jwd.apotheca.model.Drug;
 
 public class AddToRecipeCart extends RecipeCartAction implements RecipeCartAware {
 
-	public AddToRecipeCart() {
-		
+	private static AddToRecipeCart instance = new AddToRecipeCart();
+	
+	private AddToRecipeCart() {
+	}
+	
+	public static AddToRecipeCart getInstance() {
+		return instance;
 	}
 
 	@Override

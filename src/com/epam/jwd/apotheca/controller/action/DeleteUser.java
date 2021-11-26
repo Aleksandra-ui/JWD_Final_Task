@@ -20,6 +20,7 @@ import com.epam.jwd.apotheca.model.User;
 public class DeleteUser implements RunCommand {
 
 	private static final Logger logger = LoggerFactory.getLogger(DeleteUser.class);
+	private static DeleteUser instance = new DeleteUser();
 	private Map<String, String[]> params;
 	private User user;
 	private boolean deleted;
@@ -32,11 +33,15 @@ public class DeleteUser implements RunCommand {
 	private int pagesCount;
 	private Map<String, Validator> validators; 
 
-	public DeleteUser() {
+	private DeleteUser() {
 		messages = new ArrayList<String>();
 		validators = new HashMap<String, Validator>();
 		validators.put("user", new UserIdValidator("userId"));
 		validators.put("role", new RoleAccessValidator(UserDAO.ROLE_NAME_ADMIN));
+	}
+	
+	public static DeleteUser getInstance() {
+		return instance;
 	}
 
 	@Override

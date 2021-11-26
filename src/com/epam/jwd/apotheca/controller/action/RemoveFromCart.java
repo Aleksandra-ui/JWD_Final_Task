@@ -4,9 +4,13 @@ import com.epam.jwd.apotheca.controller.DrugManagerService;
 
 public class RemoveFromCart extends CartAction {
 	
-	public RemoveFromCart() {
-		
-		
+	private static RemoveFromCart instance = new RemoveFromCart();
+	
+	private RemoveFromCart() {
+	}
+	
+	public static RemoveFromCart getInstance() {
+		return instance;
 	}
 
 	@Override
