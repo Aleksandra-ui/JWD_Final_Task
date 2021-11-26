@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8" import="com.epam.jwd.apotheca.controller.OrderManagerService,com.epam.jwd.apotheca.model.Order,java.util.List,java.util.Map,java.util.HashMap,com.epam.jwd.apotheca.model.Drug,com.epam.jwd.apotheca.controller.DrugManagerService,
-	com.epam.jwd.apotheca.controller.action.Orders"%>
+	com.epam.jwd.apotheca.controller.action.Orders, java.util.ResourceBundle"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <style>
@@ -88,11 +88,15 @@ canNavigate = false;
 	
 
 </script>
+
+<%
+ResourceBundle rbp = ResourceBundle.getBundle("Pagination", locale);
+%>
 	
 <%-- 	<c:if test="${action.pagesCount > 3 }"> --%>
 		<div id="popUpNavigate" style="visibility: hidden; float: right; margin-right: 25px; margin-bottom: 10px;">
 			<input type="number" min="1" max="${action.pagesCount }" id="goToPage" value="${action.currentPage }" />
-			<button  id="navigateButton" style="display: block; margin-left: 15px; float: right;">go</button>  
+			<button  id="navigateButton" style="display: block; margin-left: 15px; float: right;"><%= rbp.getString("pagination.go2") %></button>  
 		</div>
 		<script>
 			document.getElementById("navigateButton").addEventListener("click", registerEvent);
@@ -102,19 +106,18 @@ canNavigate = false;
 <!-- <div  class="container"> -->
 	<div style="overflow: hidden"  class="container" align="center">
 		<div style="float: left">
-			items from&nbsp;
+			<%=rbp.getString("pagination.items1")%>
 			<%=currentPage * pageSize - pageSize + 1%>
-			to
+			<%=rbp.getString("pagination.items2")%>
 			<%=currentPage * pageSize - pageSize + 1 + ((totalCount % pageSize != 0 && totalCount / pageSize * pageSize + 1 == currentPage * pageSize - pageSize + 1)
 					? totalCount % pageSize : pageSize) - 1%>
-			of&nbsp;
+			<%=rbp.getString("pagination.items3")%>
 			${action.totalCount}
 		</div>
 		<span style="float: none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 		<div style="float: right">
 			<div style="float: left">
-				items per page:&nbsp; 
-				${sortCol } ${param.sortColumn }
+				<%=rbp.getString("pagination.items4")%> 
 				<select name="pageSize"
 				onChange="changePageSize(this);">
 					<option
@@ -194,7 +197,7 @@ canNavigate = false;
 				</c:if>
 				
 				<c:if test="${action.pagesCount > 3 }">
-					<button id="pageButton" onclick="showHideInput('popUpNavigate', 'navigateButton', registerEvent);">go to page</button>
+					<button id="pageButton" onclick="showHideInput('popUpNavigate', 'navigateButton', registerEvent);"><%=rbp.getString("pagination.go1")%></button>
 				</c:if>
 				
 			</div>

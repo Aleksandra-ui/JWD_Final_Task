@@ -1,14 +1,66 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8" import="com.epam.jwd.apotheca.model.Drug, java.util.ResourceBundle, java.util.List, java.util.Locale,
-    com.epam.jwd.apotheca.controller.action.CartAction"%>
+    com.epam.jwd.apotheca.controller.action.CartAction, java.util.Map, java.util.HashMap"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-
+<%-- <%@include file = "/mainMenu.jsp" %> --%>
 <%
 Locale locale = null;
-if (locale == null ) {
-	locale = new Locale("en", "US");
-}
+	
+	Map<String,String[]> langMap = new HashMap<String,String[]>(); 
+	langMap.put("zh", new String[]{"zh","CHINESE"});
+	langMap.put("en", new String[]{"en","US"});
+	
+	Cookie cookie = null;
+	locale =(Locale) session.getAttribute("locale");
+	if (locale==null){
+		locale=Locale.getDefault();
+	}
+	//if user clicked "change language"
+	if (langMap.containsKey(request.getParameter("locale"))) {
+		String[] value = langMap.get(request.getParameter("locale"));
+		//setting locale
+	locale = new Locale(value[0], value[1]);
+	if ( request.getCookies()!= null ) {
+		for (Cookie c : request.getCookies() ) {
+			if ("lang".equals(c.getName())) {
+				if ( !value[0].equals(c.getValue()) ) {
+					c.setValue(value[0]);
+				}
+				cookie = c;
+			}
+		}
+	}
+	if ( cookie == null ) {
+		cookie = new Cookie("lang", value[0]);
+	}
+	//setting certain value into cookie
+	response.addCookie(cookie);
+	} 
+	
+	//if page was uploaded without clicking "change language"
+	Cookie[] cookies = request.getCookies();
+	if ( cookie == null && cookies != null ) {
+		//searching for locale in cookies
+		for ( Cookie c : cookies ) {
+			if ("lang".equals(c.getName())) {
+				cookie = c;
+			}
+		}
+	}
+	
+	//if we have already set locale, we do not change it. otherwise, we take the value from cookie
+	if (cookie != null) {
+		String[] value = langMap.get(cookie.getValue());
+	locale = locale == null ? new Locale(value[0], value[1]) : locale;
+//if user uploaded the page for the first time
+	} else {
+		locale = new Locale("en", "US");
+		response.addCookie(new Cookie("lang", "en"));
+	}
+
+
+session.setAttribute("locale", locale);
 ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 %>
 
@@ -72,22 +124,22 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 		<div  class="container">
 			<div style="overflow: hidden" align="center">
 				<div style="float: left">
-					<%=rb.getString("drugs.records1")%>
+					<%=rb.getString("drugs.items1")%>
 					<%=currentPage * pageSize - pageSize + 1%>
-					<%=rb.getString("drugs.records2")%>
+					<%=rb.getString("drugs.items2")%>
 					<%=currentPage * pageSize - pageSize + 1
 			+ ((totalCount % pageSize != 0
 					&& totalCount / pageSize * pageSize + 1 == currentPage * pageSize - pageSize + 1)
 							? totalCount % pageSize
 							: pageSize)
 			- 1%>
-					<%=rb.getString("drugs.records3")%>
+					<%=rb.getString("drugs.items3")%>
 					${action.totalCount}
 				</div>
 				<span style="float: none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 				<div style="float: right">
 					<div style="float: left">
-						<%=rb.getString("drugs.records4")%>:&nbsp; <select name="pageSize"
+						<%=rb.getString("drugs.items4")%> <select name="pageSize"
 						onChange="displayCart( 1, this.options[this.selectedIndex].value );">
 							<option
 							${(empty param.pageSize or param.pageSize == 5) ? "selected='true'" : "" }
@@ -188,7 +240,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 		</div>
 			
 	<table border = "1" style="margin-top: 20px" class="container" align="center">
-	<caption>Shopping Cart</caption>
+	<caption><%= rb.getString("drugs.table") %></caption>
 		<thead align="center">
 			<tr>
 				<th>#</th>
@@ -252,7 +304,7 @@ ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
 
 	<form action="drugsBill.run" method="POST">
 		<div id = "div" <c:if test="${empty action.cart.products}">style="display:none"</c:if> class="container" align="center">
-			<div id="totalAmount1"><font color="Blue">Total : </font><c:out value="${totalA }"/> <input id="buyButton" type="submit" class="btn btn-primary" <c:if test="${action.cart.invalid }">disabled</c:if> value="<%=rb.getString("drugs.buy")%>"/></div>
+			<div id="totalAmount1"><font color="Blue"><%= rb.getString("drugs.total") %> </font><c:out value="${totalA }"/> <input id="buyButton" type="submit" class="btn btn-primary" <c:if test="${action.cart.invalid }">disabled</c:if> value="<%=rb.getString("drugs.buy")%>"/></div>
 		</div>
 	</form>
 

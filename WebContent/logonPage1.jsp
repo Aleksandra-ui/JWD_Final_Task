@@ -18,7 +18,6 @@
 <title><%=rb.getString("logon.title")%></title>
 
 <script type="text/javascript">
-
 	function applyAction(userId) {
 		
 		var select = document.getElementById("userAction" + userId);
@@ -27,7 +26,6 @@
 		window.location = select.options[select.selectedIndex].value;
 		
 	}
-
 </script>
 </head>
 
