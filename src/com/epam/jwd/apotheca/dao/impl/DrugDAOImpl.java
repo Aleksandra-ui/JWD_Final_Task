@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.epam.jwd.apotheca.dao.api.DrugDAO;
+import com.epam.jwd.apotheca.exception.CouldNotInitializeConnectionPoolException;
 import com.epam.jwd.apotheca.model.Drug;
 import com.epam.jwd.apotheca.pool.ConnectionPool;
 
@@ -22,11 +23,15 @@ import ch.qos.logback.classic.Level;
 public class DrugDAOImpl implements DrugDAO {
 
 	private static DrugDAOImpl instance = new DrugDAOImpl();
-	private ConnectionPool cp;
+	private ConnectionPool cp = ConnectionPool.retrieve();
 	private static final Logger logger = LoggerFactory.getLogger(DrugDAOImpl.class);
 	
 	private DrugDAOImpl() {
-		cp = ConnectionPool.retrieve();
+		try {
+			cp.init();
+		} catch (CouldNotInitializeConnectionPoolException e) {
+			e.printStackTrace();
+		}
 		ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger)LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
 		root.setLevel(Level.TRACE);
 	}
