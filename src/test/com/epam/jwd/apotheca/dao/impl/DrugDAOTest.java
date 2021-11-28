@@ -106,7 +106,7 @@ public class DrugDAOTest {
 		
 		List<Drug> drugs = ((DrugDAOImpl)drugDAO).findAll();
 		
-		List<Drug> drugs2 = drugDAO.findByRange(0, drugs.size() / 2, null, 0);
+		List<Drug> drugs2 = drugDAO.findByRange(0, drugs.size() / 2, null, false);
 		
 		assert drugs.containsAll(drugs2);
 		
@@ -136,8 +136,23 @@ public class DrugDAOTest {
 
 	}
 	
+//	@Test
+//	public void testGetTotalCount() {
+//		
+//		int first = drugDAO.getTotalCount();
+//		
+//		Drug drug = drugDAO.save(createDrug());
+//		
+//		int second = drugDAO.getTotalCount();
+//		
+//		drugDAO.delete(drug.getId());
+//		System.out.println(first + "" + second);
+//		assert first == second - 1;
+//		
+//	}
+	
 	@Test
-	public void testGetTotalCount() {
+	public void testGetPrescriptedCount() {
 		
 		int first = drugDAO.getTotalCount();
 		
@@ -152,17 +167,20 @@ public class DrugDAOTest {
 	}
 	
 	@Test
-	public void testGetPrescriptedCount() {
+	public void testChangeQuantity() {
 		
-		int first = drugDAO.getTotalCount();
+		Drug drug = createDrug();
+		drugDAO.save(drug);
+		int quantity1 = drug.getQuantity();
 		
-		Drug drug = drugDAO.save(createDrug());
+		((DrugDAOImpl)drugDAO).changeQuantity(drug, 2);
 		
-		int second = drugDAO.getTotalCount();
+		drug = drugDAO.update(drug);
+		int quantity2 = drug.getQuantity();
 		
 		drugDAO.delete(drug.getId());
-		
-		assert first == second - 1;
+		System.out.println(quantity1 + " " + quantity2);
+		assert quantity2 == quantity1 - 2;
 		
 	}
 	

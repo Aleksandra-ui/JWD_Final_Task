@@ -3,6 +3,7 @@ package com.epam.jwd.apotheca.dao.impl;
 import java.util.List;
 
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -162,6 +163,33 @@ public class UserDAOTest {
 		userDAO.delete(user.getId());
 		
 		assert first == second - 1;
+		
+	}
+	
+	@Test
+	public void testChangeRole() {
+		
+		User user = createStandardUser();
+		Role role1 = user.getRole();
+		
+		((UserDAOImpl)userDAO).changeRole(user.getId(), UserDAO.ROLE_NAME_DOCTOR);
+		userDAO.update(user);
+		Role role2 = user.getRole();
+		
+		userDAO.delete(user.getId());
+		
+		Assert.assertNotEquals(role1, role2);
+		
+	}
+	
+	@Test
+	public void testFindRole() {
+		
+		Role role = ((UserDAOImpl)userDAO).findRole(UserDAO.ROLE_NAME_DOCTOR);
+		Assert.assertEquals(UserDAO.ROLE_NAME_DOCTOR, role.getName());
+		Assert.assertEquals(UserDAO.ROLE_DOCTOR, role.getId());
+		Integer expectedPerm = UserDAO.PERM_CLIENT + UserDAO.PERM_DOCTOR;
+		Assert.assertEquals(expectedPerm, role.getPermission());
 		
 	}
 	

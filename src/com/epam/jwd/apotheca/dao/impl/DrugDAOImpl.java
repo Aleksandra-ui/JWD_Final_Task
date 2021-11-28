@@ -383,41 +383,41 @@ public class DrugDAOImpl implements DrugDAO {
 		
 	}
 	
-	public List<Drug> sortByName(List<Drug> drugs, boolean asc) {
-		
-		List<Drug> sortedDrugs = new ArrayList<Drug>();
-		List<Integer> ids = drugs.stream().map(d -> d.getId()).collect(Collectors.toList());
-		
-		String idsStr = "";
-		for (Integer id : ids) {
-			idsStr += String.valueOf(id) + ",";
-		}
-		if (idsStr.length() != 0) {
-			idsStr = idsStr.substring(0, idsStr.length() - 1);
-			
-			String query = "select id,name,quantity,price,dose,prescription from mydb.drugs where id "
-					+ (ids.size() == 1 ? " = ?" : "in (" + idsStr + ") order by name " + ( asc ? "asc" : "desc"));
-			try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement(query);) {
-				if (ids.size() == 1) {
-					st.setInt(1, ids.get(0));
-				}
-
-				ResultSet rs = st.executeQuery();
-				while (rs.next()) {
-					System.out.println(readDrug(rs));
-					sortedDrugs.add(readDrug(rs));
-				}
-				rs.close();
-				logger.info("sorted drugs by name");
-			} catch (SQLException e) {
-				logger.error("catched SQL exception while attempting to sort drugs by name");
-				e.printStackTrace();
-			}
-			return sortedDrugs;
-		} else {
-			return Collections.emptyList();
-		}
-		
-	}
+//	public List<Drug> sortByName(List<Drug> drugs, boolean asc) {
+//		
+//		List<Drug> sortedDrugs = new ArrayList<Drug>();
+//		List<Integer> ids = drugs.stream().map(d -> d.getId()).collect(Collectors.toList());
+//		
+//		String idsStr = "";
+//		for (Integer id : ids) {
+//			idsStr += String.valueOf(id) + ",";
+//		}
+//		if (idsStr.length() != 0) {
+//			idsStr = idsStr.substring(0, idsStr.length() - 1);
+//			
+//			String query = "select id,name,quantity,price,dose,prescription from mydb.drugs where id "
+//					+ (ids.size() == 1 ? " = ?" : "in (" + idsStr + ") order by name " + ( asc ? "asc" : "desc"));
+//			try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement(query);) {
+//				if (ids.size() == 1) {
+//					st.setInt(1, ids.get(0));
+//				}
+//
+//				ResultSet rs = st.executeQuery();
+//				while (rs.next()) {
+//					System.out.println(readDrug(rs));
+//					sortedDrugs.add(readDrug(rs));
+//				}
+//				rs.close();
+//				logger.info("sorted drugs by name");
+//			} catch (SQLException e) {
+//				logger.error("catched SQL exception while attempting to sort drugs by name");
+//				e.printStackTrace();
+//			}
+//			return sortedDrugs;
+//		} else {
+//			return Collections.emptyList();
+//		}
+//		
+//	}
 
 }

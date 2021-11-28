@@ -94,6 +94,20 @@ public class OrderDAOTest {
 		
 	}
 	
+	@Test
+	public void testGetDrugsCountByUser() {
+		
+		User user = createStandardUser();
+		Order order = createOrder(user);
+		
+		int count = ((OrderDAOImpl) orderDAO).getDrugsCountByUser(user.getId());
+		Assert.assertEquals(2, count);
+		
+		orderDAO.delete(order.getId());
+		userDAO.delete(user.getId());
+		
+	}
+	
 	private static Order createOrder(User user) {
 		
 		Order order = new Order();

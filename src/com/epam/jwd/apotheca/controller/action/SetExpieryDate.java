@@ -112,7 +112,7 @@ public class SetExpieryDate extends RecipeCartAction {
 		
 		try {
 			stringDate = format.format(new java.util.Date(date.getTime()));
-		} catch (Exception e) {
+		} catch (NumberFormatException e) {
 			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 		
