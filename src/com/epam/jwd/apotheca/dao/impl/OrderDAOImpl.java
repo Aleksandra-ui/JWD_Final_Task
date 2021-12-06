@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -33,7 +34,7 @@ public class OrderDAOImpl implements OrderDAO {
 		try {
 			cp.init();
 		} catch (CouldNotInitializeConnectionPoolException e) {
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 	}
 	
@@ -74,10 +75,10 @@ public class OrderDAOImpl implements OrderDAO {
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to save an order");
 			logger.error("failure during handling an SQL:\n" + query);
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		} catch (NullPointerException e) {
 			logger.error("catched  exception while attempting to save an order");
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 
 		Order orderInDB = null;
@@ -107,7 +108,7 @@ public class OrderDAOImpl implements OrderDAO {
 
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find all orders");
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 
 		try (Connection connection = cp.takeConnection();
@@ -131,13 +132,14 @@ public class OrderDAOImpl implements OrderDAO {
 				orders.add(order);
 
 			}
+			
+			logger.info("find all orders");
 
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find all orders");
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
-
-		logger.info("find all orders");
+		
 		return orders;
 
 	}
@@ -163,13 +165,13 @@ public class OrderDAOImpl implements OrderDAO {
 					result = false;
 				}
 				connection.commit();
-			}			
+			}
+			logger.info("updated an order");
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to update an order");
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 		
-		logger.info("updated an order");
 		return result ? order : null;
 		
 	}
@@ -199,7 +201,7 @@ public class OrderDAOImpl implements OrderDAO {
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to delete an order");
 			logger.error("failure during handling an SQL:\n" + query);
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 
 		return result;
@@ -215,7 +217,7 @@ public class OrderDAOImpl implements OrderDAO {
 			id = rs.getInt(1);
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 		return id;
 	}
@@ -256,7 +258,7 @@ public class OrderDAOImpl implements OrderDAO {
 			logger.info("found an order by id");
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find an order by id");
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 
 		return order;
@@ -299,7 +301,7 @@ public class OrderDAOImpl implements OrderDAO {
 			logger.info("found orders by user");
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find orders by user");
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 
 		return orders;
@@ -318,11 +320,12 @@ public class OrderDAOImpl implements OrderDAO {
 			rs.next();
 			count = rs.getInt(1);
 			rs.close();
+			logger.info("found all orders count");
+			
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find all orders count");
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
-		logger.info("found all orders count");
 		return count;
 		
 	}
@@ -341,7 +344,7 @@ public class OrderDAOImpl implements OrderDAO {
 			logger.info("found all drugs count in user's orders");
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find all drugs count in user's orders");
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 		
 		return count;
@@ -377,7 +380,7 @@ public class OrderDAOImpl implements OrderDAO {
 			logger.info("found all drugs info in user's orders");
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find all drugs info in user's orders");
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 
 		return drugsInfo;

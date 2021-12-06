@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -31,7 +32,7 @@ public class RecipeDAOImpl implements RecipeDAO {
 		try {
 			cp.init();
 		} catch (CouldNotInitializeConnectionPoolException e) {
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 	}
 	
@@ -56,7 +57,7 @@ public class RecipeDAOImpl implements RecipeDAO {
 
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find all recipes");
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 
 		try (Connection connection = cp.takeConnection();
@@ -85,7 +86,7 @@ public class RecipeDAOImpl implements RecipeDAO {
 
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find all recipes");
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 
 		
@@ -127,7 +128,7 @@ public class RecipeDAOImpl implements RecipeDAO {
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to update a recipe with id " + recipe.getId());
 			logger.error("failure during handling an SQL:\n" + query);
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 		return result ? recipe : null;
 		
@@ -153,7 +154,7 @@ public class RecipeDAOImpl implements RecipeDAO {
 
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to delete a recipe");
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 
 		return result;
@@ -176,12 +177,12 @@ public class RecipeDAOImpl implements RecipeDAO {
 				recipes.add(findRecipe(rs.getInt("id")));
 			}
 			rs.close();
+			logger.info("found recipes by user");
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find recipes by user");
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 
-		logger.info("found recipes by user");
 		return recipes;
 	}
 
@@ -201,12 +202,12 @@ public class RecipeDAOImpl implements RecipeDAO {
 				recipes.add(findRecipe(rs.getInt("r.id")));
 			}
 			rs.close();
+			logger.info("found recipes by doctor");
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find recipes by doctor");
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 
-		logger.info("found recipes by doctor");
 		return recipes;
 	}
 
@@ -237,7 +238,7 @@ public class RecipeDAOImpl implements RecipeDAO {
 			logger.info("found a recipe");
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find a recipe");
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 
 		return recipe;
@@ -288,7 +289,7 @@ public class RecipeDAOImpl implements RecipeDAO {
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to save a recipe");
 			logger.error("failure during handling an SQL:\n" + query);
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 
 		Recipe recipeInDB = null;
@@ -310,7 +311,7 @@ public class RecipeDAOImpl implements RecipeDAO {
 			st.executeUpdate();
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to delete a recipe");
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 
 		Recipe recipe = findRecipe(id);
@@ -340,11 +341,11 @@ public class RecipeDAOImpl implements RecipeDAO {
 			rs.next();
 			count = rs.getInt(1);
 			rs.close();
+			logger.info("found all recipe count");
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find all recipe count");
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
-		logger.info("found all recipe count");
 		return count;
 		
 	}
@@ -365,7 +366,7 @@ public class RecipeDAOImpl implements RecipeDAO {
 			logger.info("found all recipe count");
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find all recipe count");
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 		
 		return count;
@@ -403,7 +404,7 @@ public class RecipeDAOImpl implements RecipeDAO {
 			logger.info("found recipes by doctor");
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find recipes by doctor");
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 
 		return recipes;

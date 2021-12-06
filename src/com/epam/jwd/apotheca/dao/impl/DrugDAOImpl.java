@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,7 +31,7 @@ public class DrugDAOImpl implements DrugDAO {
 		try {
 			cp.init();
 		} catch (CouldNotInitializeConnectionPoolException e) {
-			e.printStackTrace();
+			logger.error(Arrays.toString( e.getStackTrace() ));
 		}
 		ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger)LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
 		root.setLevel(Level.TRACE);
@@ -59,15 +60,15 @@ public class DrugDAOImpl implements DrugDAO {
 
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to save a drug");
-			e.printStackTrace();
+			logger.error(Arrays.toString( e.getStackTrace() ));
 		}
 
 		Drug drug = null;
 		if (result) {
 			drug = findDrug(name, dose);
+			logger.info("drug saved");
 		}
 
-		logger.info("drug saved");
 		return drug;
 		
 	}
@@ -85,11 +86,14 @@ public class DrugDAOImpl implements DrugDAO {
 				drugs.add(readDrug(rs));
 			}
 			rs.close();
+			logger.info("found all drugs");
+			
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find all drugs");
-			e.printStackTrace();
+			logger.error(Arrays.toString( e.getStackTrace() ));
+			logger.error(Arrays.toString( e.getStackTrace() ));
 		}
-		logger.info("found all drugs");
+		
 		return drugs;
 
 	}
@@ -107,11 +111,13 @@ public class DrugDAOImpl implements DrugDAO {
 				drugs.add(readDrug(rs));
 			}
 			rs.close();
+			logger.info("found all prescripted drugs");
+			
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find all prescripted drugs");
-			e.printStackTrace();
+			logger.error(Arrays.toString( e.getStackTrace() ));
 		}
-		logger.info("found all prescripted drugs");
+		
 		return drugs;
 
 	}
@@ -147,11 +153,13 @@ public class DrugDAOImpl implements DrugDAO {
 				drugs.add(readDrug(rs));
 			}
 			rs.close();
+			logger.info("found a range of drugs");
+			
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find a range of drugs");
-			e.printStackTrace();
+			logger.error(Arrays.toString( e.getStackTrace() ));
 		}
-		logger.info("found a range of drugs");
+		
 		return drugs;
 
 	}
@@ -173,11 +181,13 @@ public class DrugDAOImpl implements DrugDAO {
 				drugs.add(readDrug(rs));
 			}
 			rs.close();
+			logger.info("found a range of prescripted drugs");
+			
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find a range of prescripted drugs");
-			e.printStackTrace();
+			logger.error(Arrays.toString( e.getStackTrace() ));
 		}
-		logger.info("found a range of prescripted drugs");
+		
 		return drugs;
 
 	}
@@ -204,7 +214,7 @@ public class DrugDAOImpl implements DrugDAO {
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to update a drug");
 			logger.error("failed SQL:\n" + query);
-			e.printStackTrace();
+			logger.error(Arrays.toString( e.getStackTrace() ));
 		}
 
 		
@@ -220,12 +230,12 @@ public class DrugDAOImpl implements DrugDAO {
 			connection.setAutoCommit(false);
 			result = st.executeUpdate(query) > 0;
 			connection.commit();
+			logger.info("deleted a drug");
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to delete a drug");
-			e.printStackTrace();
+			logger.error(Arrays.toString( e.getStackTrace() ));
 		}
 
-		logger.info("deleted a drug");
 		return result;
 	}
 
@@ -233,7 +243,6 @@ public class DrugDAOImpl implements DrugDAO {
 	public Drug findById(Integer id) {
 
 		List<Drug> drugs = findByIds(id);
-		logger.info("found a drug by id");
 		return drugs.size() == 0 ? null : drugs.get(0);
 		
 	}
@@ -262,7 +271,7 @@ public class DrugDAOImpl implements DrugDAO {
 				logger.info("found drugs by ids");
 			} catch (SQLException e) {
 				logger.error("catched SQL exception while attempting to find drugs by ids");
-				e.printStackTrace();
+				logger.error( Arrays.toString( e.getStackTrace() ) );
 			}
 			return drugs;
 		} else {
@@ -284,12 +293,13 @@ public class DrugDAOImpl implements DrugDAO {
 				drugs.add(readDrug(rs));
 			}
 			rs.close();
+			logger.info("found drugs by name");
+			
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find drugs by name");
-			e.printStackTrace();
+			logger.error( Arrays.toString( e.getStackTrace() ) );
 		}
 
-		logger.info("found drugs by name");
 		return drugs;
 	}
 
@@ -305,13 +315,12 @@ public class DrugDAOImpl implements DrugDAO {
 			if (rs.next()) {
 				drug = readDrug(rs);
 			}
-
+			logger.info("found a drug by name and dose");
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find a drug by name and dose");
-			e.printStackTrace();
+			logger.error( Arrays.toString( e.getStackTrace() ) );
 		}
 
-		logger.info("found a drug by name and dose");
 		return drug;
 
 	}
@@ -329,9 +338,10 @@ public class DrugDAOImpl implements DrugDAO {
 			count = rs.getInt(1);
 			rs.close();
 			logger.info("found all drugs count");
+			
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find all drugs count");
-			e.printStackTrace();
+			logger.error( Arrays.toString( e.getStackTrace() ) );
 		}
 		
 		return count;
@@ -353,7 +363,7 @@ public class DrugDAOImpl implements DrugDAO {
 			logger.info("found prescripted drugs count");
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find prescripted drugs count");
-			e.printStackTrace();
+			logger.error( Arrays.toString( e.getStackTrace() ) );
 		}
 		
 		return count;
@@ -378,6 +388,12 @@ public class DrugDAOImpl implements DrugDAO {
 				result = false;
 			}
 		} 
+		
+		if (result) {
+			logger.info("quantity of drug '" + drug.getName() + "' was changed from " + quantity + " to " + newQuantity);
+		} else {
+			logger.warn("an error occured while attempting to change the quantity of drug " + drug.getName() + "' from " + quantity + " to " + newQuantity);
+		}
 		
 		return result;
 		

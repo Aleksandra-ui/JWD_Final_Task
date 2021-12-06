@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -27,7 +28,7 @@ public class UserDAOImpl implements UserDAO {
 		try {
 			cp.init();
 		} catch (CouldNotInitializeConnectionPoolException e) {
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 	}
 	
@@ -57,7 +58,7 @@ public class UserDAOImpl implements UserDAO {
 			logger.info("deleted a user");
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to delete a user");
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 
 		return result;
@@ -98,10 +99,9 @@ public class UserDAOImpl implements UserDAO {
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to update a user");
 			logger.error("failure during handling an SQL:\n" + query);
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 
-		logger.info("updated a user");
 		return result ? entity : null;
 	}
 
@@ -132,10 +132,9 @@ public class UserDAOImpl implements UserDAO {
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find users");
 			logger.error("failure during handling an SQL:\n" + query);
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 
-		
 		return users;
 
 	}
@@ -165,7 +164,7 @@ public class UserDAOImpl implements UserDAO {
 			logger.info("found a user by name");
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find a user by name");
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 		
 		return users.isEmpty() ? null : users.get(0);
@@ -190,7 +189,7 @@ public class UserDAOImpl implements UserDAO {
 			}
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to create a user");
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 
 		User user = null;
@@ -213,13 +212,14 @@ public class UserDAOImpl implements UserDAO {
 
 			result = st.executeUpdate() > 0;
 			connection.commit();
+			
+			logger.info("deleted a user");
 
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to delete a user");
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 
-		logger.info("deleted a user");
 		return result;
 
 	}
@@ -237,7 +237,7 @@ public class UserDAOImpl implements UserDAO {
 			result = rs.next();
 			
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 
 		return result;
@@ -275,7 +275,7 @@ public class UserDAOImpl implements UserDAO {
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find users by role");
 			logger.error("failure during handling an SQL:\n" + query);
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 
 		return users;
@@ -303,7 +303,7 @@ public class UserDAOImpl implements UserDAO {
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find all users count");
 			logger.error("failure during handling an SQL:\n" + query);
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 		
 		return count;
@@ -338,7 +338,7 @@ public class UserDAOImpl implements UserDAO {
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find a range of users");
 			logger.error("failed SQL:\n" + sql);
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 		
 		return users;
@@ -406,7 +406,7 @@ public class UserDAOImpl implements UserDAO {
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find a role with name '" + name + "'");
 			logger.error("failed SQL:\n" + query);
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 		
 		return role;

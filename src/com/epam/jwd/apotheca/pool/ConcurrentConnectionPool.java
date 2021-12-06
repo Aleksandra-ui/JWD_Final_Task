@@ -5,6 +5,7 @@ import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -102,7 +103,7 @@ public class ConcurrentConnectionPool implements ConnectionPool {
 					}
 				} catch (SQLException e) {
 					logger.error("catched SQL exception while initializing connection pool");
-					e.printStackTrace();
+					logger.error(Arrays.toString(e.getStackTrace()));
 					initialized.set(false);
 					throw new CouldNotInitializeConnectionPoolException("failed to open connection", e);
 				}
@@ -122,7 +123,7 @@ public class ConcurrentConnectionPool implements ConnectionPool {
 					try {
 						conn.realClose();
 					} catch (SQLException e) {
-						e.printStackTrace();
+						logger.error(Arrays.toString(e.getStackTrace()));
 					}
 				}
 				deregisterDrivers();
@@ -140,7 +141,7 @@ public class ConcurrentConnectionPool implements ConnectionPool {
 			logger.info("registration successful");
 		} catch (SQLException | ClassNotFoundException e) {
 			logger.error("registration unsuccessful");
-			e.printStackTrace();
+			logger.error(Arrays.toString(e.getStackTrace()));
 			initialized.set(false);
 			throw new CouldNotInitializeConnectionPoolException("driver registration failed", e);
 		}
@@ -153,7 +154,7 @@ public class ConcurrentConnectionPool implements ConnectionPool {
 			try {
 				DriverManager.deregisterDriver(drivers.nextElement());
 			} catch (SQLException e) {
-				e.printStackTrace();
+				logger.error(Arrays.toString(e.getStackTrace()));
 				logger.error("unregistering drivers failed");
 			}
 		}
