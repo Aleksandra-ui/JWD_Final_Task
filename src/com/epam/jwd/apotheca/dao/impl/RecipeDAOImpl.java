@@ -353,7 +353,7 @@ public class RecipeDAOImpl implements RecipeDAO {
 	public Integer getDrugsCountByDoctor(User user) {
 		
 		int count = 0;
-		String query = "SELECT count(r.id) FROM mydb.recipe r "
+		String query = "select count(r.id) from mydb.recipe r "
 				+ "join mydb.users u on r.doctor_id = u.id "
 				+ "where u.id = " + user.getId();
 		
@@ -375,7 +375,7 @@ public class RecipeDAOImpl implements RecipeDAO {
 
 	public List<Map<String, String>> findRecipeInfoByRange(User user, int start, int count) {
 
-		String query = "SELECT r.id, u.name, d.name, d.dose, r.expiery_date FROM mydb.recipe r "
+		String query = "select r.id, u.name, d.name, d.dose, r.expiery_date from mydb.recipe r "
 				+ "join mydb.users doc on r.doctor_id = doc.id "
 				+ "join mydb.users u on r.user_id = u.id "
 				+ "join mydb.drugs d on r.drug_id = d.id "

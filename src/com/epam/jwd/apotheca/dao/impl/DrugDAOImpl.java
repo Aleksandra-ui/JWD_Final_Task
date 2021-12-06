@@ -52,7 +52,7 @@ public class DrugDAOImpl implements DrugDAO {
 
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 			connection.setAutoCommit(false);
-			String sql = "INSERT INTO mydb.drugs(name,quantity,price,dose,prescription) VALUES ('" + name + "',"
+			String sql = "insert into mydb.drugs(name,quantity,price,dose,prescription) values ('" + name + "',"
 					+ String.valueOf(quantity) + "," + String.valueOf(price) + "," + String.valueOf(dose) + ","
 					+ (prescription ? "1" : "0") + ")";
 			result = st.executeUpdate(sql) > 0;
@@ -282,7 +282,7 @@ public class DrugDAOImpl implements DrugDAO {
 
 	public List<Drug> findByName(String name) {
 		List<Drug> drugs = new ArrayList<Drug>();
-		String query = "select id,name,quantity,price,dose,prescription from mydb.drugs WHERE NAME = '"
+		String query = "select id,name,quantity,price,dose,prescription from mydb.drugs where name = '"
 				+ name + "' order by id";
 
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {

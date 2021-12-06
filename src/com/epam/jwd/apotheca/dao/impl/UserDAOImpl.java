@@ -227,7 +227,7 @@ public class UserDAOImpl implements UserDAO {
 	public boolean hasUser(String name) {
 
 		boolean result = false;
-		String query = "select * from mydb.users where name = ?";
+		String query = "select u.id,u.name,u.role_id,u.password from mydb.users u where u.name = ?";
 
 		try (Connection connection = cp.takeConnection();
 				PreparedStatement st = connection.prepareStatement(query);) {
