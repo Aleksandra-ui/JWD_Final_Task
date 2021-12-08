@@ -22,6 +22,7 @@ public class DrugsBill implements RunCommand, ShoppingCartAware {
 
 	private static DrugsBill instance = new DrugsBill();
 	private static final Logger logger = LoggerFactory.getLogger(DrugsBill.class);
+	private static final String name = "DrugsBill";
 	private String actionTime;
 	private Map<String, String[]> params;
 	private User user;
@@ -80,8 +81,6 @@ public class DrugsBill implements RunCommand, ShoppingCartAware {
 			currentPage = params.get("currentPage") == null ? 1
 					: Integer.valueOf(params.get("currentPage")[0]);
 			pagesCount = totalCount / pageSize + ((totalCount % pageSize) == 0 ? 0 : 1);
-//			List<Drug> drugs = DrugManagerService.getInstance().getDrugs(pageSize * (currentPage - 1), pageSize);
-			//drugs.forEach(d -> this.drugs.put(d, order.getDrugs().get(d)));
 			TreeMap<Drug, Integer> map = new TreeMap<Drug, Integer>(order.getDrugs());
 			int start = pageSize * (currentPage - 1);
 			int index = 0;
@@ -105,7 +104,7 @@ public class DrugsBill implements RunCommand, ShoppingCartAware {
 
 	@Override
 	public String getView() {
-		return "secure/drugsBill1.jsp";
+		return "secure/drugsBill.jsp";
 	}
 
 	@Override
@@ -172,6 +171,10 @@ public class DrugsBill implements RunCommand, ShoppingCartAware {
 
 	public List<String> getErrorMessages() {
 		return errorMessages;
+	}
+	
+	public String getName() {
+		return name;
 	}
 	
 }

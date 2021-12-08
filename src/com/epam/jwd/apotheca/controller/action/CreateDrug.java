@@ -94,7 +94,7 @@ public class CreateDrug implements RunCommand {
 
 	@Override
 	public String getView() {
-		return "secure/createDrug1.jsp";
+		return "secure/createDrug.jsp";
 	}
 
 	@Override

@@ -13,57 +13,47 @@ ResourceBundle rb = ResourceBundle.getBundle("CreateDrug", locale);
 </head>
 <body>
 
+	<c:if test="${not empty param }">
+		<div  class="container" align="center">
+			<c:choose>
+				<c:when test="${action.success}">
+					<font color="blue"><%=rb.getString("create.success")%></font>
+				</c:when>
+				<c:otherwise>
+					<font color="red"><%=rb.getString("create.fail")%></font>
+				</c:otherwise>
+			</c:choose>
+		</div>
+	</c:if>
 	
-	<%
-		DrugManagerService service = DrugManagerService.getInstance();
-		String drugName = request.getParameter("drugName");
-		Integer quantity = (request.getParameter("quantity") == null || request.getParameter("quantity").equals("")) ? null : Integer.valueOf(request.getParameter("quantity"));
-		Integer price = (request.getParameter("price") == null || request.getParameter("price").equals("")) ? null : Integer.valueOf(request.getParameter("price"));
-		Double dose =  (request.getParameter("dose") == null || request.getParameter("dose").equals("")) ? null : Double.valueOf( request.getParameter("dose"));
-		Boolean prescription =  request.getParameter("prescription") == null ? Boolean.FALSE : Boolean.TRUE;
-
-		if (drugName != null && quantity != null && price != null && dose != null) {
-			Drug drug = new Drug();
-			drug.setName(drugName);
-			drug.setQuantity(quantity);
-			drug.setPrice(price);
-			drug.setDose(dose);
-			drug.setPrescription(prescription);
-			if (service.addDrug(drug)){
-	%>
-			<div><%=rb.getString("create.success")%></div>
-		<%
-		} else {
-		%>
-			<div><%=rb.getString("create.fail")%></div>
-	<%
-		}
-	} else if (request.getParameter("check") != null){
-		%>
-			<div><%=rb.getString("create.prompt")%></div>
-		<%	
-	}
-	%>
+	<div id = "errorMessages"  class="container" align="center">
+   		<c:forEach items="${action.errorMessages}" var="message">
+   			<font color="red"><c:out value="${ message}"/></font>
+   			<br/>
+   		</c:forEach>
+    </div>
 	
-		<form action="/apotheca/secure/createDrug.jsp" method="post">
-		<label for = "drugName"><%=rb.getString("create.name")%></label> :
-		<input type = "text" name = "drugName"/>
+	<form action="/apotheca/createDrug.run" method="post"  class="container" align="center" style="width: 40%">
+		<label for = "drugName" class="form-label"><%=rb.getString("create.name")%></label> :
+		<input type = "text" name = "drugName" class="form-control"/>
 		<br/>
-		<label for = "quantity"><%=rb.getString("create.quantity")%></label> :
-		<input type = "text" name = "quantity"/>
+		<label for = "quantity" class="form-label"><%=rb.getString("create.quantity")%></label> :
+		<input type = "text" name = "quantity" class="form-control"/>
 		<br/>
-		<label for = "price"><%=rb.getString("create.price")%></label> :
-		<input type = "text" name = "price"/>
+		<label for = "price" class="form-label"><%=rb.getString("create.price")%></label> :
+		<input type = "text" name = "price" class="form-control"/>
 		<br/>
-		<label for = "dose"><%=rb.getString("create.dose")%></label> :
-		<input type = "text" name = "dose"/>
+		<label for = "dose" class="form-label"><%=rb.getString("create.dose")%></label> :
+		<input type = "text" name = "dose" class="form-control"/>
 		<br/>
-		<label for = "prescription"><%=rb.getString("create.prescripted")%></label> :
-		<input type = "checkbox" name = "prescription" value="on"/>
+		<label for = "prescription"  class="form-check-label"><%=rb.getString("create.prescripted")%></label> :
+		<input type = "checkbox" name = "prescription" value="on"  class="form-check-input"/>
 		<br/>
-		<input type = "submit" name = "check" value = "<%=rb.getString("create.add")%>"/>
-		</form>
-		<a href = "/apotheca/drugs.jsp"><%=rb.getString("create.list")%></a>
+		<input class="btn btn-primary" type = "submit" name = "check" value = "<%=rb.getString("create.add")%>"/>
+	 </form>
+	 <div class="container" align="center"><a href = "/apotheca/drugs.run"><%=rb.getString("create.list")%></a></div>
+		
+		
 	
 </body>
 </html>

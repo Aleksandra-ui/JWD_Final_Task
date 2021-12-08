@@ -35,7 +35,7 @@ public class RecipeDrugs implements RunCommand, RecipeCartAware {
 	}
 	
 	public String getView() {
-		return "secure/recipe1.jsp";
+		return "secure/recipe.jsp";
 	}
 	
 	@Override

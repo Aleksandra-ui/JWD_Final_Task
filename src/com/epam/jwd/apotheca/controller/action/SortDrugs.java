@@ -51,7 +51,7 @@ public class SortDrugs implements RunCommand, ShoppingCartAware {
 		pagesCount = totalCount / pageSize + ((totalCount % pageSize) == 0 ? 0 : 1);
 		int startIndex =  pageSize * (currentPage - 1);
 		int count =  currentPage < pagesCount ? pageSize :totalCount % pageSize ;
-		drugs = DrugManagerService.getInstance().getSortedDrugs(startIndex, count, false);
+		drugs = DrugManagerService.getInstance().getDrugs(startIndex, count, "name", false);
 		
 		
 		RecipeManagerService recipeService = RecipeManagerService.getInstance();
@@ -71,7 +71,7 @@ public class SortDrugs implements RunCommand, ShoppingCartAware {
 
 	@Override
 	public String getView() {
-		return "drugs1.jsp";
+		return "drugs.jsp";
 	}
 
 	@Override

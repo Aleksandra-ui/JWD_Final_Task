@@ -28,7 +28,7 @@ public class PrescribedRecipes implements RunCommand {
 	}
 	
 	public String getView() {
-		return "secure/prescribedRecipes1.jsp";
+		return "secure/prescribedRecipes.jsp";
 	}
 	
 	@Override

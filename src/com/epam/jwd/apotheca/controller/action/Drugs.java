@@ -51,7 +51,7 @@ public class Drugs implements RunCommand, ShoppingCartAware {
 	}
 
 	public String getView() {
-		return "drugs1.jsp";
+		return "drugs.jsp";
 	}
 
 	public List<Drug> getDrugs() {

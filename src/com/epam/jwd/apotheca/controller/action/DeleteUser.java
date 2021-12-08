@@ -20,6 +20,7 @@ import com.epam.jwd.apotheca.model.User;
 public class DeleteUser implements RunCommand {
 
 	private static final Logger logger = LoggerFactory.getLogger(DeleteUser.class);
+	private static final String name = "DeleteUser";
 	private static DeleteUser instance = new DeleteUser();
 	private Map<String, String[]> params;
 	private User user;
@@ -104,8 +105,7 @@ public class DeleteUser implements RunCommand {
 
 	@Override
 	public String getView() {
-		// return "secure/deleteUser.jsp";
-		return "logonPage1.jsp";
+		return "logonPage.jsp";
 	}
 
 	@Override
@@ -159,5 +159,9 @@ public class DeleteUser implements RunCommand {
 	public int getTotalCount() {
 		return totalCount;
 	}
-
+	
+	public String getName() {
+		return name;
+	}
+	
 }

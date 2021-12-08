@@ -19,6 +19,7 @@ import com.epam.jwd.apotheca.model.User;
 public class ChangeUserRole implements RunCommand {
 
 	private static final Logger logger = LoggerFactory.getLogger(ChangeUserRole.class);
+	private static final String name = "ChangeUserRole";
 	private static ChangeUserRole instance = new ChangeUserRole();
 	private Map<String, String[]> params;
 	private User user;
@@ -84,11 +85,12 @@ public class ChangeUserRole implements RunCommand {
 		users = UserManagerService.getInstance().findUsersByRange(pageSize * (currentPage - 1), pageSize);
 		
 		return null;
+		
 	}
 
 	@Override
 	public String getView() {
-		return "logonPage1.jsp";
+		return "logonPage.jsp";
 	}
 
 	@Override
@@ -141,6 +143,10 @@ public class ChangeUserRole implements RunCommand {
 
 	public String role() {
 		return role;
+	}
+	
+	public String getName() {
+		return name;
 	}
 	
 }

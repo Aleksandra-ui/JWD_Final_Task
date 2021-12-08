@@ -44,7 +44,7 @@ public class Logon implements RunCommand {
 	}
 
 	public String getView() {
-		return "logonPage1.jsp";
+		return "logonPage.jsp";
 	}
 	
 	@Override      

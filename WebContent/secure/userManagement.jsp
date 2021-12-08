@@ -14,6 +14,18 @@
 		background-color: LightGreen;
 	}
 </style>
+
+<script type="text/javascript">
+	function applyAction(userId) {
+		
+		var select = document.getElementById("userAction" + userId);
+		console.log(select.selectedIndex);
+		console.log(select.options[select.selectedIndex].value);
+		window.location = select.options[select.selectedIndex].value;
+		
+	}
+</script>
+
 </head>
 <body>
 

@@ -52,7 +52,7 @@ public class Orders implements RunCommand {
 
 	@Override
 	public String getView() {
-		return "secure/orders1.jsp";
+		return "secure/orders.jsp";
 	}
 
 	@Override

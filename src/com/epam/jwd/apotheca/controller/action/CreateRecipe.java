@@ -28,13 +28,13 @@ import com.epam.jwd.apotheca.model.User;
 
 public class CreateRecipe implements RunCommand, RecipeCartAware {
 
+	private static final String name = "CreateRecipe";
 	private static CreateRecipe instance = new CreateRecipe();
 	private List<Drug> drugs;
 	private List<Drug> allDrugs;
 	private String actionTime;
 	private Map<String, String[]> params;
 	private static final Logger logger = LoggerFactory.getLogger(CreateRecipe.class);
-	private String displayPage = "secure/createRecipe1.jsp";
 	private List<String> errorMessages;
 	private Map<String, Validator> validators;
 	private RecipeCart cart;
@@ -52,10 +52,6 @@ public class CreateRecipe implements RunCommand, RecipeCartAware {
 		params = new HashMap<String, String[]>();
 		errorMessages = new ArrayList<String>();
 		validators = new HashMap<String, Validator>();
-//		validators.put("date", new DateValidator("year", "month", "day"));
-//		validators.add(new DrugValidator(drugs));
-//		validators.put("client", new UserValidator("clientName"));
-//		validators.put("access", new ActionAccessValidator("createRecipe"));
 		validators.put("access", new RoleAccessValidator(UserDAO.ROLE_NAME_DOCTOR));
 		validators.put("cart", new RecipeCartValidator());
 	}
@@ -83,8 +79,6 @@ public class CreateRecipe implements RunCommand, RecipeCartAware {
 		
 		clearFields();
 		
-//		validators.get("date").setValue(params);
-//		validators.get("client").setValue(params);
 		validators.get("access").setValue(user);
 		validators.get("cart").setValue(cart);
 	    
@@ -113,9 +107,6 @@ public class CreateRecipe implements RunCommand, RecipeCartAware {
 	 		recipe.setDrugIds(drugIds);
 	 		
 			recipe.setExpieryDate(getCart().getExpieryDate());
-			
-//			getCart().setExpieryDate(sqlDate);
-//			getCart().setUserId(client.getId());
 			
 			if ( service.addRecipe(recipe) ) {
 			  
@@ -158,7 +149,7 @@ public class CreateRecipe implements RunCommand, RecipeCartAware {
 	@Override
 	public String getView() {
 		
-		return displayPage;
+		return "secure/createRecipe.jsp";
 	}
 
 	@Override
@@ -224,8 +215,13 @@ public class CreateRecipe implements RunCommand, RecipeCartAware {
 	public int getCurrentPage() {
 		return currentPage;
 	}
+	
 	public int getTotalCount() {
 		return totalCount;
+	}
+	
+	public String getName() {
+		return name;
 	}
 
 }
