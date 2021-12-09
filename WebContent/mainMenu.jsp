@@ -86,7 +86,7 @@ java.util.Map,java.util.HashMap"%>
  			response.addCookie(new Cookie("lang", "en"));
  		}
 		
-		ResourceBundle rb0 = ResourceBundle.getBundle("Menu", locale);
+		ResourceBundle rb0 = ResourceBundle.getBundle("properties/Menu", locale);
 		session.setAttribute("locale", locale);
 		
 	%>

@@ -90,7 +90,7 @@ canNavigate = false;
 </script>
 
 <%
-ResourceBundle rbp = ResourceBundle.getBundle("Pagination", locale);
+ResourceBundle rbp = ResourceBundle.getBundle("properties/Pagination", locale);
 %>
 	
 <%-- 	<c:if test="${action.pagesCount > 3 }"> --%>

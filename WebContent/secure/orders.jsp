@@ -8,7 +8,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ include file = "/mainMenu.jsp" %>
 <%
-ResourceBundle rb = ResourceBundle.getBundle("Orders", locale);
+ResourceBundle rb = ResourceBundle.getBundle("properties/Orders", locale);
 %>
 <title><%=rb.getString("orders.title")%> "${action.user.name}"</title>
 <style>

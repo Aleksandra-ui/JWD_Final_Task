@@ -7,7 +7,7 @@
 
 <%@ include file = "/mainMenu.jsp" %>
 <%
-ResourceBundle rb = ResourceBundle.getBundle("CreateDrug", locale);
+ResourceBundle rb = ResourceBundle.getBundle("properties/CreateDrug", locale);
 %>
 <title><%=rb.getString("create.title")%></title>
 </head>

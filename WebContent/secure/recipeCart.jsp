@@ -60,7 +60,7 @@
 	}
 	
 	session.setAttribute("locale", locale);
-	ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
+	ResourceBundle rb = ResourceBundle.getBundle("properties/Drugs", locale);
 %>
 
 <style>

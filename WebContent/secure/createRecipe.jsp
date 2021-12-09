@@ -8,7 +8,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <%@ include file = "/mainMenu.jsp" %>
 <%
-ResourceBundle rb = ResourceBundle.getBundle("CreateRecipe", locale);
+ResourceBundle rb = ResourceBundle.getBundle("properties/CreateRecipe", locale);
 %> 
 <title><%=rb.getString("create.title")%></title>
 </head>

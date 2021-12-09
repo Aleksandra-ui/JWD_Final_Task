@@ -25,7 +25,7 @@ int currentPage;
 	%>
 <%@ include file = "/mainMenu.jsp" %>
 <%
-ResourceBundle rb = ResourceBundle.getBundle("Drugs", locale);
+ResourceBundle rb = ResourceBundle.getBundle("properties/Drugs", locale);
 %>
 <title><%=rb.getString("drugs.list")%></title>
 </head>
