@@ -138,51 +138,6 @@ ResourceBundle rb = ResourceBundle.getBundle("properties/Drugs", locale);
 
 <body onload="displayCart();">
 	
-
-<%-- 
-	<div style="width:50%" class="container">
-		<div style="overflow: hidden" class="container" align="center">
-			<div style="float: left">
-				<%=rb.getString("drugs.records1")%>
-				<%=currentPage * pageSize - pageSize + 1%>
-				<%=rb.getString("drugs.records2")%>
-				<%=currentPage * pageSize - pageSize + 1 + ((totalCount % pageSize != 0 && totalCount / pageSize * pageSize + 1 == currentPage * pageSize - pageSize + 1)
-						? totalCount % pageSize : pageSize) - 1%>
-				<%=rb.getString("drugs.records3")%>
-				${action.totalCount}&nbsp;&nbsp;
-			</div>
-			<span style="float: none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-			<div style="float: right">
-				<div style="float: left">
-					<%=rb.getString("drugs.records4")%>:&nbsp; <select name="pageSize"
-						onChange="changePageSize(this);" >
-						<option
-							${(empty action.pageSize or action.pageSize == 5) ? "selected='true'" : "" }
-							value="/apotheca/drugs.run?pageSize=5">5</option>
-						<option
-							${(not empty action.pageSize and action.pageSize  == 10) ? "selected='true'" : "" }
-							value="/apotheca/drugs.run?pageSize=10">10</option>
-						<option
-							${(not empty action.pageSize and action.pageSize  == 20) ? "selected='true'" : "" }
-							value="/apotheca/drugs.run?pageSize=20">20</option>
-					</select>
-				</div>
-				<span style="float: none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-				<div style="float: right">
-					<c:forEach var="displayPage" begin="1" end="${action.pagesCount}">
-						<c:choose>
-							<c:when
-								test="${displayPage == (empty action.currentPage ? 1 : action.currentPage)}">${displayPage} &nbsp;</c:when>
-							<c:otherwise>
-								<a href="/apotheca/drugs.run?pageSize=${empty action.pageSize ? 5 : action.pageSize}&currentPage=${displayPage}">${displayPage}</a>&nbsp;</c:otherwise>
-						</c:choose>
-					</c:forEach>
-				</div>
-			</div>
-		</div>
-	</div>
---%>
-	
 <div class="container" style="width: 70%;">	
 	
 	<%@ include file = "/pagination.jsp" %>
@@ -191,17 +146,7 @@ ResourceBundle rb = ResourceBundle.getBundle("properties/Drugs", locale);
 		<thead align="center">
 			<tr>
 				<th>#</th>
-				<c:set var="icon" value="no_sort.png"/>
-				<c:if test="${not empty sortCol }">
-					<c:choose>
-						<c:when test="${param.sortOrder eq 'asc' }">
-							<c:set var="icon" value="asc.png"/>
-						</c:when>
-						<c:otherwise>
-							<c:set var="icon" value="desc.png"/>
-						</c:otherwise>
-					</c:choose>
-				</c:if>
+				<c:set var="icon" value="asc.png"/>
 				<th><a href="/apotheca/drugs.run?pageSize=${empty action.pageSize ? 5 : action.pageSize}&sortColumn=name&sortOrder=asc" class="text-dark" style="text-decoration: none"><%=rb.getString("drugs.name")%>&nbsp;<img alt="" src="${icon }" width="10px"/></a></th>
 				<th><%=rb.getString("drugs.dose")%></th>
 				<th><%=rb.getString("drugs.quantity")%></th>
