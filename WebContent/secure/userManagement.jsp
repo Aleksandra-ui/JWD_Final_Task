@@ -33,7 +33,7 @@
 
 	<%
 		
-			ResourceBundle rb = ResourceBundle.getBundle("LogonPage", locale);
+			ResourceBundle rb = ResourceBundle.getBundle("properties/LogonPage", locale);
 			UserManagement bean = (UserManagement)request.getAttribute("action");
 			int totalCount = bean.getTotalCount();
 			int pageSize = bean.getPageSize();
