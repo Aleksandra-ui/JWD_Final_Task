@@ -71,7 +71,7 @@ public class OrderDAOTest {
 	}
 	
 	@Test
-	public void testGetTotalCount() throws InterruptedException {
+	public void testGetTotalCount() {
 		
 		User user = new User();
 		Role role = ((UserDAOImpl)userDAO).findRole(UserDAO.ROLE_NAME_CLIENT);
@@ -97,15 +97,9 @@ public class OrderDAOTest {
 	@Test
 	public void testGetDrugsCountByUser() {
 		
-		User user = createStandardUser();
-		Order order = createOrder(user);
-		
 		int count = ((OrderDAOImpl) orderDAO).getDrugsCountByUser(user.getId());
 		Assert.assertEquals(2, count);
-		
-		orderDAO.delete(order.getId());
-		userDAO.delete(user.getId());
-		
+	
 	}
 	
 	private static Order createOrder(User user) {
