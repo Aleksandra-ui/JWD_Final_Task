@@ -56,7 +56,7 @@ public class OrderDAOTest {
 	}
 
 	@Test
-	public void testFindOrder() throws InterruptedException {
+	public void testFindOrder() {
 
 		Order orderInDB = orderDAO.findOrder(order.getId());
 		Assert.assertEquals(order, orderInDB);

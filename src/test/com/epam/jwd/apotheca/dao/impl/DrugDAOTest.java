@@ -35,6 +35,7 @@ public class DrugDAOTest {
 
 		Drug drug = createDrug();
 		Drug drugInDB = drugDAO.save(drug);
+		System.out.println(drugInDB);
 		drug.setId(drugInDB.getId());
 		
 		drugDAO.delete(drug.getId());
@@ -163,24 +164,6 @@ public class DrugDAOTest {
 		drugDAO.delete(drug.getId());
 		
 		assert first == second - 1;
-		
-	}
-	
-	@Test
-	public void testChangeQuantity() {
-		
-		Drug drug = createDrug();
-		drugDAO.save(drug);
-		int quantity1 = drug.getQuantity();
-		
-		((DrugDAOImpl)drugDAO).changeQuantity(drug, 2);
-		
-		drug = drugDAO.update(drug);
-		int quantity2 = drug.getQuantity();
-		
-		drugDAO.delete(drug.getId());
-		System.out.println(quantity1 + " " + quantity2);
-		assert quantity2 == quantity1 - 2;
 		
 	}
 	

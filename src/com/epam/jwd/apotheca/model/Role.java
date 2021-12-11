@@ -30,4 +30,9 @@ public class Role implements Entity {
 		this.permission = permission;
 	}
 
+	@Override
+	public String toString() {
+		return "Role [id=" + id + ", name=" + name + ", permission=" + permission + "]";
+	}
+	
 }

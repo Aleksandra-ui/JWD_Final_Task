@@ -294,16 +294,19 @@ public class UserDAOImpl implements UserDAO {
 
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 
+			connection.setAutoCommit(false);
 			ResultSet rs = st.executeQuery(query);
 			logger.trace("following query was executed successfully:\n" + query);
 			rs.next();
 			count = rs.getInt(1);
 			rs.close();
 			logger.info("found all users count");
+			connection.commit();
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find all users count");
 			logger.error("failure during handling an SQL:\n" + query);
 			logger.error(Arrays.toString(e.getStackTrace()));
+			//connection.rollback();
 		}
 		
 		return count;

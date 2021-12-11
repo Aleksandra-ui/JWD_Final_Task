@@ -49,6 +49,7 @@ public class DrugDAOImpl implements DrugDAO {
 		Integer price = entity.getPrice();
 		Double dose = entity.getDose();
 		Boolean prescription = entity.isPrescription();
+		//Integer id = getMaxId() + 1;
 
 		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
 			connection.setAutoCommit(false);
@@ -434,6 +435,21 @@ public class DrugDAOImpl implements DrugDAO {
 //			return Collections.emptyList();
 //		}
 //		
+//	}
+	
+//	private Integer getMaxId() {
+//		String query = "select max(id) from mydb.drugs";
+//		Integer id = null;
+//		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
+//
+//			ResultSet rs = st.executeQuery(query);
+//			rs.next();
+//			id = rs.getInt(1);
+//
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
+//		return id;
 //	}
 
 }
