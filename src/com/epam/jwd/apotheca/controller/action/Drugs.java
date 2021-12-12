@@ -60,6 +60,8 @@ public class Drugs implements RunCommand, ShoppingCartAware {
 
 	@Override      
 	public String run() {
+		
+		drugsFromRecipe.clear();
 
 		String sortColumn = params.get("sortColumn") == null ? null : params.get("sortColumn")[0];
 		boolean sortOrder = params.get("sortOrder") == null ? false : Boolean.valueOf(params.get("sortOrder")[0]);

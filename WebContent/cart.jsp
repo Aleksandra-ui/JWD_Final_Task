@@ -154,14 +154,7 @@
 					</div>
 					<span style="float: none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 					<div style="float: right">
-<%-- 						<c:forEach var="displayPage" begin="1" end="${pagesCount}"> --%>
-<%-- 							<c:choose> --%>
-<%-- 								<c:when test="${displayPage == (empty param.currentPage ? 1 : param.currentPage)}">${displayPage} &nbsp;</c:when> --%>
-<%-- 								<c:otherwise> --%>
-<%-- 									<a onclick="displayCart(${displayPage}, ${action.pageSize })" style="text-decoration: underline;">${displayPage}</a>&nbsp; --%>
-<%-- 								</c:otherwise> --%>
-<%-- 							</c:choose> --%>
-<%-- 						</c:forEach> --%>
+
 				<%--Button "previous", shown when current page > 1--%>
 				<c:if test="${action.currentPage != 1 }">
 					<span>

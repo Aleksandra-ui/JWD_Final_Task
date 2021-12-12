@@ -112,8 +112,12 @@ public class Logon implements RunCommand {
 			
 			user = null;
 			if ( session != null ) {
-				session.removeAttribute("recipeCart");
-				session.removeAttribute("cart");
+				if ( session.getAttribute("recipeCart") != null ) {
+					session.removeAttribute("recipeCart");
+				}
+				if ( session.getAttribute("cart") != null ) {
+					session.removeAttribute("cart");
+				}
 			}
 			
 		}

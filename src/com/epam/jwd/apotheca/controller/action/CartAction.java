@@ -141,7 +141,7 @@ public abstract class CartAction implements RunCommand, ShoppingCartAware {
 						errorColumns.put("amount", String.valueOf(actualDrug.getQuantity()));
 					}
 					//TODO 2.ecли лек-во было в свободном доступе,а стало по рецепту 
-					if ( ! drug.isPrescription() && actualDrug.isPrescription() ) {
+					if ( (! drug.isPrescription()) && actualDrug.isPrescription() ) {
 						errorColumns.put("prescription", "prescripted");
 					}
 					//TODO 3.ecли истёк срок годности рецепта на лек-во
