@@ -16,10 +16,8 @@ import com.epam.jwd.apotheca.controller.DrugManagerService;
 import com.epam.jwd.apotheca.controller.RecipeCart;
 import com.epam.jwd.apotheca.controller.RecipeManagerService;
 import com.epam.jwd.apotheca.controller.UserManagerService;
-import com.epam.jwd.apotheca.controller.validator.DateValidator;
 import com.epam.jwd.apotheca.controller.validator.RecipeCartValidator;
 import com.epam.jwd.apotheca.controller.validator.RoleAccessValidator;
-import com.epam.jwd.apotheca.controller.validator.UserValidator;
 import com.epam.jwd.apotheca.controller.validator.Validator;
 import com.epam.jwd.apotheca.dao.api.UserDAO;
 import com.epam.jwd.apotheca.model.Drug;
@@ -32,7 +30,6 @@ public class CreateRecipe implements RunCommand, RecipeCartAware {
 	private static CreateRecipe instance = new CreateRecipe();
 	private List<Drug> drugs;
 	private List<Drug> allDrugs;
-	private String actionTime;
 	private Map<String, String[]> params;
 	private static final Logger logger = LoggerFactory.getLogger(CreateRecipe.class);
 	private List<String> errorMessages;
@@ -66,7 +63,7 @@ public class CreateRecipe implements RunCommand, RecipeCartAware {
 	}
 	
 	@Override
-	public String run() {
+	public void run() {
 		
 		if ( getCart().getDrugs().isEmpty() ) {
 			pageSize = params.get("pageSize") == null ? 5 : Integer.valueOf(params.get("pageSize")[0]);
@@ -74,7 +71,7 @@ public class CreateRecipe implements RunCommand, RecipeCartAware {
 					: Integer.valueOf(params.get("currentPage")[0]);
 			pagesCount = totalCount / pageSize + ((totalCount % pageSize) == 0 ? 0 : 1);
 			drugs = allDrugs.subList( Math.min(pageSize * (currentPage - 1), totalCount), Math.min( (pageSize * (currentPage - 1) + pageSize), totalCount ));
-			return null;
+			return;
 		}
 		
 		clearFields();
@@ -123,14 +120,13 @@ public class CreateRecipe implements RunCommand, RecipeCartAware {
 				getCart().clear();
 			} else {
 				errorMessages.add("Unable to create recipe.");
-				logger.error("Unable to create recipe.");
+				logger.error("unable to create recipe");
 				if ( ! validators.get("cart").validate() ) {
 					errorMessages.addAll(validators.get("cart").getMessages());
 				}
 			}
 		
 		} 
-		return actionTime;
 		
 	}
 
@@ -148,7 +144,6 @@ public class CreateRecipe implements RunCommand, RecipeCartAware {
 
 	@Override
 	public String getView() {
-		
 		return "secure/createRecipe.jsp";
 	}
 
@@ -164,14 +159,9 @@ public class CreateRecipe implements RunCommand, RecipeCartAware {
 	
 	@Override
 	public User getUser() {
-		
 		return user;
 	}
 	
-	public String getActionTime() {
-		return actionTime;
-	}
-
 	public List<Drug> getDrugs() {
 		return drugs;
 	}
@@ -181,8 +171,7 @@ public class CreateRecipe implements RunCommand, RecipeCartAware {
 	}
 
 	@Override
-	public boolean isSecure() {
-		
+	public boolean isSecure() {	
 		return true;
 	}
 

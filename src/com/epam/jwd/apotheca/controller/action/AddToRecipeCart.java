@@ -6,7 +6,7 @@ import java.sql.Date;
 import com.epam.jwd.apotheca.controller.DrugManagerService;
 import com.epam.jwd.apotheca.model.Drug;
 
-public class AddToRecipeCart extends RecipeCartAction implements RecipeCartAware {
+public class AddToRecipeCart extends RecipeCartAction {
 
 	private static AddToRecipeCart instance = new AddToRecipeCart();
 	
@@ -18,7 +18,7 @@ public class AddToRecipeCart extends RecipeCartAction implements RecipeCartAware
 	}
 
 	@Override
-	public String run() {
+	public void run() {
 
 		super.run();
 		
@@ -30,7 +30,7 @@ public class AddToRecipeCart extends RecipeCartAction implements RecipeCartAware
 			}
 		}
 		
-		if ( getCart().getExpieryDate()  == null ) {
+		if ( getCart().getExpieryDate() == null ) {
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTime(new Date(System.currentTimeMillis()));
 			calendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR) + 1);
@@ -39,8 +39,6 @@ public class AddToRecipeCart extends RecipeCartAction implements RecipeCartAware
 		}
 		
 		updateCart();
-		
-		return null;
 		
 	}
 

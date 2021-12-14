@@ -12,12 +12,11 @@ public class DisplayCart extends CartAction {
 	}
 
 	@Override
-	public String run() {
+	public void run() {
 
 		super.run();
 		updateProducts();
 		
-		return null;
 	}
 	
 }

@@ -46,10 +46,9 @@ public class ChangeUserRole implements RunCommand {
 	}
 
 	@Override
-	public String run() {
+	public void run() {
 		
 		messages.clear();
-		
 
 		validators.get("access").setValue(user);
 		validators.get("user").setValue(params);
@@ -83,8 +82,6 @@ public class ChangeUserRole implements RunCommand {
 		}
 		
 		users = UserManagerService.getInstance().findUsersByRange(pageSize * (currentPage - 1), pageSize);
-		
-		return null;
 		
 	}
 

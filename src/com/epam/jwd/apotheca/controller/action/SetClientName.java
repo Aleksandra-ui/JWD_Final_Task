@@ -20,7 +20,7 @@ public class SetClientName extends RecipeCartAction {
 	}
 
 	@Override
-	public String run() {
+	public void run() {
 		
 		super.run();
 		
@@ -39,7 +39,6 @@ public class SetClientName extends RecipeCartAction {
 		
 		updateCart();
 		
-		return null;
 	}
 
 }

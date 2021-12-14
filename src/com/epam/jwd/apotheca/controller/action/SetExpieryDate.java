@@ -23,35 +23,32 @@ public class SetExpieryDate extends RecipeCartAction {
 	}
 	
 	public static SetExpieryDate getInstance() {
-		
 		return instance;
-		
 	}
 
 	@Override
-	public String run() {
+	public void run() {
 		
 		super.run();
 		
 		Validator validator = getValidators().get("date");
 		validator.setValue(getParams());
 		
-		if ( !validator.validate() ) {
+		if ( ! validator.validate() ) {
 			
-				logger.trace("attempt to change date from {} to {} failed", getFormattedDate(getCart().getExpieryDate()), getParams().get("year") + "/" +
-						getParams().get("month") + "/" +
-						getParams().get("day"));
-				for ( String m : validator.getMessages() ) {
-					logger.trace(m);
-				}
-				getErrors().put("expiery", "wrong expiery date (yyyy/mm/dd): " +
+			logger.trace("attempt to change date from {} to {} failed", getFormattedDate(getCart().getExpieryDate()), getParams().get("year") + "/" +
+				getParams().get("month") + "/" +
+					getParams().get("day"));
+			for ( String m : validator.getMessages() ) {
+				logger.trace(m.toLowerCase());
+			}
+			getErrors().put("expiery", "wrong expiery date (yyyy/mm/dd): " +
 											getParams().get("year") + "/" +
 											getParams().get("month") + "/" +
 											getParams().get("day"));
-			
-			
 		}
-		Integer day = null, month=null, year = null;
+		
+		Integer day = null, month = null, year = null;
 		Date date = getCart().getExpieryDate();
 		Calendar calendar = new GregorianCalendar();
 		if ( date != null ) {
@@ -92,17 +89,11 @@ public class SetExpieryDate extends RecipeCartAction {
 			
 		}
 
-			
+		getCart().setExpieryDate(new java.sql.Date(calendar.getTime().getTime()));
+		
 		logger.trace("values {}/{}/{} were set into {}/{}/{}", year, month, day, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
 		
-		getCart().setExpieryDate(new java.sql.Date(calendar.getTime().getTime()));
-			
-		
-		
-		
 		updateCart();
-		
-		return null;
 		
 	}
 	

@@ -2,7 +2,6 @@ package com.epam.jwd.apotheca.controller.action;
 
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +21,6 @@ public class Drugs implements RunCommand, ShoppingCartAware {
 	private static Drugs instance = new Drugs();
 	private static final Logger logger = LoggerFactory.getLogger(Drugs.class);
 	private static final String name = "Drugs";
-	private String actionTime;
 	private List<Drug> drugs;
 	private Map<String, String[]> params;
 	private int totalCount;
@@ -46,10 +44,6 @@ public class Drugs implements RunCommand, ShoppingCartAware {
 		return drugsFromRecipe;
 	}
 
-	public String getActionTime() {
-		return actionTime;
-	}
-
 	public String getView() {
 		return "drugs.jsp";
 	}
@@ -59,23 +53,18 @@ public class Drugs implements RunCommand, ShoppingCartAware {
 	}
 
 	@Override      
-	public String run() {
+	public void run() {
 		
 		drugsFromRecipe.clear();
 
-		String sortColumn = params.get("sortColumn") == null ? null : params.get("sortColumn")[0];
-		boolean sortOrder = params.get("sortOrder") == null ? false : Boolean.valueOf(params.get("sortOrder")[0]);
-		
 		totalCount = DrugManagerService.getInstance().getTotalCount();
 		pageSize = params.get("pageSize") == null ? 5 : Integer.valueOf(params.get("pageSize")[0]);
 		currentPage = params.get("currentPage") == null ? 1
 				: Integer.valueOf(params.get("currentPage")[0]);
 		pagesCount = totalCount / pageSize + ((totalCount % pageSize) == 0 ? 0 : 1);
 		int startIndex =  pageSize * (currentPage - 1);
-		int count =  currentPage < pagesCount ? pageSize :totalCount % pageSize ;
-		drugs = DrugManagerService.getInstance().getDrugs(startIndex, count, sortColumn, sortOrder);
-		
-		actionTime = GregorianCalendar.getInstance().getTime().toString();
+		int count =  currentPage < pagesCount ? pageSize : totalCount % pageSize;
+		drugs = DrugManagerService.getInstance().getDrugs(startIndex, count, "name", false);
 		
 		RecipeManagerService recipeService = RecipeManagerService.getInstance();
 		if (user != null) {
@@ -89,7 +78,6 @@ public class Drugs implements RunCommand, ShoppingCartAware {
 		}
 		logger.trace("displaying " + count + " drugs starting from " + startIndex);
 		
-		return actionTime;
 	}
 
 	@Override
@@ -104,13 +92,11 @@ public class Drugs implements RunCommand, ShoppingCartAware {
 	
 	@Override
 	public User getUser() {
-		
 		return user;
 	}
 
 	@Override
 	public boolean isSecure() {
-		
 		return false;
 	}
 

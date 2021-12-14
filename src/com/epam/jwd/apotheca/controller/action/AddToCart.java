@@ -15,7 +15,7 @@ public class AddToCart extends CartAction {
 	}
 
 	@Override
-	public String run() {
+	public void run() {
 
 		super.run();
 		
@@ -30,7 +30,6 @@ public class AddToCart extends CartAction {
 
 		updateProducts();
 		
-		return null;
 	}
 
 }

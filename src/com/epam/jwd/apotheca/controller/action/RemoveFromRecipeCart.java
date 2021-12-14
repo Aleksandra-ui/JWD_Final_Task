@@ -2,7 +2,7 @@ package com.epam.jwd.apotheca.controller.action;
 
 import com.epam.jwd.apotheca.controller.DrugManagerService;
 
-public class RemoveFromRecipeCart extends RecipeCartAction implements RecipeCartAware {
+public class RemoveFromRecipeCart extends RecipeCartAction {
 
 	private static RemoveFromRecipeCart instance = new RemoveFromRecipeCart();
 	
@@ -14,7 +14,7 @@ public class RemoveFromRecipeCart extends RecipeCartAction implements RecipeCart
 	}
 
 	@Override
-	public String run() {
+	public void run() {
 		
 		super.run();
 		String id = getParams().get("drugId") == null ? null : getParams().get("drugId")[0];
@@ -29,7 +29,6 @@ public class RemoveFromRecipeCart extends RecipeCartAction implements RecipeCart
 		}
 		
 		updateCart();
-		return null;
 		
 	}
 	

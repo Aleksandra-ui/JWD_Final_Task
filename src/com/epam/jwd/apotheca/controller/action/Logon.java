@@ -9,8 +9,6 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.epam.jwd.apotheca.controller.RecipeCart;
-import com.epam.jwd.apotheca.controller.ShoppingCart;
 import com.epam.jwd.apotheca.controller.UserManagerService;
 import com.epam.jwd.apotheca.dao.api.UserDAO;
 import com.epam.jwd.apotheca.model.User;
@@ -20,7 +18,6 @@ public class Logon implements RunCommand {
 	private static final String name = "Logon";
 	private static Logon instance = new Logon();
 	private static final Logger logger = LoggerFactory.getLogger(Logon.class);
-	private String actionTime;
 	private Map<String, String[]> params;
 	private User user;
 	private List<User> users;
@@ -39,16 +36,12 @@ public class Logon implements RunCommand {
 		return instance;
 	}
 
-	public String getActionTime() {
-		return actionTime;
-	}
-
 	public String getView() {
 		return "logonPage.jsp";
 	}
 	
 	@Override      
-	public String run() {
+	public void run() {
 		
 		messages.clear();
 		UserManagerService userService = UserManagerService.getInstance();
@@ -66,7 +59,7 @@ public class Logon implements RunCommand {
 		String register = params.get("register") != null ? params.get("register")[0] : null;
 		
 		if ( user == null ) {
-			if (  "1".equals(register) ){
+			if ( "1".equals(register) ){
 				if (! userService.hasUser(userName)){
 					user = new User();
 					user.setName(userName);
@@ -76,12 +69,12 @@ public class Logon implements RunCommand {
 					if ( newUser == null  ){
 						messages.add("User " + user.getName() + " didn't log on.");
 						messages.add("Internal error during user creation.");
-						logger.trace("User " + user.getName() + " didn't log on.");
-						logger.trace("Internal error during user creation.");
+						logger.trace("user " + user.getName() + " didn't log on");
+						logger.trace("internal error during user creation");
 						user = null;
 					} else {
 						messages.add("User " + user.getName() + " was successfully registered.");
-						logger.trace("User " + user.getName() + " was successfully registered.");
+						logger.trace("user " + user.getName() + " was successfully registered");
 						user = newUser;
 					}
 				}
@@ -91,23 +84,23 @@ public class Logon implements RunCommand {
 					if ( user.getPassword().equalsIgnoreCase(userPass) ) {
 						this.user = user;
 						messages.add("User " + user.getName() + " successfully logged on.");
-						logger.trace("User " + user.getName() + " successfully logged on.");
+						logger.trace("user " + user.getName() + " successfully logged on");
 					} else {
 						messages.add("Password for user " + user.getName() + " is incorrect.");
-						logger.trace("Password for user " + user.getName() + " is incorrect.");
+						logger.trace("password for user " + user.getName() + " is incorrect");
 					}
 				} else if ( userPass != null ) {
 					messages.add("User name isn't specified for logon.");
-					logger.trace("User name isn't specified for logon.");
+					logger.trace("user name isn't specified for logon");
 				}
 			}
 		} if ("1".equals(userLogoff)) {
 			if ( user != null ) {
 				messages.add("User " + user.getName() + " was logged off.");
-				logger.trace("User " + user.getName() + " was logged off.");
+				logger.trace("user " + user.getName() + " was logged off");
 			} else {
 				messages.add("No users logged in the system.");
-				logger.trace("No users logged in the system.");
+				logger.trace("no users logged in the system");
 			}
 			
 			user = null;
@@ -122,7 +115,6 @@ public class Logon implements RunCommand {
 			
 		}
 		
-		return actionTime;
 	}
 
 	@Override
@@ -137,7 +129,6 @@ public class Logon implements RunCommand {
 	
 	@Override
 	public User getUser() {
-		
 		return user;
 	}
 

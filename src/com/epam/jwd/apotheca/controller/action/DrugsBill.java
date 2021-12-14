@@ -23,7 +23,6 @@ public class DrugsBill implements RunCommand, ShoppingCartAware {
 	private static DrugsBill instance = new DrugsBill();
 	private static final Logger logger = LoggerFactory.getLogger(DrugsBill.class);
 	private static final String name = "DrugsBill";
-	private String actionTime;
 	private Map<String, String[]> params;
 	private User user;
 	private AtomicInteger total;
@@ -50,9 +49,10 @@ public class DrugsBill implements RunCommand, ShoppingCartAware {
 	}
 	
 	@Override
-	public String run() {
+	public void run() {
+		
 		errorMessages.clear();
-		if ( getCart().getProducts().size() > 0 ){
+		if ( getCart().getProducts().size() > 0 ) {
 			getCart().setInvalid(false);
 			order = OrderManagerService.getInstance().buy(user.getId(), getCart().getProducts());
 			if ( order != null ) {
@@ -73,7 +73,7 @@ public class DrugsBill implements RunCommand, ShoppingCartAware {
 					getCart().setInvalid(true);
 				}
 				errorMessages.add("Cannot create an order.");
-				logger.error("Cannot create an order.");
+				logger.error("cannot create an order");
 			}
 		} 
 		if ( order != null ) {
@@ -84,22 +84,18 @@ public class DrugsBill implements RunCommand, ShoppingCartAware {
 			TreeMap<Drug, Integer> map = new TreeMap<Drug, Integer>(order.getDrugs());
 			int start = pageSize * (currentPage - 1);
 			int index = 0;
-			System.out.println("start: " + start + ",index: " + index);
 			drugs.clear();
 			for ( Drug d : map.keySet() ) {
-				System.out.println("index: " + index);
-				if (index >= start ) {
+				if ( index >= start ) {
 					this.drugs.put(d, map.get(d));
-					System.out.println(d.getId());
 				} 
 				index++;
-				if(index ==  map.size()||this.drugs.size()==pageSize ) {
-					System.out.println("break at index: " + index);
+				if( index == map.size() || this.drugs.size() == pageSize ) {
 					break;
 				}
 			}
 		}
-		return actionTime;
+		
 	}
 
 	@Override
@@ -125,10 +121,6 @@ public class DrugsBill implements RunCommand, ShoppingCartAware {
 	@Override
 	public boolean isSecure() {
 		return true;
-	}
-
-	public String getActionTime() {
-		return actionTime;
 	}
 
 	public AtomicInteger getTotal() {

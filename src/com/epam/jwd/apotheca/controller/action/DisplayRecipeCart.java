@@ -1,6 +1,6 @@
 package com.epam.jwd.apotheca.controller.action;
 
-public class DisplayRecipeCart extends RecipeCartAction implements RecipeCartAware {
+public class DisplayRecipeCart extends RecipeCartAction {
 
 	private static DisplayRecipeCart instance = new DisplayRecipeCart();
 	
@@ -12,12 +12,12 @@ public class DisplayRecipeCart extends RecipeCartAction implements RecipeCartAwa
 	}
 	
 	@Override
-	public String run() {
+	public void run() {
 		
 		super.run();
 		
 		updateCart();
-		return null;
+		
 	}
 
 }

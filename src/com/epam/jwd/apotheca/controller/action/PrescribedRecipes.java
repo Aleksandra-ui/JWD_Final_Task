@@ -12,7 +12,6 @@ public class PrescribedRecipes implements RunCommand {
 	private static final String name = "PrescribedRecipes";
 	private static PrescribedRecipes instance = new PrescribedRecipes();
 	private User user;
-	private String actionTime;
 	private Map<String, String[]> params;
 	private List<Map<String, String>> recipeInfo;
 	private int totalCount;
@@ -32,7 +31,7 @@ public class PrescribedRecipes implements RunCommand {
 	}
 	
 	@Override
-	public String run() {
+	public void run() {
 			
 		totalCount = RecipeManagerService.getInstance().getCountByDoctor(user);
 		pageSize = params.get("pageSize") == null ? 5 : Integer.valueOf(params.get("pageSize")[0]);
@@ -42,14 +41,8 @@ public class PrescribedRecipes implements RunCommand {
 		
 		recipeInfo = RecipeManagerService.getInstance().findByRange(user, pageSize * (currentPage - 1), pageSize);
 
-		return actionTime;
-		
 	}
 	
-	public String getActionTime() {
-		return actionTime;
-	}
-
 	@Override
 	public void setParams(Map<String, String[]> params) {
 		this.params = params;
@@ -62,13 +55,11 @@ public class PrescribedRecipes implements RunCommand {
 	
 	@Override
 	public User getUser() {
-		
 		return user;
 	}
 
 	@Override
 	public boolean isSecure() {
-		
 		return true;
 	}
 	

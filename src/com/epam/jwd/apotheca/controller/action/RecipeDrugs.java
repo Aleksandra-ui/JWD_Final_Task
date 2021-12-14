@@ -16,7 +16,6 @@ public class RecipeDrugs implements RunCommand, RecipeCartAware {
 	private static final String name = "RecipeDrugs";
 	private static RecipeDrugs instance = new RecipeDrugs();
 	private User user;
-	private String actionTime;
 	private Map<String, String[]> params;
 	private int pageSize;
 	private int currentPage;
@@ -39,7 +38,7 @@ public class RecipeDrugs implements RunCommand, RecipeCartAware {
 	}
 	
 	@Override
-	public String run() {
+	public void run() {
 
 		totalCount = DrugManagerService.getInstance().getPrescriptedCount();
 		pageSize = params.get("pageSize") == null ? 5 : Integer.valueOf(params.get("pageSize")[0]);
@@ -49,14 +48,8 @@ public class RecipeDrugs implements RunCommand, RecipeCartAware {
 		drugs = DrugManagerService.getInstance().getPrescriptedDrugs(pageSize * (currentPage - 1), pageSize);
 		clients = UserManagerService.getInstance().getClients();
 		
-		return actionTime;
-		
 	}
 	
-	public String getActionTime() {
-		return actionTime;
-	}
-
 	@Override
 	public void setParams(Map<String, String[]> params) {
 		this.params = params;
@@ -69,7 +62,6 @@ public class RecipeDrugs implements RunCommand, RecipeCartAware {
 	
 	@Override
 	public User getUser() {
-		
 		return user;
 	}
 
@@ -99,7 +91,6 @@ public class RecipeDrugs implements RunCommand, RecipeCartAware {
 
 	@Override
 	public boolean isSecure() {
-		
 		return true;
 	}
 

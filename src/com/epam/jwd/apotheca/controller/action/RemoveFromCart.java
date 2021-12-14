@@ -14,7 +14,7 @@ public class RemoveFromCart extends CartAction {
 	}
 
 	@Override
-	public String run() {
+	public void run() {
 
 		super.run();
 		
@@ -26,7 +26,6 @@ public class RemoveFromCart extends CartAction {
 		
 		updateProducts();
 		
-		return null;
 	}
 
 }

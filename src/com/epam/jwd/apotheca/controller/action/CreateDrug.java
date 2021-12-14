@@ -22,7 +22,6 @@ public class CreateDrug implements RunCommand {
 	private static final String name = "CreateDrug";
 	private static CreateDrug instance = new CreateDrug();
 	private static final Logger logger = LoggerFactory.getLogger(CreateDrug.class);
-	private String actionTime;
 	private Map<String, String[]> params;
 	private User user;
 	private boolean success;
@@ -48,7 +47,7 @@ public class CreateDrug implements RunCommand {
 	}
 
 	@Override
-	public String run() {
+	public void run() {
 		
 		clearFields();
 		
@@ -59,11 +58,10 @@ public class CreateDrug implements RunCommand {
 			validators.get("dose").setValue(params);
 			validators.get("price").setValue(params);
 			
-			
 			for (Validator validator : validators.values()) {
 				if ( ! validator.validate() ) {
 					errorMessages.addAll( validator.getMessages() );
-					validator.getMessages().stream().forEach(m -> logger.error(m));
+					validator.getMessages().stream().forEach(m -> logger.error(m.toLowerCase()));
 				}
 			}
 		
@@ -88,8 +86,6 @@ public class CreateDrug implements RunCommand {
 			}
 		}
 			
-		return actionTime;
-		
 	}
 
 	@Override

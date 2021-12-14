@@ -3,9 +3,6 @@ package com.epam.jwd.apotheca.controller.action;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.epam.jwd.apotheca.controller.UserManagerService;
 import com.epam.jwd.apotheca.model.User;
 
@@ -13,8 +10,6 @@ public class UserManagement implements RunCommand {
 
 	private static final String name = "UserManagement";
 	private static UserManagement instance = new UserManagement();
-	private static final Logger logger = LoggerFactory.getLogger(UserManagement.class);
-	private String actionTime;
 	private Map<String, String[]> params;
 	private User user;
 	private int totalCount;
@@ -31,7 +26,7 @@ public class UserManagement implements RunCommand {
 	}
 
 	@Override
-	public String run() {
+	public void run() {
 		
 		UserManagerService userService = UserManagerService.getInstance();
 		
@@ -42,8 +37,6 @@ public class UserManagement implements RunCommand {
 		pagesCount = totalCount / pageSize + ((totalCount % pageSize) == 0 ? 0 : 1);
 		
 		users = userService.findUsersByRange(pageSize * (currentPage - 1), pageSize);
-		
-		return null;
 		
 	}
 

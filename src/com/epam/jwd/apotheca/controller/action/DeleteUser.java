@@ -46,7 +46,7 @@ public class DeleteUser implements RunCommand {
 	}
 
 	@Override
-	public String run() {
+	public void run() {
 
 		messages.clear();
 		deleted = false;
@@ -56,7 +56,7 @@ public class DeleteUser implements RunCommand {
 		for (Validator validator : validators.values()) {
 			if ( ! validator.validate() ) {
 				messages.addAll( validator.getMessages() );
-				validator.getMessages().stream().forEach(m -> logger.error(m));
+				validator.getMessages().stream().forEach(m -> logger.error(m.toLowerCase()));
 			}
 		}
 		
@@ -100,7 +100,6 @@ public class DeleteUser implements RunCommand {
 		pagesCount = totalCount / pageSize + ((totalCount % pageSize) == 0 ? 0 : 1);
 		users = UserManagerService.getInstance().findUsersByRange(pageSize * (currentPage - 1), pageSize);
 
-		return null;
 	}
 
 	@Override

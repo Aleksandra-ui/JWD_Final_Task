@@ -14,7 +14,6 @@ public class Orders implements RunCommand {
 	private static final String name = "Orders";
 	private static Orders instance = new Orders();
 	private static final Logger logger = LoggerFactory.getLogger(Orders.class);
-	private String actionTime;
 	private Map<String, String[]> params;
 	private User user;
 	private List<Map<String, String>> drugsInfo;
@@ -31,7 +30,7 @@ public class Orders implements RunCommand {
 	}
 
 	@Override
-	public String run() {
+	public void run() {
 
 		totalCount = OrderManagerService.getInstance().getDrugsCountByUser(user.getId());
 		
@@ -41,12 +40,10 @@ public class Orders implements RunCommand {
 		pagesCount = totalCount / pageSize + ((totalCount % pageSize) == 0 ? 0 : 1);
 		
 		int startIndex =  pageSize * (currentPage - 1);
-		int count =  currentPage < pagesCount ? pageSize :totalCount % pageSize ;
+		int count =  currentPage < pagesCount ? pageSize : totalCount % pageSize ;
 		drugsInfo = OrderManagerService.getInstance().findDrugInfoByRange(user, startIndex, count);
 		
-		logger.trace("displaying " + count + " drugs ordered by user " + user + " starting from " + startIndex + " records.");
-		
-		return actionTime;
+		logger.trace("displaying " + count + " drugs ordered by user " + user + " starting from " + startIndex + " records");
 		
 	}
 
@@ -70,18 +67,10 @@ public class Orders implements RunCommand {
 		return user;
 	}
 
-	public String getActionTime() {
-		return actionTime;
-	}
-
 	@Override
 	public boolean isSecure() {
 		return true;
 	}
-
-//	public List<Order> getOrders() {
-//		return orders;
-//	}
 	
 	public int getPageSize() {
 		return pageSize;

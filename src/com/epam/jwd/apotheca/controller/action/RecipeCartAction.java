@@ -5,19 +5,16 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 import com.epam.jwd.apotheca.controller.DrugManagerService;
 import com.epam.jwd.apotheca.controller.RecipeCart;
 import com.epam.jwd.apotheca.controller.UserManagerService;
 import com.epam.jwd.apotheca.controller.validator.RecipeCartValidator;
 import com.epam.jwd.apotheca.controller.validator.RoleAccessValidator;
-import com.epam.jwd.apotheca.controller.validator.RoleNameValidator;
 import com.epam.jwd.apotheca.controller.validator.Validator;
 import com.epam.jwd.apotheca.dao.api.UserDAO;
 import com.epam.jwd.apotheca.model.Drug;
@@ -47,22 +44,18 @@ public abstract class RecipeCartAction implements RunCommand, RecipeCartAware {
 	}
 	
 	public Integer getTotalCount() {
-		
 		return cart.getDrugs().size();
 	}
 	
 	
 	@Override
-	public String run() {
+	public void run() {
 		
-		UserManagerService userService = UserManagerService.getInstance();
-		setClients( userService.getClients() );
+		setClients( UserManagerService.getInstance().getClients() );
 		pageSize = params.get("pageSize") == null ? 5 : Integer.valueOf(params.get("pageSize")[0]);
 		currentPage = params.get("currentPage") == null ? 1
 				: Integer.valueOf(params.get("currentPage")[0]);
 		pagesCount = getTotalCount() / pageSize + ((getTotalCount() % pageSize) == 0 ? 0 : 1);
-		
-		return null;
 		
 	}
 	
@@ -87,7 +80,7 @@ public abstract class RecipeCartAction implements RunCommand, RecipeCartAware {
 	
 	
 	public void setParams(Map<String, String[]> params) {
-		this.params=params;
+		this.params = params;
 	}
 
 	public List<Drug> getDrugs() {
@@ -99,7 +92,6 @@ public abstract class RecipeCartAction implements RunCommand, RecipeCartAware {
 	}
 
 	protected Map<String, String[]> getParams() {
-		
 		return params;
 	}
 	
@@ -151,8 +143,6 @@ public abstract class RecipeCartAction implements RunCommand, RecipeCartAware {
 			
 			if ( getCart().isInvalid() ) {
 				
-				//TODO 2.ecли дата истечения  рецепта вышла за пределы допустимого интервала
-				//TODO 3.существует ли польз-тель в системе
 				Date currentDate = new Date(System.currentTimeMillis());
 	
 				if ( getCart().getExpieryDate() != null ) {
@@ -173,7 +163,6 @@ public abstract class RecipeCartAction implements RunCommand, RecipeCartAware {
 				
 				for ( Drug d : getCart().getDrugs() ) {
 					Drug actualDrug = DrugManagerService.getInstance().getDrug(d.getId());
-					//TODO 1.ecли лек-во было по рецепту,а стало в свободном доступе
 					if ( ! actualDrug.isPrescription() ) {
 						invalidDrugs.add(d);
 					}
