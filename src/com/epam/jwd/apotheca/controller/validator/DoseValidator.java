@@ -27,6 +27,7 @@ public class DoseValidator implements Validator {
 
 	@Override
 	public boolean validate() {
+		
 		messages.clear();
 
 		boolean result = false;
@@ -40,15 +41,15 @@ public class DoseValidator implements Validator {
 						result = true;
 					} else {
 						messages.add("Value '" + value + "' exceeds allowed range.");
-						logger.error("Value '" + value + "' exceeds allowed range.");
+						logger.error("value '" + value + "' exceeds allowed range");
 					}
 				} catch (NumberFormatException e) {
 					messages.add("Value '" + dose + "' is not a valid decimal.");
-					logger.error("Value '" + dose + "' is not a valid decimal.");
+					logger.error("value '" + dose + "' is not a valid decimal");
 				}
 			} else {
 				messages.add("Value '" + dose + "' is not valid.");
-				logger.error("Value '" + dose + "' is not valid.");
+				logger.error("value '" + dose + "' is not valid");
 			}
 		}
 		

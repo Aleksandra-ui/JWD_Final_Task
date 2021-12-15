@@ -27,6 +27,7 @@ public class DrugNameValidator implements Validator {
 
 	@Override
 	public boolean validate() {
+		
 		messages.clear();
 
 		boolean result = false;
@@ -38,24 +39,15 @@ public class DrugNameValidator implements Validator {
 			}
 		}
 		
-		if (!result) {
+		if ( ! result ) {
 			logger.error("'" + drugName + "' is not a valid drug name.");
-			messages.add("'" + drugName + "' is not a valid drug name.");
+			messages.add("'" + drugName + "' is not a valid drug name");
 		}
 		
 		return result;
 		
 	}
 	
-	public static void main(String[] args) {
-		
-//		Map<String, String[]> map = new HashMap<>();
-//		map.put("drugName", new String[]{" "});
-//		Validator drValidator = new DrugNameValidator(map);
-//		System.out.println(drValidator.validate());
-		
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setValue(Object value) {

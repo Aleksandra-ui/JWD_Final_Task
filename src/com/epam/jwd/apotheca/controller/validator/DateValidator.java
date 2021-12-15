@@ -83,7 +83,7 @@ public class DateValidator implements Validator {
 			result = false;
 		}
 		calendar.add(GregorianCalendar.YEAR, 1);
-		if (!toCheck.before(calendar)) {
+		if (! toCheck.before(calendar)) {
 			messages.add("Specified date is more than year after current date.");
 			result = false;
 		}
@@ -104,7 +104,8 @@ public class DateValidator implements Validator {
 		} catch (ParseException e) {
 			result = false;
 			messages.add("Incorrect date format, \"YYYY-MM-DD\" is expected.");
-			logger.info(Arrays.toString(e.getStackTrace()));
+			logger.error("incorrect date format, \"YYYY-MM-DD\" is expected");
+			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 		
 		return result;

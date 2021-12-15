@@ -26,6 +26,7 @@ public class PriceValidator implements Validator {
 
 	@Override
 	public boolean validate() {
+		
 		messages.clear();
 
 		boolean result = false;
@@ -39,11 +40,11 @@ public class PriceValidator implements Validator {
 					result = true;
 				} else {
 					messages.add("Value '" + value + "' exceeds allowed range.");
-					logger.error("Value '" + value + "' exceeds allowed range.");
+					logger.error("value '" + value + "' exceeds allowed range");
 				}
 			} catch (NumberFormatException e) {
 				messages.add("Value '" + price + "' is not a valid integer.");
-				logger.error("Value '" + price + "' is not a valid integer.");
+				logger.error("value '" + price + "' is not a valid integer");
 			}
 			
 		}

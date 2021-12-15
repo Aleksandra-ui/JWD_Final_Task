@@ -44,11 +44,11 @@ public class UserIdValidator implements Validator {
 				if ( UserManagerService.getInstance().getUser(userId) == null ) {
 					result = false;
 					messages.add("User with id '" + userId + "' is not present in the system.");
-					logger.warn("User with id '" + userId + "' is not present in the system.");
+					logger.warn("user with id '" + userId + "' is not present in the system");
 				}
 			} catch (NumberFormatException e) {
 				messages.add("User id value is wrong.");
-				logger.warn("user id value is wrong");
+				logger.error("user id value is wrong");
 				result = false;
 				logger.error(Arrays.toString(e.getStackTrace()));
 			}

@@ -35,7 +35,6 @@ public class ShoppingCartValidator implements Validator {
 			List<Drug> updated = DrugManagerService.getInstance().getDrugs(ids.toArray(new Integer[ids.size()]));
 			Drug actualDrug;
 			for ( Drug drug : cart.getProducts().keySet() ) {
-				//TODO 1.кол-во всех лек-в в корзине <= quantity 
 				actualDrug = null;
 				for ( Drug updatedDrug : updated ) {
 					if ( updatedDrug.getId() == drug.getId() ) {
@@ -48,12 +47,14 @@ public class ShoppingCartValidator implements Validator {
 					logger.error("there is no such drug in DB");
 					result = false;
 				} else {
+					
 					Integer amountToBuy = cart.getProducts().get(drug);
 					if ( amountToBuy < 1 || amountToBuy > 100 ) {
 						messages.add("Amount " + amountToBuy + " exceeds allowed range (between 1 and 100).");
 						logger.error("amount exceeds allowed range (between 1 and 100)");
 						result = false;
 					}
+					
 					if ( amountToBuy > actualDrug.getQuantity() ) {
 						messages.add("Cannot create an order.");
 						String message = String.format("Cannot sell drug '%s'. You asked for %d grand, when there are %d grand left.", drug.getName(), amountToBuy, actualDrug.getQuantity());
@@ -61,7 +62,7 @@ public class ShoppingCartValidator implements Validator {
 						logger.error(message.toLowerCase());
 						result = false;
 					}
-					//TODO 2.ecли лек-во было в свободном доступе,а стало по рецепту 
+					 
 					if ( ! drug.isPrescription() && actualDrug.isPrescription() ) {
 						
 						messages.add("Cannot create an order.");
@@ -70,14 +71,14 @@ public class ShoppingCartValidator implements Validator {
 						result = false;
 						
 					}
-					//TODO 3.ecли истёк срок годности рецепта на лек-во
-					//TODO 4.ecли изменилась цена
+					
 					if ( actualDrug.getPrice() > drug.getPrice() ) {
 						messages.add("Cannot create an order.");
 						messages.add("Cannot sell drug '" + drug.getName() + "'. Price for it has changed from " + drug.getPrice() + " to " + actualDrug.getPrice() + ".");
 						logger.error("cannot sell drug '" + drug.getName() + "'. price for it has changed from " + drug.getPrice() + " to " + actualDrug.getPrice() + ".");
 						result = false;
 					}
+					
 				}
 			}
 				
