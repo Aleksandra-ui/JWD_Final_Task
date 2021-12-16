@@ -52,12 +52,14 @@ public class RecipeManagerService {
 	}
 
 	public boolean deleteUserRecipes(User user) {
+		
 		boolean result = true;
 		List<Recipe> recipes = ((RecipeDAOImpl)recipeDAO).findRecipes(user);
 		for ( Recipe recipe : recipes ) {
 			result &= ((RecipeDAOImpl)recipeDAO).delete(recipe.getId());
 		}
 		return result;
+		
 	}
 	
 	public boolean switchToSuperDoc(User doctor) {

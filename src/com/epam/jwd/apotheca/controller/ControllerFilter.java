@@ -80,9 +80,6 @@ public class ControllerFilter implements Filter {
 		String path = ((HttpServletRequest)request).getServletPath();
 		String finalPath = path.substring(path.lastIndexOf("/"), path.indexOf(".run")).replace("/", "");
 		
-		logger.info("path: " + path);
-		logger.info("final path: " + finalPath);
-		
 		if ( actionMapping.keySet().contains(finalPath) ) {
 			RunCommand command = actionMapping.get(finalPath);
 			
@@ -119,6 +116,7 @@ public class ControllerFilter implements Filter {
 				((Logon) command).setSession(((HttpServletRequest)request).getSession());
 			}
 			((HttpServletRequest)request).setAttribute("action", command);
+			
 			request.getRequestDispatcher(command.getView()).forward(request, response);
 			return;
 		} else {
@@ -128,7 +126,7 @@ public class ControllerFilter implements Filter {
 		chain.doFilter(request, response);
 		
 	}
-
+	
 	public void init(FilterConfig fConfig) throws ServletException {
 	}
 

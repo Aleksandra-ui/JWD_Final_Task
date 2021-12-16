@@ -21,16 +21,12 @@ public class DrugManagerService {
 		return instance;
 	}
 
-	public DrugDAO getDrugDAO() {
-		return drugDAO;
-	}
-
 	public List<Drug> getDrugs() {
 		return drugDAO.findAll();
 	}
 	
-	public List<Drug> getDrugs(int start, int count, String sortColumn, boolean sortOrder) {
-		return drugDAO.findByRange(start, count, sortColumn, sortOrder);
+	public List<Drug> getDrugs(int start, int count, String sortColumn) {
+		return drugDAO.findByRange(start, count, sortColumn);
 	}
 
 	public List<Drug> getPrescriptedDrugs() {

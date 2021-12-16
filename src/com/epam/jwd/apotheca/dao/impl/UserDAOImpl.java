@@ -231,12 +231,14 @@ public class UserDAOImpl implements UserDAO {
 
 		try (Connection connection = cp.takeConnection();
 				PreparedStatement st = connection.prepareStatement(query);) {
+			
 			st.setString(1, name);
 
 			ResultSet rs = st.executeQuery();
 			result = rs.next();
 			
 		} catch (SQLException e) {
+			logger.error("catched SQL exception while attempting to find a user by name");
 			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 

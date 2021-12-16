@@ -2,8 +2,6 @@ package com.epam.jwd.apotheca.controller;
 
 import java.util.List;
 
-import javax.servlet.http.HttpSession;
-
 import com.epam.jwd.apotheca.dao.api.UserDAO;
 import com.epam.jwd.apotheca.dao.impl.UserDAOImpl;
 import com.epam.jwd.apotheca.model.Role;
@@ -15,24 +13,24 @@ public class UserManagerService {
 	private UserDAO userDAO = UserDAOImpl.getInstance();
 
 	private UserManagerService() {
-		
 	}
 	
 	public static UserManagerService getInstance() {
 		return instance;
 	}
 	
-	public boolean createUser(User user, HttpSession session) {
-
-		boolean result = false;
-		User newUser = userDAO.save(user);
-		if (newUser != null) {
-			session.setAttribute("user", newUser);
-			user = newUser;
-			result = true;
-		}
-		return result;
-	}
+//	public boolean createUser(User user, HttpSession session) {
+//
+//		boolean result = false;
+//		User newUser = userDAO.save(user);
+//		if ( newUser != null ) {
+//			session.setAttribute("user", newUser);
+//			user = newUser;
+//			result = true;
+//		}
+//		return result;
+//		
+//	}
 	
 	public User createUser(User user) {
 
@@ -41,23 +39,12 @@ public class UserManagerService {
 		}
 		return userDAO.save(user);
 		
-		
-	}
-
-	public UserDAO getUserDAO() {
-		return userDAO;
 	}
 
 	public boolean hasUser(String name) {
-		boolean contains = false;
-		List<User> users = userDAO.findAll();
-		for (User user : users) {
-			if (user.getName().equals(name)) {
-				contains = true;
-				break;
-			}
-		}
-		return contains;
+		
+		return ((UserDAOImpl)userDAO).hasUser(name);
+		
 	}
 
 	public List<User> getUsers() {

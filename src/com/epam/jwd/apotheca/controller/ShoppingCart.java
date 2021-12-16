@@ -14,7 +14,6 @@ public class ShoppingCart {
 
 		products.put(drug, quantity);
 		
-
 	}
 
 	public void removeDrug(Drug drug) {

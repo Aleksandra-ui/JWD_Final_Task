@@ -15,7 +15,6 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.epam.jwd.apotheca.dao.impl.DrugDAOImpl;
 import com.epam.jwd.apotheca.model.User;
 
 public class AuthorizationFilter implements Filter {
@@ -29,17 +28,17 @@ public class AuthorizationFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-		logger.info("before authorization filter");
-
+		
 		HttpSession session = ((HttpServletRequest)request).getSession();
 		User user = (User)session.getAttribute("user");
-		if (user==null) {
+		if (user == null) {
 			((HttpServletResponse)response).sendRedirect("/apotheca/logon.run");
+			logger.warn("to use the site please log on");
 			return;
 		} 
 		
-		logger.info("after authorization filter");
 		chain.doFilter(request, response);
+		
 	}
 
 	@Override

@@ -21,7 +21,6 @@ public class OrderManagerService {
 	private DrugDAO drugDAO = DrugDAOImpl.getInstance();
 	
 	private OrderManagerService() {
-		
 	}
 	
 	public static OrderManagerService getInstance() {
@@ -52,11 +51,11 @@ public class OrderManagerService {
 		boolean result = true;
 		Map<Drug, Drug> updatedDrugs = new HashMap<Drug, Drug>();
 		Order order = null;
-		if (drugs != null && !drugs.isEmpty()) {
+		if ( drugs != null && ! drugs.isEmpty() ) {
 			for ( Drug d : drugs.keySet() ) {
-				Drug key = drugDAO.findById(d.getId());
-				updatedDrugs.put(d, key);
-				result = ((DrugDAOImpl)drugDAO).changeQuantity(key, drugs.get(d));
+				Drug value = drugDAO.findById(d.getId());
+				updatedDrugs.put(d, value);
+				result = ((DrugDAOImpl)drugDAO).changeQuantity(value, drugs.get(d));
 				if ( ! result  ) {
 					revertChanges(updatedDrugs);
 					break;
@@ -96,12 +95,14 @@ public class OrderManagerService {
 	}
 	
 	public boolean deleteUserOrders(User user) {
+		
 		boolean result = true;
 		List<Order> orders = ((OrderDAOImpl) orderDAO).findOrdersByUser(user.getId());
 		for ( Order order : orders ) {
 			result &= ((OrderDAOImpl) orderDAO).delete(order.getId());
 		}
 		return result;
+		
 	}
 	
 }

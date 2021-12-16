@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 import com.epam.jwd.apotheca.model.Drug;
 
@@ -71,46 +70,36 @@ public class RecipeCart {
 		this.invalid = invalid;
 	}
 	
+	public String getMonth() {	 
 	
-	
-	public String getMonth() {
-		 
-	
-		Integer month= Integer.valueOf( getField(Calendar.MONTH) ) + 1 ;
-		 return String.valueOf(month<10 ? ("0"+month) : month);
+		Integer month = Integer.valueOf( getField(Calendar.MONTH) ) + 1 ;
+		return String.valueOf( month < 10 ? ( "0" + month ) : month );
 		
 	}
+	
 	public String getDay() {
 		
-		String day = getField(Calendar.DAY_OF_MONTH);
-		return Integer.valueOf(day)<10 ? "0"+ day : day;
+		String day = getField( Calendar.DAY_OF_MONTH );
+		return Integer.valueOf( day ) < 10 ? "0" + day : day;
 		
 	}
+	
 	public String getYear() {
-		
-		
-		return getField(Calendar.YEAR);
+			
+		return getField( Calendar.YEAR );
 		
 	}
 	
 	
-	
-	public String getField(int field) {
+	private String getField(int field) {
 		
 		String fieldValue = null;
-		if (expieryDate != null) {
+		if ( expieryDate != null ) {
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTime(expieryDate);
-			fieldValue = String.valueOf(calendar.get(field));
+			fieldValue = String.valueOf( calendar.get( field ) );
 		}
 		return fieldValue;
-		
-	}
-	
-	public static void main(String[] args) {
-		RecipeCart c=new RecipeCart(); 
-		c.expieryDate = new Date(2020, 5, 28);
-		System.out.println( c.getDay());;
 		
 	}
 	

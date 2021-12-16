@@ -134,12 +134,12 @@ public class DrugDAOImpl implements DrugDAO {
 		return drug;
 	}
 
-	public List<Drug> findByRange(Integer start, Integer count, String columnName, boolean sortOrder) {
+	public List<Drug> findByRange(Integer start, Integer count, String columnName) {
 		
 		List<Drug> drugs = new ArrayList<Drug>();
 
 		columnName = columnName == null ? "id" : columnName;
-		String sortColumns = ("id".equals(columnName)) ? ("id" + (sortOrder ? " desc" : " asc")) : columnName + (sortOrder ? " desc" : " asc") + ", id asc";
+		String sortColumns = ("id".equals(columnName)) ? ("id asc") : columnName + " asc" + ", id asc";
 		
 		String sql = "select id,name,quantity,price,dose,prescription from mydb.drugs order by " + sortColumns
 				+ " limit ?,?";
