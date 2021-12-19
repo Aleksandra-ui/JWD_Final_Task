@@ -70,7 +70,6 @@ public class ProxyConnection implements Connection {
 	@Override
 	public void close() {
 		ConcurrentConnectionPool.INSTANCE.releaseConnection(this);
-//        actualConnection.close();
 	}
 
 	void realClose() throws SQLException {
@@ -305,4 +304,5 @@ public class ProxyConnection implements Connection {
 	public boolean isWrapperFor(Class<?> iface) throws SQLException {
 		return actualConnection.isWrapperFor(iface);
 	}
+	
 }
