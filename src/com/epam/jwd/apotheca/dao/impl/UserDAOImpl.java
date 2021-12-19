@@ -25,10 +25,12 @@ public class UserDAOImpl implements UserDAO {
 	private static final Logger logger = LoggerFactory.getLogger(UserDAOImpl.class);
 	
 	private UserDAOImpl() {
-		try {
-			cp.init();
-		} catch (CouldNotInitializeConnectionPoolException e) {
-			logger.error(Arrays.toString(e.getStackTrace()));
+		if ( ! cp.getInitialized().get() ) {
+			try {
+				cp.init();
+			} catch (CouldNotInitializeConnectionPoolException e) {
+				logger.error(Arrays.toString( e.getStackTrace() ));
+			}
 		}
 	}
 	
@@ -48,7 +50,7 @@ public class UserDAOImpl implements UserDAO {
 		String query = "delete from mydb.users where id = ?";
 
 		try (Connection connection = cp.takeConnection();
-				PreparedStatement st = connection.prepareStatement(query);) {
+				PreparedStatement st = connection.prepareStatement(query)) {
 			connection.setAutoCommit(false);
 			st.setInt(1, id);
 
@@ -80,11 +82,12 @@ public class UserDAOImpl implements UserDAO {
 
 	@Override
 	public User update(User entity) {
+		
 		boolean result = false;
 		String query = "update mydb.users set name = '" + entity.getName() + "', role_id = '" + entity.getRole().getId()
 				+ "', password = '" + entity.getPassword() + "' where id = " + entity.getId();
 
-		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement()) {
 			connection.setAutoCommit(false);
 			result = st.executeUpdate(query) > 0;
 			logger.trace("following query was executed successfully:\n" + query);
@@ -95,7 +98,6 @@ public class UserDAOImpl implements UserDAO {
 				logger.info("unable to update a user");
 				connection.rollback();
 			}
-//			result = true;
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to update a user");
 			logger.error("failure during handling an SQL:\n" + query);
@@ -103,6 +105,7 @@ public class UserDAOImpl implements UserDAO {
 		}
 
 		return result ? entity : null;
+		
 	}
 
 	public List<User> getUsers(Integer... id) {
@@ -112,7 +115,7 @@ public class UserDAOImpl implements UserDAO {
 				+ "join mydb.roles r on r.id = u.role_id " + (id.length > 0 ? "where u.id = " + id[0] : "")
 				+ " order by u.id";
 
-		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement()) {
 			ResultSet rs = st.executeQuery(query);
 			logger.trace("following query was executed successfully:\n" + query);
 			while (rs.next()) {
@@ -139,35 +142,36 @@ public class UserDAOImpl implements UserDAO {
 
 	}
 
+	@Override
 	public User getUser(String name) {
 
-		List<User> users = new ArrayList<User>();
+		User user = null;
 		String query = "select u.id, u.name, u.password, r.id, r.name, r.permission from mydb.users u "
 				+ "join mydb.roles r on r.id = u.role_id " + "where u.name = '" + name + "' order by u.id";
 
-		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
-			ResultSet rs = st
-					.executeQuery(query);
-			while (rs.next()) {
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement()) {
+			ResultSet rs = st.executeQuery(query);
+			if (rs.next()) {
+				user = new User();
 				Role role = new Role();
 				role.setId(rs.getInt("r.id"));
 				role.setPermission(rs.getInt("r.permission"));
 				role.setName(rs.getString("r.name"));
-				User user = new User();
 				user.setName(rs.getString("u.name"));
 				user.setRole(role);
 				user.setPassword(rs.getString("u.password"));
 				user.setId(rs.getInt("u.id"));
-				users.add(user);
+				logger.info("found a user by name");
+			} else {
+				logger.warn("user with specified name doesn't exist");
 			}
 			rs.close();
-			logger.info("found a user by name");
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find a user by name");
 			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 		
-		return users.isEmpty() ? null : users.get(0);
+		return user;
 
 	}
 
@@ -177,7 +181,7 @@ public class UserDAOImpl implements UserDAO {
 		String query = "insert into mydb.users(name,role_id,password) values ('" + name + "'," + role_id
 				+ ",'" + password + "')";
 
-		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement()) {
 			connection.setAutoCommit(false);
 			result = st.executeUpdate(query) > 0;
 			if ( result ) {
@@ -204,16 +208,22 @@ public class UserDAOImpl implements UserDAO {
 	public boolean deleteUser(String name) {
 
 		boolean result = false;
+		String query = "delete from mydb.users where name = ?";
 
 		try (Connection connection = cp.takeConnection();
-				PreparedStatement st = connection.prepareStatement("delete from mydb.users where name = ?");) {
+				PreparedStatement st = connection.prepareStatement(query)) {
+			
 			connection.setAutoCommit(false);
 			st.setString(1, name);
 
 			result = st.executeUpdate() > 0;
-			connection.commit();
-			
-			logger.info("deleted a user");
+			if ( result ) {
+				connection.commit();
+				logger.info("deleted a user");
+			} else {
+				connection.rollback();
+				logger.error("unable to delete a user");
+			}
 
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to delete a user");
@@ -230,12 +240,17 @@ public class UserDAOImpl implements UserDAO {
 		String query = "select u.id,u.name,u.role_id,u.password from mydb.users u where u.name = ?";
 
 		try (Connection connection = cp.takeConnection();
-				PreparedStatement st = connection.prepareStatement(query);) {
+				PreparedStatement st = connection.prepareStatement(query)) {
 			
 			st.setString(1, name);
 
 			ResultSet rs = st.executeQuery();
 			result = rs.next();
+			if ( result ) {
+				logger.info("found a user by name");
+			} else {
+				logger.info("user with specified name is absent");
+			}
 			
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find a user by name");
@@ -253,15 +268,25 @@ public class UserDAOImpl implements UserDAO {
 		String query = "select u.id, u.name, u.password, r.id, r.name, r.permission from mydb.users u "
 				+ "join mydb.roles r on r.id = u.role_id where r.name = '" + roleName + "' order by u.id";
 
-		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement()) {
+			
 			ResultSet rs = st.executeQuery(query);
 			logger.trace("following query was executed successfully:\n" + query);
-			while (rs.next()) {
+			Role role = null;
+			if (rs.next()) {
 				User user = new User();
-				Role role = new Role();
+				role = new Role();
 				role.setId(rs.getInt("r.id"));
 				role.setPermission(rs.getInt("r.permission"));
 				role.setName(rs.getString("r.name"));
+				user.setName(rs.getString("u.name"));
+				user.setRole(role);
+				user.setPassword(rs.getString("u.password"));
+				user.setId(rs.getInt("u.id"));
+				users.add(user);
+			}
+			while (rs.next()) {
+				User user = new User();
 				user.setName(rs.getString("u.name"));
 				user.setRole(role);
 				user.setPassword(rs.getString("u.password"));
@@ -274,6 +299,7 @@ public class UserDAOImpl implements UserDAO {
 			} else {
 				logger.info("found {} users with role '{}'", users.size(), roleName);
 			}
+			
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find users by role");
 			logger.error("failure during handling an SQL:\n" + query);
@@ -281,6 +307,7 @@ public class UserDAOImpl implements UserDAO {
 		}
 
 		return users;
+		
 	}
 	
 	@Override
@@ -294,21 +321,19 @@ public class UserDAOImpl implements UserDAO {
 		String query = "select count(u.id) from mydb.users u " +
 				(useSuperDoc ? "where u.name != 'super_doc'" : "");
 
-		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement()) {
 
-			connection.setAutoCommit(false);
 			ResultSet rs = st.executeQuery(query);
 			logger.trace("following query was executed successfully:\n" + query);
 			rs.next();
 			count = rs.getInt(1);
 			rs.close();
 			logger.info("found all users count");
-			connection.commit();
+			
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find all users count");
 			logger.error("failure during handling an SQL:\n" + query);
 			logger.error(Arrays.toString(e.getStackTrace()));
-			//connection.rollback();
 		}
 		
 		return count;
@@ -318,14 +343,14 @@ public class UserDAOImpl implements UserDAO {
 	public List<User> findByRange(Integer start, Integer count, boolean useSuperDoc) {
 
 		List<User> users = new ArrayList<User>();
-		String sql = "select u.id,u.name,u.password,r.id,r.name,r.permission from mydb.users u "
+		String query = "select u.id,u.name,u.password,r.id,r.name,r.permission from mydb.users u "
 				+ "join mydb.roles r on r.id = u.role_id "
 				+ (useSuperDoc ? "where u.name <> 'super_doc' " : "")
 				+ "order by u.id asc limit " + start + "," + count;
 
-		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
-			ResultSet rs = st.executeQuery(sql);
-			logger.trace("following query was executed successfully:\n" + sql);
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement()) {
+			ResultSet rs = st.executeQuery(query);
+			logger.trace("following query was executed successfully:\n" + query);
 			while (rs.next()) {
 				Role role = new Role();
 				role.setId(rs.getInt("r.id"));
@@ -342,7 +367,7 @@ public class UserDAOImpl implements UserDAO {
 			logger.info("found a range of users");
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find a range of users");
-			logger.error("failed SQL:\n" + sql);
+			logger.error("failed SQL:\n" + query);
 			logger.error(Arrays.toString(e.getStackTrace()));
 		}
 		
@@ -362,6 +387,7 @@ public class UserDAOImpl implements UserDAO {
 			logger.error("error while attempting to change role. user with id {} doesn't exist", userId);
 			return null;
 		}
+		
 		String userName = user.getName();
 		
 		if ( roleName.equals( user.getRole().getName() ) ) {
@@ -393,7 +419,7 @@ public class UserDAOImpl implements UserDAO {
 		String query = "select r.name, r.permission, r.id from mydb.roles r where r.name = '" + name + "'";
 		Role role = null;
 		
-		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement()) {
 			ResultSet rs = st.executeQuery( query );
 			logger.trace("following query was executed successfully:\n" + query);
 			if (rs.next()) {

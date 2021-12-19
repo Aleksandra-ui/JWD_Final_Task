@@ -7,9 +7,9 @@ import com.epam.jwd.apotheca.model.User;
 
 public interface RecipeDAO extends DAO<Recipe> {
 	
-	List<Recipe> findRecipes(User user) ;
+	List<Recipe> findRecipes(User user);
 	
-	Recipe findRecipe(Integer id) ;
+	Recipe findRecipe(Integer id);
 	
 	Recipe save(Recipe recipe);
 	

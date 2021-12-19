@@ -90,6 +90,7 @@ public class ConcurrentConnectionPool implements ConnectionPool {
 
 	@Override
 	public void init() throws CouldNotInitializeConnectionPoolException {
+		
 		lock.lock();
 		try {
 			if (initialized.compareAndSet(false, true)) {
@@ -112,6 +113,7 @@ public class ConcurrentConnectionPool implements ConnectionPool {
 		} finally {
 			lock.unlock();
 		}
+		
 	}
 
 	@Override
@@ -158,6 +160,11 @@ public class ConcurrentConnectionPool implements ConnectionPool {
 				logger.error("unregistering drivers failed");
 			}
 		}
+	}
+
+	@Override
+	public AtomicBoolean getInitialized() {
+		return initialized;
 	}
 	
 }

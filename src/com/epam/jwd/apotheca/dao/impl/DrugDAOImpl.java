@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,13 +27,18 @@ public class DrugDAOImpl implements DrugDAO {
 	private static final Logger logger = LoggerFactory.getLogger(DrugDAOImpl.class);
 	
 	private DrugDAOImpl() {
-		try {
-			cp.init();
-		} catch (CouldNotInitializeConnectionPoolException e) {
-			logger.error(Arrays.toString( e.getStackTrace() ));
+		
+		if ( ! cp.getInitialized().get() ) {
+			try {
+				cp.init();
+			} catch (CouldNotInitializeConnectionPoolException e) {
+				logger.error(Arrays.toString( e.getStackTrace() ));
+			}
 		}
+		
 		ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger)LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
 		root.setLevel(Level.TRACE);
+		
 	}
 	
 	public static DrugDAOImpl getInstance() {
@@ -43,20 +47,21 @@ public class DrugDAOImpl implements DrugDAO {
 
 	@Override
 	public Drug save(Drug entity) {
+		
 		boolean result = false;
 		String name = entity.getName();
 		Integer quantity = entity.getQuantity();
 		Integer price = entity.getPrice();
 		Double dose = entity.getDose();
 		Boolean prescription = entity.isPrescription();
-		//Integer id = getMaxId() + 1;
-
-		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
+		
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement()) {
+			
 			connection.setAutoCommit(false);
-			String sql = "insert into mydb.drugs(name,quantity,price,dose,prescription) values ('" + name + "',"
+			String query = "insert into mydb.drugs(name,quantity,price,dose,prescription) values ('" + name + "',"
 					+ String.valueOf(quantity) + "," + String.valueOf(price) + "," + String.valueOf(dose) + ","
 					+ (prescription ? "1" : "0") + ")";
-			result = st.executeUpdate(sql) > 0;
+			result = st.executeUpdate(query) > 0;
 			connection.commit();
 
 		} catch (SQLException e) {
@@ -65,7 +70,7 @@ public class DrugDAOImpl implements DrugDAO {
 		}
 
 		Drug drug = null;
-		if (result) {
+		if ( result ) {
 			drug = findDrug(name, dose);
 			logger.info("drug saved");
 		}
@@ -80,7 +85,7 @@ public class DrugDAOImpl implements DrugDAO {
 		List<Drug> drugs = new ArrayList<Drug>();
 		String query = "select id,name,quantity,price,dose,prescription from mydb.drugs order by id";
 
-		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement()) {
 
 			ResultSet rs = st.executeQuery(query);
 			while (rs.next()) {
@@ -90,20 +95,22 @@ public class DrugDAOImpl implements DrugDAO {
 			logger.info("found all drugs");
 			
 		} catch (SQLException e) {
+			
 			logger.error("catched SQL exception while attempting to find all drugs");
 			logger.error(Arrays.toString( e.getStackTrace() ));
-			logger.error(Arrays.toString( e.getStackTrace() ));
+
 		}
 		
 		return drugs;
 
 	}
 
+	@Override
 	public List<Drug> findPrescripted() {
 
 		List<Drug> drugs = new ArrayList<Drug>();
 
-		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement()) {
 
 			ResultSet rs = st.executeQuery(
 					"select id,name,quantity,price,dose,prescription from mydb.drugs where prescription = " + 1
@@ -115,8 +122,10 @@ public class DrugDAOImpl implements DrugDAO {
 			logger.info("found all prescripted drugs");
 			
 		} catch (SQLException e) {
+			
 			logger.error("catched SQL exception while attempting to find all prescripted drugs");
 			logger.error(Arrays.toString( e.getStackTrace() ));
+			
 		}
 		
 		return drugs;
@@ -124,6 +133,7 @@ public class DrugDAOImpl implements DrugDAO {
 	}
 
 	private Drug readDrug(ResultSet rs) throws SQLException {
+		
 		Drug drug = new Drug();
 		drug.setName(rs.getString("name"));
 		drug.setQuantity(rs.getInt("quantity"));
@@ -132,19 +142,21 @@ public class DrugDAOImpl implements DrugDAO {
 		drug.setDose(rs.getDouble("dose"));
 		drug.setPrescription(rs.getBoolean("prescription"));
 		return drug;
+		
 	}
 
+	@Override
 	public List<Drug> findByRange(Integer start, Integer count, String columnName) {
 		
 		List<Drug> drugs = new ArrayList<Drug>();
 
 		columnName = columnName == null ? "id" : columnName;
-		String sortColumns = ("id".equals(columnName)) ? ("id asc") : columnName + " asc" + ", id asc";
+		String sortColumns = ("id".equals(columnName)) ? ("id asc") : columnName + " asc, id asc";
 		
-		String sql = "select id,name,quantity,price,dose,prescription from mydb.drugs order by " + sortColumns
+		String query = "select id,name,quantity,price,dose,prescription from mydb.drugs order by " + sortColumns
 				+ " limit ?,?";
 
-		try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement(sql);) {
+		try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement(query)) {
 
 			st.setInt(1, start);
 			st.setInt(2, count);
@@ -152,13 +164,16 @@ public class DrugDAOImpl implements DrugDAO {
 			while (rs.next()) {
 
 				drugs.add(readDrug(rs));
+				
 			}
 			rs.close();
 			logger.info("found a range of drugs");
 			
 		} catch (SQLException e) {
+			
 			logger.error("catched SQL exception while attempting to find a range of drugs");
 			logger.error(Arrays.toString( e.getStackTrace() ));
+			
 		}
 		
 		return drugs;
@@ -169,10 +184,10 @@ public class DrugDAOImpl implements DrugDAO {
 
 		List<Drug> drugs = new ArrayList<Drug>();
 
-		String sql = "select id,name,quantity,price,dose,prescription from mydb.drugs where prescription = " + 1
+		String query = "select id,name,quantity,price,dose,prescription from mydb.drugs where prescription = " + 1
 				+ " order by id asc limit ?,?";
 
-		try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement(sql);) {
+		try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement(query)) {
 
 			st.setInt(1, start);
 			st.setInt(2, end);
@@ -180,13 +195,16 @@ public class DrugDAOImpl implements DrugDAO {
 			while (rs.next()) {
 
 				drugs.add(readDrug(rs));
+				
 			}
 			rs.close();
 			logger.info("found a range of prescripted drugs");
 			
 		} catch (SQLException e) {
+			
 			logger.error("catched SQL exception while attempting to find a range of prescripted drugs");
 			logger.error(Arrays.toString( e.getStackTrace() ));
+	
 		}
 		
 		return drugs;
@@ -195,12 +213,14 @@ public class DrugDAOImpl implements DrugDAO {
 
 	@Override
 	public Drug update(Drug entity) {
+		
 		boolean result = false;
 		String query = "update mydb.drugs set quantity = " + entity.getQuantity() + ", price = "
 				+ entity.getPrice() + ", prescription = " + (entity.isPrescription() ? "1" : "0") + " where id = "
 				+ entity.getId();
 
-		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement()) {
+			
 			connection.setAutoCommit(false);
 			result = st.executeUpdate(query) > 0;
 			if ( result ) {
@@ -212,14 +232,17 @@ public class DrugDAOImpl implements DrugDAO {
 				logger.trace("following query was executed with errors or warnings:\n" + query);
 				logger.warn("transaction was rolled back");
 			}
+			
 		} catch (SQLException e) {
+			
 			logger.error("catched SQL exception while attempting to update a drug");
 			logger.error("failed SQL:\n" + query);
 			logger.error(Arrays.toString( e.getStackTrace() ));
+			
 		}
 
-		
 		return result ? entity : null;
+		
 	}
 
 	@Override
@@ -227,17 +250,22 @@ public class DrugDAOImpl implements DrugDAO {
 
 		String query = "delete from mydb.drugs where id = " + id;
 		boolean result = false;
-		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement()) {
+			
 			connection.setAutoCommit(false);
 			result = st.executeUpdate(query) > 0;
 			connection.commit();
 			logger.info("deleted a drug");
+			
 		} catch (SQLException e) {
+			
 			logger.error("catched SQL exception while attempting to delete a drug");
 			logger.error(Arrays.toString( e.getStackTrace() ));
+			
 		}
 
 		return result;
+		
 	}
 
 	@Override
@@ -248,7 +276,9 @@ public class DrugDAOImpl implements DrugDAO {
 		
 	}
 
+	@Override
 	public List<Drug> findByIds(Integer... ids) {
+		
 		List<Drug> drugs = new ArrayList<Drug>();
 		String idsStr = "";
 		for (Integer id : ids) {
@@ -259,7 +289,7 @@ public class DrugDAOImpl implements DrugDAO {
 			
 			String query = "select id,name,quantity,price,dose,prescription from mydb.drugs where id "
 					+ (ids.length == 1 ? " = ?" : "in (" + idsStr + ")");
-			try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement(query);) {
+			try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement(query)) {
 				if (ids.length == 1) {
 					st.setInt(1, ids[0]);
 				}
@@ -282,11 +312,12 @@ public class DrugDAOImpl implements DrugDAO {
 	}
 
 	public List<Drug> findByName(String name) {
+		
 		List<Drug> drugs = new ArrayList<Drug>();
 		String query = "select id,name,quantity,price,dose,prescription from mydb.drugs where name = '"
 				+ name + "' order by id";
 
-		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement()) {
 
 			ResultSet rs = st
 					.executeQuery(query);
@@ -297,11 +328,14 @@ public class DrugDAOImpl implements DrugDAO {
 			logger.info("found drugs by name");
 			
 		} catch (SQLException e) {
+			
 			logger.error("catched SQL exception while attempting to find drugs by name");
 			logger.error( Arrays.toString( e.getStackTrace() ) );
+			
 		}
 
 		return drugs;
+		
 	}
 
 	@Override
@@ -315,8 +349,10 @@ public class DrugDAOImpl implements DrugDAO {
 			ResultSet rs = st.executeQuery(query);
 			if (rs.next()) {
 				drug = readDrug(rs);
+				logger.info("found a drug by name and dose");
+			} else {
+				logger.warn("there is no drugs with name + " + name + " and dose " + dose);
 			}
-			logger.info("found a drug by name and dose");
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find a drug by name and dose");
 			logger.error( Arrays.toString( e.getStackTrace() ) );
@@ -332,7 +368,7 @@ public class DrugDAOImpl implements DrugDAO {
 		int count = 0;
 		String query = "select count(id) from mydb.drugs";
 
-		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement()) {
 
 			ResultSet rs = st.executeQuery(query);
 			rs.next();
@@ -355,13 +391,14 @@ public class DrugDAOImpl implements DrugDAO {
 		int count = 0;
 		String query = "select count(id) from mydb.drugs where prescription = 1";
 
-		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
+		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement()) {
 
 			ResultSet rs = st.executeQuery(query);
 			rs.next();
 			count = rs.getInt(1);
 			rs.close();
 			logger.info("found prescripted drugs count");
+			
 		} catch (SQLException e) {
 			logger.error("catched SQL exception while attempting to find prescripted drugs count");
 			logger.error( Arrays.toString( e.getStackTrace() ) );
@@ -371,6 +408,7 @@ public class DrugDAOImpl implements DrugDAO {
 		
 	}
 	
+	@Override
 	public boolean changeQuantity(Drug drug, Integer amount) {
 		
 		Drug updatedDrug = new Drug();
@@ -400,56 +438,4 @@ public class DrugDAOImpl implements DrugDAO {
 		
 	}
 	
-//	public List<Drug> sortByName(List<Drug> drugs, boolean asc) {
-//		
-//		List<Drug> sortedDrugs = new ArrayList<Drug>();
-//		List<Integer> ids = drugs.stream().map(d -> d.getId()).collect(Collectors.toList());
-//		
-//		String idsStr = "";
-//		for (Integer id : ids) {
-//			idsStr += String.valueOf(id) + ",";
-//		}
-//		if (idsStr.length() != 0) {
-//			idsStr = idsStr.substring(0, idsStr.length() - 1);
-//			
-//			String query = "select id,name,quantity,price,dose,prescription from mydb.drugs where id "
-//					+ (ids.size() == 1 ? " = ?" : "in (" + idsStr + ") order by name " + ( asc ? "asc" : "desc"));
-//			try (Connection connection = cp.takeConnection(); PreparedStatement st = connection.prepareStatement(query);) {
-//				if (ids.size() == 1) {
-//					st.setInt(1, ids.get(0));
-//				}
-//
-//				ResultSet rs = st.executeQuery();
-//				while (rs.next()) {
-//					System.out.println(readDrug(rs));
-//					sortedDrugs.add(readDrug(rs));
-//				}
-//				rs.close();
-//				logger.info("sorted drugs by name");
-//			} catch (SQLException e) {
-//				logger.error("catched SQL exception while attempting to sort drugs by name");
-//				e.printStackTrace();
-//			}
-//			return sortedDrugs;
-//		} else {
-//			return Collections.emptyList();
-//		}
-//		
-//	}
-	
-//	private Integer getMaxId() {
-//		String query = "select max(id) from mydb.drugs";
-//		Integer id = null;
-//		try (Connection connection = cp.takeConnection(); Statement st = connection.createStatement();) {
-//
-//			ResultSet rs = st.executeQuery(query);
-//			rs.next();
-//			id = rs.getInt(1);
-//
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//		}
-//		return id;
-//	}
-
 }
