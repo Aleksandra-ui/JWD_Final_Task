@@ -1,15 +1,11 @@
 package com.epam.jwd.apotheca.dao.impl;
 
-import org.junit.Assert;
-
-
 import java.util.List;
 
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.epam.jwd.apotheca.dao.api.DrugDAO;
 import com.epam.jwd.apotheca.model.Drug;
@@ -35,7 +31,6 @@ public class DrugDAOTest {
 
 		Drug drug = createDrug();
 		Drug drugInDB = drugDAO.save(drug);
-		System.out.println(drugInDB);
 		drug.setId(drugInDB.getId());
 		
 		drugDAO.delete(drug.getId());
@@ -91,11 +86,10 @@ public class DrugDAOTest {
 	public void testFindPrescripted() {
 		
 		Drug drug = drugDAO.save(createDrug());
-		System.out.println("drug from DB: " + drug);
 		
 		List<Drug> prescriptedDrugs = ((DrugDAOImpl)drugDAO).findPrescripted();
 		
-		System.out.println( drugDAO.delete(drug.getId()));;
+		drugDAO.delete(drug.getId());
 		
 		Assert.assertNotNull(prescriptedDrugs);
 		assert ! prescriptedDrugs.isEmpty();
@@ -136,21 +130,6 @@ public class DrugDAOTest {
 		assert (drugs.contains(drug) );
 
 	}
-	
-//	@Test
-//	public void testGetTotalCount() {
-//		
-//		int first = drugDAO.getTotalCount();
-//		
-//		Drug drug = drugDAO.save(createDrug());
-//		
-//		int second = drugDAO.getTotalCount();
-//		
-//		drugDAO.delete(drug.getId());
-//		System.out.println(first + "" + second);
-//		assert first == second - 1;
-//		
-//	}
 	
 	@Test
 	public void testGetPrescriptedCount() {

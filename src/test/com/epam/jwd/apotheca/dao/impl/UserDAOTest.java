@@ -11,18 +11,14 @@ import com.epam.jwd.apotheca.dao.api.UserDAO;
 import com.epam.jwd.apotheca.model.Role;
 import com.epam.jwd.apotheca.model.User;
 import com.epam.jwd.apotheca.pool.ConnectionPool;
-import java.sql.Connection;
 
 public class UserDAOTest {
 
 	private static UserDAO userDAO;
 	private static User user;
-	//private static Connection c;
-
+	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-//		c = ConnectionPool.retrieve().takeConnection();
-//		c.setAutoCommit(false);
 		userDAO = UserDAOImpl.getInstance();
 		user = createStandardUser();
 	}
@@ -35,6 +31,7 @@ public class UserDAOTest {
 
 	@Test
 	public void testGetUsers() {
+		
 		List<User> users = ((UserDAOImpl) userDAO).getUsers();
 		assert users.size() > 0;
 
@@ -47,6 +44,7 @@ public class UserDAOTest {
 		}
 
 		assert found;
+		
 	}
 
 	@Test
@@ -154,22 +152,7 @@ public class UserDAOTest {
 	public void testFindUsersByRole() {
 		System.out.println(userDAO.findUsersByRole(UserDAO.ROLE_NAME_CLIENT));
 	}
-	
-//	@Test
-//	public void testGetTotalCount() {
-//		
-//		int first = userDAO.getTotalCount();
-//		
-//		userDAO.delete(user.getId());
-//		
-//		int second = userDAO.getTotalCount();
-//		
-//		user = createStandardUser();
-//		System.out.println(first + " " + second);
-//		assert first == second + 1;
-//		
-//	}
-	
+
 	@Test
 	public void testChangeRole() {
 		
@@ -206,7 +189,6 @@ public class UserDAOTest {
 		user.setRole(role);
 		
 		user = userDAO.save(user);
-		System.out.println("test user in DB: " + user);
 		return user;
 		
 	}

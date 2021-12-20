@@ -1,9 +1,9 @@
 package com.epam.jwd.apotheca.dao.impl;
 
-import java.util.ArrayList;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.AfterClass;
@@ -14,7 +14,6 @@ import org.junit.Test;
 import com.epam.jwd.apotheca.dao.api.RecipeDAO;
 import com.epam.jwd.apotheca.dao.api.UserDAO;
 import com.epam.jwd.apotheca.model.Recipe;
-import com.epam.jwd.apotheca.model.Role;
 import com.epam.jwd.apotheca.model.User;
 import com.epam.jwd.apotheca.pool.ConnectionPool;
 
@@ -95,11 +94,8 @@ public class RecipeDAOTest {
 	public void testDeleteRecipe() {
 		
 		Recipe recipe = recipeDAO.save(createRecipe());
-		System.out.println("recipe from DB: " + recipe);
 		
-		//for ( int i = 0; i < recipe.getDrugIds().size(); i ++ ) {
-			recipeDAO.deleteRecipe(recipe.getId(), recipe.getUserId(), recipe.getDrugIds().get(0));
-		//}
+		recipeDAO.deleteRecipe(recipe.getId(), recipe.getUserId(), recipe.getDrugIds().get(0));
 		
 		Assert.assertNull(recipeDAO.findRecipe(recipe.getId()));
 		

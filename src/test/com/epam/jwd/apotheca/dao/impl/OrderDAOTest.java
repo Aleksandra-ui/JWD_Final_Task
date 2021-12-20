@@ -1,12 +1,11 @@
 package com.epam.jwd.apotheca.dao.impl;
 
-import org.junit.Assert;
-
 import java.sql.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -19,9 +18,6 @@ import com.epam.jwd.apotheca.model.Role;
 import com.epam.jwd.apotheca.model.User;
 import com.epam.jwd.apotheca.pool.ConnectionPool;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 
 public class OrderDAOTest {
 
@@ -30,8 +26,7 @@ public class OrderDAOTest {
 	private static UserDAO userDAO;
 	private static User user;
 	private static Order order;
-	private static final Logger logger = LoggerFactory.getLogger(OrderDAOTest.class);
-
+	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		orderDAO = OrderDAOImpl.getInstance();
@@ -127,7 +122,7 @@ public class OrderDAOTest {
 		user.setRole(role);
 		
 		user = userDAO.save(user);
-		System.out.println("test user in DB: " + user);
+		
 		return user;
 		
 	}
