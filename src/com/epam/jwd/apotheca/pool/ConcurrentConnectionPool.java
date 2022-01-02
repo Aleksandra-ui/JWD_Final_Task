@@ -10,6 +10,7 @@ import java.util.Enumeration;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -30,6 +31,7 @@ public class ConcurrentConnectionPool implements ConnectionPool {
 	private final Queue<ProxyConnection> availableConnections;// only unused connections
 	private AtomicInteger connectionsOpened;// all connections amount
 	private final Lock lock;
+	private final Condition enoughConnections;
 	
 	private static final Logger logger = LoggerFactory.getLogger(ConcurrentConnectionPool.class);
 
@@ -38,30 +40,39 @@ public class ConcurrentConnectionPool implements ConnectionPool {
 		availableConnections = new ArrayDeque<>();
 		connectionsOpened = new AtomicInteger(0);
 		lock = new ReentrantLock();
+		enoughConnections = lock.newCondition();
 	}
 
 	@Override
 	public Connection takeConnection() throws SQLException {
 
 		lock.lock();
+		
 		Connection connection = null;
+		
 		try {
+		
+			while ( availableConnections.size() < 1 ) {
+				enoughConnections.await();
+			}
+			
 			connection = availableConnections.poll();
-			final int currentOpenedConnections = connectionsOpened.get();
-			if (availableConnections.size() <= currentOpenedConnections / CONNECTIONS_GROW_FACTOR
-					&& currentOpenedConnections < MAX_CONNECTIONS_AMOUNT) {
+			
+			if ( availableConnections.size() <= connectionsOpened.get() / CONNECTIONS_GROW_FACTOR && connectionsOpened.get() < MAX_CONNECTIONS_AMOUNT ) {
 				connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "root", "root");
 				final ProxyConnection proxyConnection = new ProxyConnection(connection);
 				availableConnections.add(proxyConnection);
 				connectionsOpened.getAndIncrement();
-				logger.info("connection added, available connections: " + availableConnections.size()
-						+ ", connections opened: " + connectionsOpened.get());
-			} else if (availableConnections.size() == 0 && connection == null) {
-				logger.info("no available connections");
+				logger.info("connection added, available connections: " + availableConnections.size() + ", connections opened: " + connectionsOpened.get());
 			} else {
-				logger.info("available connections: " + availableConnections.size() + ", connections opened: "
-						+ connectionsOpened.get());
+				logger.info("available connections: " + availableConnections.size() + ", connections opened: " + connectionsOpened.get());
 			}
+			
+		} catch ( InterruptedException e ) {
+			
+			logger.error("catched InterruptedException exception while attempting to take a connection from connection pool");
+			logger.error(Arrays.toString(e.getStackTrace()));
+			
 		} finally {
 			lock.unlock();
 		}
